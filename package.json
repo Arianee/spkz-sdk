@@ -1,0 +1,39 @@
+{
+  "name": "@arianee/credit-manager",
+  "version": "1.0.0",
+  "description": "A node server",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "gitool -cl=1 && npm run lint && jest",
+    "lint": "./node_modules/.bin/eslint -c .eslintrc.json 'src/**/*.ts'",
+    "lint:fix": "./node_modules/.bin/eslint -c --fix .eslintrc.json 'src/**/*.ts'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arianee/boilerplate-nodejs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Arianee/boilerplate-nodejs/issues"
+  },
+  "homepage": "https://github.com/Arianee/boilerplate-nodejs#readme",
+  "devDependencies": {
+    "@types/jest": "^24.0.17",
+    "@types/node": "^12.7.1",
+    "@typescript-eslint/eslint-plugin": "^2.29.0",
+    "@typescript-eslint/parser": "^2.29.0",
+    "eslint": "^6.6.0",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-jest": "^23.0.2",
+    "eslint-plugin-node": "^10.0.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "gitool": "^1.13.0",
+    "jest": "^24.8.0",
+    "nodemon": "^1.19.1",
+    "ts-jest": "^24.0.2",
+    "typescript": "^3.5.3"
+  }
+}
