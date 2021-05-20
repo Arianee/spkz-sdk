@@ -1,6 +1,8 @@
 ﻿A node server
 
 
+git remote set-url origin git@your.git.repo.example.com:user/repository2.git
+
 UNIT TESTING: with jest.
 
 
