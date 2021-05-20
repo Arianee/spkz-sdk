@@ -4,6 +4,10 @@
   "description": "A node server",
   "main": "dist/index.js",
   "scripts": {
+    "start": "node dist/index.js",
+    "start:w": "nodemon dist/index.js",
+    "build": "tsc",
+    "build:w": "tsc --watch",
     "test": "gitool -cl=1 && npm run lint && jest",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json 'src/**/*.ts'",
     "lint:fix": "./node_modules/.bin/eslint -c --fix .eslintrc.json 'src/**/*.ts'"
@@ -35,5 +39,9 @@
     "nodemon": "^1.19.1",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
   }
 }
