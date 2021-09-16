@@ -1,5 +1,5 @@
 {
-  "name": "@arianee/boilerplate",
+  "name": "@arianee/spkz-sdk",
   "version": "1.0.0",
   "description": "A simple node boilerplate for Arianee",
   "main": "dist/index.js",
