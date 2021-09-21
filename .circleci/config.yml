@@ -58,13 +58,13 @@ jobs:
           name: rm version tag from npm
           command: |
             if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME}-ci $VERSION_TAG
+              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME} $VERSION_TAG
             fi
       - run:
           name: unpublish old snapshot
           command: |
             if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$OLD_SNAPSHOT
+              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}@$OLD_SNAPSHOT
             fi
       - run:
           working_directory: dist
@@ -73,7 +73,7 @@ jobs:
       - run:
           working_directory: dist
           name: tag
-          command: npm dist-tag add @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$VERSION_SNAPSHOT $VERSION_TAG
+          command: npm dist-tag add @arianee/${CIRCLE_PROJECT_REPONAME}@$VERSION_SNAPSHOT $VERSION_TAG
 
   release:
     docker:
