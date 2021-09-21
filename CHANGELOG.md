@@ -1,5 +1,11 @@
 #  Spkz SDK
 #  Release notes
+## v1.0.1 ( 2021-09-21 )
+
+### **fix (2):**
+ - fix(ci): Persist dist
+ - fix(ci): Release-ci
+
 ## v1.0.0 ( 2021-09-21 )
 
 ### **feat (4):**
