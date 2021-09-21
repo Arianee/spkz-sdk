@@ -1,6 +1,6 @@
 {
   "name": "@arianee/spkz-sdk",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Spkz-sdk for Arianee",
   "main": "dist/index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "start:w": "nodemon dist/index.js",
     "build": "tsc",
     "build:w": "tsc --watch",
-    "test": "gitool -cl=1 && npm run lint && jest",
+    "test": "gitool -cl=1 && npm run lint && jest --coverage",
+    "test:w": "jest --watch",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json 'src/**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
     "changelog": "gitool -po=./CHANGELOG.md --pn='Spkz SDK'",
@@ -41,12 +42,21 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "jest": "^24.8.0",
+    "jest-localstorage-mock": "^2.4.17",
     "nodemon": "^1.19.1",
     "ts-jest": "^24.0.2",
     "typescript": "^3.5.3"
   },
   "dependencies": {
+    "axios": "^0.21.4",
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "ethers": "^5.4.7",
+    "express": "^4.17.1",
+    "jayson": "^3.6.4",
+    "js-base64": "^3.7.1",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.6.0",
+    "web3": "^1.5.2"
   }
 }
