@@ -1,11 +1,11 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { Room } from '../room/room';
+import { RoomService } from '../roomService/roomService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
 
 @scoped(Lifecycle.ContainerScoped)
-export class Rooms {
-  constructor (private roomService:Room) {
+export class RoomsService {
+  constructor (private roomService:RoomService) {
 
   }
 

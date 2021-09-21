@@ -4,10 +4,10 @@ import { JWTGeneric } from '../../../../helpers/JWTGeneric/JWTGeneric';
 import { Lifecycle, scoped } from 'tsyringe';
 import Web3 from 'web3';
 import { Account } from 'web3-core';
-import { required } from '../../../../helpers/required';
+import { required } from '../../../../helpers/required/required';
 
 @scoped(Lifecycle.ContainerScoped)
-export class MessagingWallet {
+export class MessagingWalletService {
   get authorizedAddresses () {
     return [...this._authorizedAddresses];
   }
@@ -67,7 +67,7 @@ export class MessagingWallet {
 
     }
 
-    async addWallet (jwt): Promise<MessagingWallet> {
+    async addWallet (jwt): Promise<MessagingWalletService> {
       const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
       required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
 

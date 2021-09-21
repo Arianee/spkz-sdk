@@ -1,6 +1,6 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import axios from 'axios';
-import { requiredDefined } from '../../../../helpers/required';
+import { requiredDefined } from '../../../../helpers/required/required';
 import { PayloadService } from '../payloadService/payloadService';
 
 @scoped(Lifecycle.ContainerScoped)

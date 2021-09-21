@@ -4,16 +4,16 @@ import { HttpService } from '../httpService/httpService';
 import { getStrategyHelperFactory } from '../../../../helpers/getStrategyHelper/getStrategyHelper.helper';
 import { executeStrategies } from '../../../../strategies/executeStrategy';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
-import { MessagingWallet } from '../messagingWallet/messagingWallet';
+import { MessagingWalletService } from '../messagingWalletService/messagingWalletService';
 import { PayloadService } from '../payloadService/payloadService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
-import { required } from '../../../../helpers/required';
+import { required } from '../../../../helpers/required/required';
 
 @scoped(Lifecycle.ContainerScoped)
-export class Room {
+export class RoomService {
   constructor (private contractService:ContractService,
-               private messagingService:MessagingWallet,
+               private messagingService:MessagingWalletService,
                private payloadService:PayloadService,
                private httpService:HttpService) {
 

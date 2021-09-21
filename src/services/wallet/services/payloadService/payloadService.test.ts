@@ -1,5 +1,5 @@
 import { PayloadService } from './payloadService';
-import { MessagingWallet } from '../messagingWallet/messagingWallet';
+import { MessagingWalletService } from '../messagingWalletService/messagingWalletService';
 
 describe('payload service', function () {
   const pk = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
@@ -10,7 +10,7 @@ describe('payload service', function () {
 
   let payloadService:PayloadService;
   beforeEach(() => {
-    const messagingWallet = new MessagingWallet();
+    const messagingWallet = new MessagingWalletService();
     messagingWallet.privateKey = pk;
     payloadService = new PayloadService(messagingWallet);
   });
@@ -43,7 +43,7 @@ describe('payload service', function () {
         }
       };
 
-      const messagingWallet = new MessagingWallet();
+      const messagingWallet = new MessagingWalletService();
       messagingWallet.privateKey = pk;
       const payloadService = new PayloadService(messagingWallet);
 

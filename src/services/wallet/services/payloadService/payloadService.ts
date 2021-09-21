@@ -1,12 +1,12 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { MessagingWallet } from '../messagingWallet/messagingWallet';
-import { required, requiredDefined } from '../../../../helpers/required';
+import { MessagingWalletService } from '../messagingWalletService/messagingWalletService';
+import { required, requiredDefined } from '../../../../helpers/required/required';
 import { cloneDeep } from 'lodash';
 import { JWTGeneric } from '../../../../helpers/JWTGeneric/JWTGeneric';
 
 @scoped(Lifecycle.ContainerScoped)
 export class PayloadService {
-  constructor (private messagingWallet:MessagingWallet) {
+  constructor (private messagingWallet:MessagingWalletService) {
 
   }
 
