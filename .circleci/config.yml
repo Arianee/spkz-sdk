@@ -6,15 +6,15 @@ orbs:
   jq: circleci/jq@2.2
 
 jobs:
-  test:
-    docker:
-      - image: cimg/node:10.19.0
-    steps:
-      - checkout
-      - node/install-packages
-      - run:
-          name: test
-          command: npm run test
+#  test:
+#    docker:
+#      - image: cimg/node:10.19.0
+#    steps:
+#      - checkout
+#      - node/install-packages
+#      - run:
+#          name: test
+#          command: npm run test
   build:
     docker:
       - image: cimg/node:10.19.0
@@ -79,27 +79,32 @@ jobs:
     steps:
       - checkout
       - node/install-packages
-      - run:
-          name: set git email
-          command: git config --global user.email "tech@arianee.org"
-      - run:
-          name: set git name
-          command: git config --global user.name "Arianee Deployer"
-      - run:
-          name: remote origin url git
-          command: git config --get remote.origin.url
-      - run:
-          name: setup push git commits & tags simultaneously
-          command: git config --global push.followTags true
-      - run:
-          name: version
-          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
-      - run:
-          name: push tag && update version
-          command: node ./.circleci/update-version.js ${VERSION}
+      - attach_workspace:
+          at: ./dist
+#      - run:
+#          name: set git email
+#          command: git config --global user.email "tech@arianee.org"
+#      - run:
+#          name: set git name
+#          command: git config --global user.name "Arianee Deployer"
+#      - run:
+#          name: remote origin url git
+#          command: git config --get remote.origin.url
+#      - run:
+#          name: setup push git commits & tags simultaneously
+#          command: git config --global push.followTags true
+#      - run:
+#          name: version
+#          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
+#      - run:
+#          name: push tag && update version
+#          command: node ./.circleci/update-version.js ${VERSION}
       - run:
           name: copie changelog to package
           command: cp ./CHANGELOG.md ./dist/CHANGELOG.md
+      - run:
+          name: copie readme to package
+          command: cp ./readme.md ./dist/readme.md
 
 
   package-master:
@@ -129,10 +134,10 @@ jobs:
 workflows:
   build_test_package:
     jobs:
-      - test
-      - build:
-          requires:
-            - test
+      #- test
+      - build #:
+          #requires:
+            #- test
       - package-develop:
           requires:
             - build
