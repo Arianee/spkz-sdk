@@ -81,6 +81,8 @@ jobs:
     steps:
       - checkout
       - node/install-packages
+      - attach_workspace:
+          at: ./dist
       - run:
           name: set git email
           command: git config --global user.email "tech@arianee.org"
@@ -100,9 +102,21 @@ jobs:
           name: push tag && update version
           command: node ./.circleci/update-version.js ${VERSION}
       - run:
-          name: copie changelog to package
+          name: version
+          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
+      - run:
+          name: push tag && update version
+          command: node ./.circleci/update-version.js ${VERSION}
+      - run:
+          name: copy changelog to package
           command: cp ./CHANGELOG.md ./dist/CHANGELOG.md
-
+      - run:
+          name: copy readme to package
+          command: cp ./readme.md ./dist/readme.md
+      - persist_to_workspace:
+          root: ./dist
+          paths:
+            - '*'
 
   package-master:
     docker:
