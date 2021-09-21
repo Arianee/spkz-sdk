@@ -1,7 +1,7 @@
 {
-  "name": "@arianee/boilerplate",
+  "name": "@arianee/spkz-sdk",
   "version": "1.0.0",
-  "description": "A simple node boilerplate for Arianee",
+  "description": "Spkz-sdk for Arianee",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
@@ -10,19 +10,25 @@
     "build:w": "tsc --watch",
     "test": "gitool -cl=1 && npm run lint && jest",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json 'src/**/*.ts'",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "changelog": "gitool -po=./CHANGELOG.md --pn='Spkz SDK'",
+    "release": "npm run release:minor",
+    "release:minor": "npm version minor --no-git-tag-version",
+    "release:patch": "npm version patch --no-git-tag-version",
+    "release:major": "npm version major --no-git-tag-version"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Arianee/boilerplate-nodejs.git"
+    "url": "git+https://github.com/Arianee/spkz-sdk.git"
   },
-  "author": "",
+  "author": "Arianee.org",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Arianee/boilerplate-nodejs/issues"
+    "url": "https://github.com/Arianee/spkz-sdk/issues"
   },
-  "homepage": "https://github.com/Arianee/boilerplate-nodejs#readme",
+  "homepage": "https://github.com/Arianee/spkz-sdk#readme",
   "devDependencies": {
+    "@arianee/gitool": "^1.24.0",
     "@types/jest": "^24.0.17",
     "@types/node": "^12.7.1",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
@@ -34,7 +40,6 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
-    "gitool": "^1.13.0",
     "jest": "^24.8.0",
     "nodemon": "^1.19.1",
     "ts-jest": "^24.0.2",

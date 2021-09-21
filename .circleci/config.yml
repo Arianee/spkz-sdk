@@ -1,0 +1,155 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+# Use a package of configuration called an orb.
+orbs:
+  node: circleci/node@4.5.1
+  jq: circleci/jq@2.2
+
+jobs:
+  test:
+    docker:
+      - image: cimg/node:10.19.0
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: test
+          command: npm run test
+  build:
+    docker:
+      - image: cimg/node:10.19.0
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: build library
+          command: npm run build
+      - persist_to_workspace:
+          root: ./dist
+          paths:
+            - '*'
+  package-develop:
+    docker:
+      - image: cimg/node:10.19.0
+    steps:
+      - checkout
+      - node/install-packages
+      - jq/install
+      - attach_workspace:
+          at: ./dist
+      - run:
+          name: login to npm
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: version tag
+          command: export VERSION_TAG=`cat ./package.json | jq -r .version`.SNAPSHOT && echo "export VERSION_TAG=$VERSION_TAG" >> $BASH_ENV
+      - run:
+          name: version snapshot
+          command: export VERSION_SNAPSHOT=`cat ./package.json | jq -r .version`-SNAPSHOT.$(date +%s) && echo "export VERSION_SNAPSHOT=$VERSION_SNAPSHOT" >> $BASH_ENV
+      - run:
+          name: version old snapshot
+          command: export OLD_SNAPSHOT=`npm view @arianee/$CIRCLE_PROJECT_REPONAME@$VERSION_TAG version` && echo "export OLD_SNAPSHOT=$OLD_SNAPSHOT" >> $BASH_ENV
+      - run:
+          name: set version in package.json
+          command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION_SNAPSHOT/g" ./dist/package.json
+      - run:
+          name: rm version tag from npm
+          command: |
+            if [ "$OLD_SNAPSHOT" != "" ]; then
+              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME}-ci $VERSION_TAG
+            fi
+      - run:
+          name: unpublish old snapshot
+          command: |
+            if [ "$OLD_SNAPSHOT" != "" ]; then
+              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$OLD_SNAPSHOT
+            fi
+      - run:
+          working_directory: dist
+          name: publish
+          command: npm publish --access=public
+      - run:
+          working_directory: dist
+          name: tag
+          command: npm dist-tag add @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$VERSION_SNAPSHOT $VERSION_TAG
+
+  release:
+    docker:
+      - image: cimg/node:10.19.0
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          name: set git email
+          command: git config --global user.email "tech@arianee.org"
+      - run:
+          name: set git name
+          command: git config --global user.name "Arianee Deployer"
+      - run:
+          name: remote origin url git
+          command: git config --get remote.origin.url
+      - run:
+          name: setup push git commits & tags simultaneously
+          command: git config --global push.followTags true
+      - run:
+          name: version
+          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
+      - run:
+          name: push tag && update version
+          command: node ./.circleci/update-version.js ${VERSION}
+      - run:
+          name: copie changelog to package
+          command: cp ./CHANGELOG.md ./dist/CHANGELOG.md
+
+
+  package-master:
+    docker:
+      - image: cimg/node:10.19.0
+    steps:
+      - checkout
+      - node/install-packages
+      - jq/install
+      - attach_workspace:
+          at: ./dist
+      - run:
+          name: login to npm
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
+      - run:
+          name: version
+          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
+      - run:
+          name: set version in package.json
+          command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION/g" ./dist/package.json
+      - run:
+          working_directory: dist
+          name: publish
+          command: npm publish --access=public
+
+
+workflows:
+  build_test_package:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+      - package-develop:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - release:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
+      - package-master:
+          requires:
+            - release
+          filters:
+            branches:
+              only: master
+
+
