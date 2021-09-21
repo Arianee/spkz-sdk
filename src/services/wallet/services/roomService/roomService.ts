@@ -1,28 +1,20 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { ContractService } from '../contractService/contractService';
-import { HttpService } from '../httpService/httpService';
-import { getStrategyHelperFactory } from '../../../../helpers/getStrategyHelper/getStrategyHelper.helper';
-import { executeStrategies } from '../../../../strategies/executeStrategy';
+import { RPCJSONService } from '../httpService/RPCJSONService';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
-import { MessagingWalletService } from '../messagingWalletService/messagingWalletService';
-import { PayloadService } from '../payloadService/payloadService';
-import { NFTROOM } from '../../../../models/NFTROOM';
+import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
-import { required } from '../../../../helpers/required/required';
+import { required, requiredDefined } from '../../../../helpers/required/required';
+import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
+import { RightService } from '../../../utils/services/rightService/rightService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
-  constructor (private contractService:ContractService,
-               private messagingService:MessagingWalletService,
-               private payloadService:PayloadService,
-               private httpService:HttpService) {
+  constructor (
+               private messagingService:ProxyWalletService,
+               private fetchRoomService:FetchRoomService,
+               private rightService:RightService,
+               private httpService:RPCJSONService) {
 
-  }
-
-  public async fetchRoom (roomId:string):Promise<NFTROOM> {
-    const tokenURI = await this.contractService.erc721Contract.methods.tokenURI(roomId).call();
-
-    return await this.httpService.fetch(tokenURI);
   }
 
   /**
@@ -32,9 +24,9 @@ export class RoomService {
    */
   async getMessages (parameters:{roomId:string, sectionId:string}) {
     const { roomId, sectionId } = parameters;
-    required(roomId, 'roomId is required');
-    required(sectionId, 'sectionId is required');
-    const tokenContent = await this.fetchRoom(roomId);
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
     const { endpoint } = tokenContent;
     const params = {
@@ -52,11 +44,12 @@ export class RoomService {
    */
   async sendMessage (parameters:{roomId:string, sectionId:string, messageContent:any}) {
     const { roomId, sectionId, messageContent } = parameters;
-    required(roomId, 'roomId is required');
-    required(sectionId, 'sectionId is required');
-    required(messageContent, 'messageContent is required');
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+    requiredDefined(messageContent, 'messageContent is required');
 
-    const tokenContent = await this.fetchRoom(roomId);
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
     const { endpoint } = tokenContent;
     const params = {
       content: messageContent,
@@ -73,42 +66,28 @@ export class RoomService {
    * @returns {Promise<StrategiesReturn>}
    */
   async canJoin (parameters:{roomId:string}):Promise<StrategiesReturn> {
-    const { roomId } = parameters;
-    const tokenContent = await this.fetchRoom(roomId);
-
-    const strategies = getStrategyHelperFactory(tokenContent, this.messagingService.authorizedAddresses[0])
-      .getRoomStrategies();
-    return executeStrategies(strategies);
+    return this.rightService.canJoinRoom({
+      ...parameters,
+      address: this.messagingService.authorizedAddresses[0]
+    });
   }
 
   /**
    * Can user write message in this room AND section
-   * @param {string} roomId
-   * @param {string} sectionId
    * @returns {Promise<StrategiesReturn>}
+   * @param parameters
    */
   async canWriteSection (parameters:{roomId:string, sectionId:string}):Promise<StrategiesReturn> {
-    const { roomId, sectionId } = parameters;
-    const tokenContent = await this.fetchRoom(roomId);
-    const strategies = getStrategyHelperFactory(tokenContent, this.messagingService.authorizedAddresses[0])
-      .getSectionWriteStrategies(sectionId);
-
-    return executeStrategies(strategies);
+    return this.rightService.canWriteSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
   /**
    *  Can user read message in this room AND section
-   * @param {string} roomId
-   * @param {string} sectionId
    * @returns {Promise<StrategiesReturn>}
+   * @param parameters
    */
   async canReadSection (parameters:{roomId:string, sectionId:string}):Promise<StrategiesReturn> {
-    const { roomId, sectionId } = parameters;
-    const tokenContent = await this.fetchRoom(roomId);
-
-    const strategies = getStrategyHelperFactory(tokenContent, this.messagingService.authorizedAddresses[0])
-      .getSectionReadStrategies(sectionId);
-    return executeStrategies(strategies);
+    return this.rightService.canReadSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
   public getMembers (rooms:string|string[]) { console.info('not implemented'); }

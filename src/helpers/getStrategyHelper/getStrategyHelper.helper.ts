@@ -32,7 +32,6 @@ export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeyOfCaller?:str
         return replaceAddressInStrategies(readStrategy);
       }
     }
-    console.info('nftRoom.strategies', nftRoom.strategies);
     return replaceAddressInStrategies(nftRoom.strategies) || [[]];
   };
 
