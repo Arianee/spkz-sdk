@@ -1,4 +1,4 @@
-import { required, requiredDefined } from '../required';
+import { required, requiredDefined } from '../required/required';
 import { Strategy } from '../../models/strategy';
 import { cloneDeep } from 'lodash';
 import { NFTROOM } from '../../models/NFTROOM';

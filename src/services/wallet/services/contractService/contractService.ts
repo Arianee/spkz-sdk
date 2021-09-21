@@ -1,11 +1,11 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { MessagingWallet } from '../messagingWallet/messagingWallet';
+import { MessagingWalletService } from '../messagingWalletService/messagingWalletService';
 import Web3 from 'web3';
 import { erc721ABI } from '../../../../abi/erc721.abi';
 
 @scoped(Lifecycle.ContainerScoped)
 export class ContractService {
-  constructor (private messagingWallet:MessagingWallet) {
+  constructor (private messagingWallet:MessagingWalletService) {
 
   }
 

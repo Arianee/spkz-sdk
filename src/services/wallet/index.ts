@@ -1,14 +1,14 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { MessagingWallet } from './wallet/messagingWallet/messagingWallet';
-import { Room } from './wallet/room/room';
-import { Rooms } from './wallet/rooms/rooms';
+import { MessagingWalletService } from './services/messagingWalletService/messagingWalletService';
+import { RoomService } from './services/roomService/roomService';
+import { RoomsService } from './services/roomsService/roomsService';
 
 export class SPKZ {
     private container = container.createChildContainer();
-    public wallets: MessagingWallet = this.container.resolve(MessagingWallet);
-    public room: Room = this.container.resolve(Room);
-    public rooms: Rooms = this.container.resolve(Rooms);
+    public wallets: MessagingWalletService = this.container.resolve(MessagingWalletService);
+    public room: RoomService = this.container.resolve(RoomService);
+    public rooms: RoomsService = this.container.resolve(RoomsService);
 
     public get privateKey () {
       return this.wallets.privateKey;

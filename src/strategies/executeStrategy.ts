@@ -3,7 +3,7 @@ import * as implementedStrategies from './stategies';
 import assert from 'assert';
 import Web3 from 'web3';
 import { StrategiesReturn, StrategyReturn } from '../models/strategyReturn';
-import { requiredDefined } from '../helpers/required';
+import { requiredDefined } from '../helpers/required/required';
 
 const chainConfig = require('../../chain.config.json');
 

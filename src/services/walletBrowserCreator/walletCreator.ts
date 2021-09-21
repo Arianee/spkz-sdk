@@ -1,7 +1,7 @@
 import { Wallet as etherWallet } from 'ethers';
-import { isPrivateKeyValid } from '../../helpers/isPrivateKeyValid';
+import { isPrivateKeyValid } from '../../helpers/isPrivateKeyValid/isPrivateKeyValid';
 import { SPKZ } from '../wallet';
-import { required, requiredDefined } from '../../helpers/required';
+import { required, requiredDefined } from '../../helpers/required/required';
 
 const key = 'messagingPrivateKey';
 
