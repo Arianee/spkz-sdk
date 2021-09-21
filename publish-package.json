@@ -1,5 +1,5 @@
 {
-  "name": "@arianee/spkz-sdk-ci",
+  "name": "@arianee/spkz-sdk",
   "version": "VERSION-CI",
   "description": "Spkz-sdk for Arianee",
   "main": "index.js",
