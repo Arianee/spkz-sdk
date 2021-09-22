@@ -7,7 +7,7 @@ import { Account } from 'web3-core';
 import { required } from '../../../../helpers/required/required';
 
 @scoped(Lifecycle.ContainerScoped)
-export class MessagingWalletService {
+export class ProxyWalletService {
   get authorizedAddresses () {
     return [...this._authorizedAddresses];
   }
@@ -67,14 +67,14 @@ export class MessagingWalletService {
 
     }
 
-    async addWallet (jwt): Promise<MessagingWalletService> {
+    async addWallet (jwt): Promise<ProxyWalletService> {
       const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
       required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
 
       if (!this._authorizedAddresses.includes(issuer)) {
         this._authorizedAddresses.push(issuer);
+        this._authorizations.push(jwt);
       }
-      this._authorizations.push(jwt);
 
       return this;
     }

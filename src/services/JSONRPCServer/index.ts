@@ -6,8 +6,8 @@ export class SPKZJSONRPC {
     private messagesJSONRPC;
 
     setMessagesMethod (parameters: {
-        write: AsyncFunc<{ roomId: string, sectionId: string }, any>,
-        read: AsyncFunc<{ roomId: string, sectionId: string }, any>
+        read: AsyncFunc<{ roomId: string, sectionId: string }, any>,
+        write: AsyncFunc<{ roomId: string, sectionId: string }, any>
     }): SPKZJSONRPC {
       this.messagesJSONRPC = messagesJSONRPCFactory(parameters);
       return this;
