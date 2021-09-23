@@ -20,4 +20,6 @@ export class SPKZ {
       spkzInstance.wallets.privateKey = privateKey;
       return spkzInstance;
     }
+
+ public checkAuthorizations=this.wallets.checkBlockchainWalletAuthorizations;
 }

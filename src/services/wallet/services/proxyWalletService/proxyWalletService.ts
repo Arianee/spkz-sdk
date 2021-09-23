@@ -5,9 +5,16 @@ import { Lifecycle, scoped } from 'tsyringe';
 import Web3 from 'web3';
 import { Account } from 'web3-core';
 import { required } from '../../../../helpers/required/required';
+import { RightService } from '../../../utils/services/rightService/rightService';
+import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 
+const localStorageAuthorizationKey = 'authorizations';
 @scoped(Lifecycle.ContainerScoped)
 export class ProxyWalletService {
+  constructor (private rightService:RightService) {
+
+  }
+
   get authorizedAddresses () {
     return [...this._authorizedAddresses];
   }
@@ -44,53 +51,88 @@ export class ProxyWalletService {
       this.signer = signer;
       this.decoder = decoder;
       this.jwtHelper = new JWTGeneric(this.signer, this.decoder);
+      this.retrieveJWTAuthorizationsFromLocalStorage()
+        .map(jwt => this.addBlockchainWalletAuthorization(jwt));
     }
 
-    public addFromMetamask () {
+  /**
+   * Get blockchainWallets authorizations from localstorage
+   * If proxyWallet not authorized, it removes entry from localstorage and return empty array
+   * @returns {[]}
+   */
+  private retrieveJWTAuthorizationsFromLocalStorage=():any[] => {
+    const valueFromStorage = localStorage.getItem(localStorageAuthorizationKey);
+    if (valueFromStorage) {
+      try {
+        const parseValue:any[] = JSON.parse(valueFromStorage);
+        const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
+        if (isAuthorized) {
+          return parseValue;
+        }
+      } catch (e) {
 
-      // make workflow signing the getPayloadToSign
-      // then addWallet
-    }
-
-    public async addWalletFromPrivateKey (privateKey: string) {
-      const { signer, decoder, address } = signerDecoder(privateKey);
-      const jwtSigner = new JWTGeneric(signer, decoder);
-      const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(address);
-      const zef = await jwtSigner.setPayload(payloadToSign);
-
-      const signedJWT = await zef.sign();
-      this.addWallet(signedJWT);
-      return this;
-    }
-
-    public addFromCustomWallet () {
-
-    }
-
-    async addWallet (jwt): Promise<ProxyWalletService> {
-      const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
-      required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
-
-      if (!this._authorizedAddresses.includes(issuer)) {
-        this._authorizedAddresses.push(issuer);
-        this._authorizations.push(jwt);
       }
-
-      return this;
     }
 
-    /**
+    localStorage.removeItem(localStorageAuthorizationKey);
+    return [];
+  }
+
+  public addFromMetamask () {
+
+    // make workflow signing the getPayloadToSign
+    // then addWallet
+  }
+
+  public async addWalletFromPrivateKey (privateKey: string) {
+    const { signer, decoder, address } = signerDecoder(privateKey);
+    const jwtSigner = new JWTGeneric(signer, decoder);
+    const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(address);
+    const zef = await jwtSigner.setPayload(payloadToSign);
+
+    const signedJWT = await zef.sign();
+    this.addBlockchainWalletAuthorization(signedJWT);
+    return this;
+  }
+
+  public addFromCustomWallet () {
+
+  }
+
+  /**
+   * Check if authorizations from blockchainWallets are still valid (not expired, sub is proxyWallet...)
+   * It should be call on every app launch
+   * @returns {Promise<AuthorizationsStatus>}
+   */
+  public checkBlockchainWalletAuthorizations=async ():Promise<AuthorizationsStatus> => {
+    return this.rightService.proxyWalletAuthorisationStatus(this.authorizations, this.address);
+  }
+
+  async addBlockchainWalletAuthorization (jwt): Promise<ProxyWalletService> {
+    const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
+    required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
+
+    if (!this._authorizedAddresses.includes(issuer)) {
+      this._authorizedAddresses.push(issuer);
+      this._authorizations.push(jwt);
+      window.localStorage.setItem(localStorageAuthorizationKey, JSON.stringify(this.authorizations));
+    }
+
+    return this;
+  }
+
+  /**
      * Get payload to authorized messaging wallet to send message on behalf of another blockchain wallet
      * @param {string} publicKey
      * @returns {{sub: any; iss: string; exp: number}}
      */
-    public getPayloadToSignToAddABlockchainWallet (publicKey: string) {
-      return {
-        iss: publicKey,
-        exp: addDate(7, 'days'),
-        sub: this.address
-      };
-    }
+  public getPayloadToSignToAddABlockchainWallet (publicKey: string) {
+    return {
+      iss: publicKey,
+      exp: addDate(7, 'days'),
+      sub: this.address
+    };
+  }
 }
 
 // ecdsa
