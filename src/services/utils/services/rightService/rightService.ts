@@ -5,6 +5,7 @@ import { cloneDeep } from 'lodash';
 import { Lifecycle, scoped } from 'tsyringe';
 import { requiredDefined } from '../../../../helpers/required/required';
 import { decoder, JWTDecoder } from '../../../../helpers/JWTGeneric/signerAndDecoderFromPrivateKey';
+import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
@@ -12,26 +13,42 @@ export class RightService {
 
   }
 
+  public proxyWalletAuthorisationStatus=RightService.proxyWalletAuthorisationStatus;
+
+  public static proxyWalletAuthorisationStatus=(authorizationsJWT:string[], publicKeyToVerify):AuthorizationsStatus => {
+    requiredDefined(authorizationsJWT, 'authorizations should not be null');
+    requiredDefined(publicKeyToVerify, 'publicKeyToVerify  should not be null');
+
+    const authorisationStatus = authorizationsJWT
+      .map(authorization => {
+        const { payload } = JWTDecoder(authorization).decode();
+        const { iss, sub } = payload;
+        const isValid = JWTDecoder(authorization).verify(iss);
+
+        const isProxyWalletAuthorized = sub === publicKeyToVerify;
+        return {
+          blockchainWalletAddress: iss,
+          proxyWallet: sub,
+          isAuthorized: isValid && isProxyWalletAuthorized
+        };
+      });
+
+    return {
+      isAuthorized: authorisationStatus.map(d => d.isAuthorized).includes(false) === false,
+      authorizations: authorisationStatus
+    };
+  }
+
     /**
      * Verify if all jwt in authorization correponds to global signing public key
-     * @param payload
+     * @param authorizationsJWT
      * @param publicKeyToVerify
      * @returns {boolean}
      */
     public static isProxyWalletAuthorized=(authorizationsJWT:string[], publicKeyToVerify):boolean => {
-      requiredDefined(authorizationsJWT, 'authorizations rpc payload should not be null');
+      const authorisationStatus = RightService.proxyWalletAuthorisationStatus(authorizationsJWT, publicKeyToVerify);
 
-      const authorizations:any[] = authorizationsJWT
-        .map(authorization => {
-          const { payload } = JWTDecoder(authorization).decode();
-          const { iss, sub } = payload;
-          const isValid = JWTDecoder(authorization).verify(iss);
-
-          const isProxyWalletAuthorized = sub === publicKeyToVerify;
-          return isValid && isProxyWalletAuthorized;
-        });
-
-      return !authorizations.includes(false);
+      return authorisationStatus.isAuthorized;
     }
 
     public static extractBlockchainWalletAddressWhoAuthorizedProxyWallet=

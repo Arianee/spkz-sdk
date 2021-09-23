@@ -1,68 +1,35 @@
-﻿A node server
+﻿# SPKZ SDK
+
+## Get started
+
+```bash
+npm i @arianee/spkz-sdk -S
+```
+
+In your index.ts or js.
+```javascript
+
+// It will create or retrieve wallet from local storage if there is one
+const proxyWallet=createOrRetrieveWallet();
+
+// For testing purpose you can use this method
+await proxyWallet.wallets.addWalletFromPrivateKey('your very unique private key');
+```
+
+Now you have proxy wallet that allow you to send message on behalf of your blockchain wallet.
+
+```javascript
+
+await proxyWallet.room.sendMessage({
+        roomId:0,
+        sectionId:'chat',
+        messageContent:{
+        title:'Hello world'
+        }
+    });
+
+```
+
+Boom! You have just sent your very first message. Behind the curtain, SPKZ-SDK add JWT authorizations and others cryptographic elements to be sure that no one can send a message on your behalf!
 
 
-git remote set-url origin git@your.git.repo.example.com:user/repository2.git
-
-UNIT TESTING: with jest.
-
-
-
-
-* environments (dir)
-   * environment.prod.ts
-   * environment.dev.ts
-* .travis.yml
-* .gitignore
-* readme.md
-* eslint.rc
-* dist <- compiled javascript
-   * environments
-   * src
-* src
-   * middlewares
-      * middlewareName
-         * index.ts
-         * libs (dir)
-   * services
-      * featureFlipService
-      * databaseService (dir)
-         * index.ts
-      * brietlingService (dir)
-      * facebookService
-      * branchioService
-      * batchService
-      * blockchainListenersService
-   * index.ts => implements routing or plug with firebase
-   * routes (dir)
-      * featureName (dir)
-         * index.ts
-         * routes.ts
-         * libs (dir)
-
-
-
-
-routes/hello/hello.ts
-app.get(‘/hello’, (req,res)=>{
-res.send(‘World’);
-})
-
-
-routes.ts
-{libExample} from ‘./libs’;
-app.get(‘/hello’, authMiddleWare, (req,res)=>{
-
-
-const {myParam}= req.body.queryParams
-
-
-const result=libExample(myParam);
-if(result){
-res.sendStatus(200)
-}
-else{
-res.sendStatus(500)
-}
-
-
-});
