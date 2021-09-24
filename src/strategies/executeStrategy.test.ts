@@ -5,15 +5,25 @@ describe('Execute strategy', () => {
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 
   describe('execute strategies of erc 20 balance of', () => {
-    test('wallet without aria should be not authorized', async () => {
+    test(' wallet without aria should be not authorized', async () => {
       const strategyProvider = await executeStrategies([
         [{
-          chainId: '77',
           name: 'erc-20-balance-of',
-          address: walletAddressWithoutAria,
+          addresses: [walletAddressWithoutAria],
           params: {
             minBalance: '12',
-            address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+            tokens: [
+              {
+                chainId: '77',
+                networkId: '1',
+                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+              },
+              {
+                chainId: '1',
+                networkId: '1',
+                address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+              }
+            ]
           }
         }]
       ]);
@@ -23,16 +33,25 @@ describe('Execute strategy', () => {
 
       expect(strategyProvider.isAuthorized).toBeFalsy();
     });
-
     test('wallet with aria should be authorized', async () => {
       const strategyProvider = await executeStrategies([
         [{
-          chainId: '77',
           name: 'erc-20-balance-of',
-          address: walletAddressWithAria,
+          addresses: [walletAddressWithAria],
           params: {
             minBalance: '12',
-            address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+            tokens: [
+              {
+                chainId: '77',
+                networkId: '1',
+                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+              },
+              {
+                chainId: '1',
+                networkId: '1',
+                address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+              }
+            ]
           }
         }]
       ]);
@@ -42,65 +61,187 @@ describe('Execute strategy', () => {
       expect(strategyProvider.isAuthorized).toBeTruthy();
     });
 
-    test('and clause', async () => {
-      const strategyProvider = await executeStrategies([
-        [
-          {
-            chainId: '77',
-            name: 'erc-20-balance-of',
-            address: walletAddressWithAria,
-            params: {
-              minBalance: '1000000000000000000000',
-              address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+    describe('clause', () => {
+      describe('AND clause', () => {
+        test('should return true if have aria on Mainnet AND POA', async () => {
+          const strategyProvider = await executeStrategies([[
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '11',
+                tokens: [
+                  // have aria on mainnet
+                  {
+                    chainId: '1',
+                    networkId: '1',
+                    address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+                  }
+
+                ]
+              }
+            },
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '12',
+                tokens: [
+
+                  // have aria on Polygon/matic
+                  {
+                    chainId: '137',
+                    networkId: '1',
+                    address: '0x46f48fbdedaa6f5500993bede9539ef85f4bee8e'
+                  }
+
+                ]
+              }
+            },
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '13',
+                tokens: [
+                  // have aria on POA
+                  {
+                    chainId: '99',
+                    networkId: '1',
+                    address: '0x55d536e4d6c1993d8ef2e2a4ef77f02088419420'
+                  }
+                ]
+              }
             }
-          },
-          {
-            chainId: '77',
-            name: 'erc-20-balance-of',
-            address: walletAddressWithAria,
-            params: {
-              minBalance: '12',
-              address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+          ]]
+          );
+
+          expect(strategyProvider.isAuthorized).toBeTruthy();
+        });
+
+        test('should return false if does not have aria on Mainnet AND Sokol POA', async () => {
+          const strategyProvider = await executeStrategies([
+            [{
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '13',
+                tokens: [
+                  // have aria on POA
+                  {
+                    chainId: '99',
+                    networkId: '1',
+                    address: '0x55d536e4d6c1993d8ef2e2a4ef77f02088419420'
+                  }
+                ]
+              }
+            },
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '13',
+                tokens: [
+                  // have aria on POA
+                  {
+                    chainId: '77',
+                    networkId: '1',
+                    address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+                  }
+                ]
+              }
             }
-          }
+            ]]
+          );
 
-        ]
-      ]);
-      expect(strategyProvider.isAuthorized).toBeFalsy();
-    });
+          expect(strategyProvider.isAuthorized).toBeFalsy();
+        });
+      });
+      describe('OR clause', () => {
+        test('should return false if have not USDC on Mainnet OR POA', async () => {
+          const strategyProvider = await executeStrategies([[
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '11',
+                tokens: [
+                  // have usdc on polygon
+                  {
+                    chainId: '137',
+                    networkId: '1',
+                    address: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
+                  }
 
-    test('or clause', async () => {
-      const strategyProvider = await executeStrategies([
-        [
-          {
-            chainId: '77',
-            name: 'erc-20-balance-of',
-            address: walletAddressWithAria,
-            params: {
-              minBalance: '1000000000000000000000',
-              address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+                ]
+              }
             }
-          }
-        ],
-        [
+          ], [
+            {
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '11',
+                tokens: [
+                  // have aria on mainnet
+                  {
+                    chainId: '1',
+                    networkId: '1',
+                    address: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
+                  }
 
-          {
-            chainId: '77',
-            name: 'erc-20-balance-of',
-            address: walletAddressWithAria,
-            params: {
-              minBalance: '12',
-              address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+                ]
+              }
             }
-          }
+          ]]
+          );
 
-        ]
+          expect(strategyProvider.isAuthorized).toBeFalsy();
+        });
 
-      ]);
+        test('should return false if does not have aria on Mainnet OR Sokol POA', async () => {
+          const strategyProvider = await executeStrategies([
+            [{
+              name: 'erc-20-balance-of',
+              addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+              params: {
+                minBalance: '13',
+                tokens: [
+                  // have aria on POA
+                  {
+                    chainId: '99',
+                    networkId: '1',
+                    address: '0x55d536e4d6c1993d8ef2e2a4ef77f02088419420'
+                  }
+                ]
+              }
+            }
+            ], [
+              {
+                name: 'erc-20-balance-of',
+                addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+                params: {
+                  minBalance: '13',
+                  tokens: [
+                    // have aria on sokol
+                    {
+                      chainId: '77',
+                      networkId: '1',
+                      address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+                    }
+                  ]
+                }
+              }
+            ]]
+          );
 
-      expect(strategyProvider.isAuthorized).toBeTruthy();
+          expect(strategyProvider.isAuthorized).toBeTruthy();
+        });
+      });
     });
   });
+});
+/*
 
   describe('execute strategies of erc 721 balance of', () => {
     test('wallet without erc 721 should be not authorized', async () => {
@@ -220,3 +361,4 @@ describe('Execute strategy', () => {
     });
   });
 });
+  */
