@@ -1,5 +1,5 @@
 import { Strategy } from '../models/strategy';
-import * as implementedStrategies from './stategies';
+import * as implementedStrategies from './strategies';
 import { StrategiesReturn, StrategyReturn } from '../models/strategyReturn';
 import { requiredDefined } from '../helpers/required/required';
 

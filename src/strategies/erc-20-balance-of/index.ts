@@ -31,7 +31,7 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
 const getBalancesOfChains = async (strategy: Strategy): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { addresses, params } = strategy;
 
-  const balances = await Promise.all(params.tokens
+  const balances:any[] = await Promise.all(params.tokens
     .map(param => getBalancesOfFromChain(param, addresses)));
 
   const flatBalances = flattenDeep(balances);
