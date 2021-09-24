@@ -6,14 +6,16 @@ import Web3 from 'web3';
 import { Account } from 'web3-core';
 import { required } from '../../../../helpers/required/required';
 import { RightService } from '../../../utils/services/rightService/rightService';
-import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
+import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
+import { MetamaskService } from '../metamask/metamaskService';
 
 const localStorageAuthorizationKey = 'authorizations';
 @scoped(Lifecycle.ContainerScoped)
 export class ProxyWalletService {
-  constructor (private rightService:RightService) {
-
-  }
+  constructor (
+    private rightService:RightService,
+    private metamaskService: MetamaskService
+  ) {}
 
   get authorizedAddresses () {
     return [...this._authorizedAddresses];
@@ -78,10 +80,15 @@ export class ProxyWalletService {
     return [];
   }
 
-  public addFromMetamask () {
+  public async addFromMetamask () {
+    await this.metamaskService.initMetamask();
+    const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+    const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {});
+    const zef = jwtSigner.setPayload(payloadToSign);
+    const signedJWT = await zef.sign();
 
-    // make workflow signing the getPayloadToSign
-    // then addWallet
+    this.addBlockchainWalletAuthorization(signedJWT);
+    return this;
   }
 
   public async addWalletFromPrivateKey (privateKey: string) {
@@ -91,6 +98,7 @@ export class ProxyWalletService {
     const zef = await jwtSigner.setPayload(payloadToSign);
 
     const signedJWT = await zef.sign();
+
     this.addBlockchainWalletAuthorization(signedJWT);
     return this;
   }
@@ -128,9 +136,9 @@ export class ProxyWalletService {
      */
   public getPayloadToSignToAddABlockchainWallet (publicKey: string) {
     return {
-      iss: publicKey,
+      iss: publicKey.toLowerCase(),
       exp: addDate(7, 'days'),
-      sub: this.address
+      sub: this.address.toLowerCase()
     };
   }
 }

@@ -17,8 +17,12 @@
     "release": "npm run release:minor",
     "release:minor": "npm version minor --no-git-tag-version",
     "release:patch": "npm version patch --no-git-tag-version",
-    "release:major": "npm version major --no-git-tag-version"
+    "release:major": "npm version major --no-git-tag-version",
+    "serve": "parcel examples/metamask/index.html"
   },
+  "browserslist": [
+    "since 2017-06"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Arianee/spkz-sdk.git"
