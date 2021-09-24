@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { SPKZJSONRPC } from './services/JSONRPCServer';
 import { SPKZ } from './services/wallet';
-import { writeParameters } from './models/jsonrpc/writeParameters';
+import { ReadMessageParameters, WriteMessageParameters } from './models/jsonrpc/writeMessageParameters';
+
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -13,14 +14,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const dbMessage = {};
 
-const spkzJSONRPC = new SPKZJSONRPC()
+const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
 // @ts-ignore
   .setMessagesMethod({
-    read: (parameters:{roomId:string, sectionId:string}) => {
+    read: (parameters:ReadMessageParameters) => {
       const { roomId, sectionId } = parameters;
       return Promise.resolve(dbMessage[roomId + sectionId]);
     },
-    write: (parameters:writeParameters) => {
+    write: (parameters:WriteMessageParameters) => {
       const { roomId, sectionId } = parameters;
       dbMessage[roomId + sectionId] = parameters;
       return Promise.resolve({});

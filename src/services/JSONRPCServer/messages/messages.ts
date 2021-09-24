@@ -2,8 +2,17 @@ import { JSONRPCMethods } from '../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../helpers/required/required';
 import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
+import { AsyncFunc } from '../../../models/AsyncFunc';
+import { ReadMessageParameters, WriteMessageParameters } from '../../../models/jsonrpc/writeMessageParameters';
+import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 
-export const messagesJSONRPCFactory = (configuration:{read, write}) => {
+export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (configuration: {
+  read: AsyncFunc<ReadMessageParameters, any>,
+  write: AsyncFunc<WriteMessageParameters, any>
+}) => {
+  const { chainId, network } = networkParameters;
+  const limit = 100;
+
   const fetchMessages = async (params, callback) => {
     requiredDefined(params, 'params should be defined');
 
@@ -26,7 +35,13 @@ export const messagesJSONRPCFactory = (configuration:{read, write}) => {
     }
 
     try {
-      const messages = await configuration.read({ roomId, sectionId });
+      const messages = await configuration.read({
+        chainId,
+        limit,
+        network,
+        roomId,
+        sectionId
+      });
       callback(null, messages);
     } catch (e) {
       callback(e);
@@ -42,7 +57,7 @@ export const messagesJSONRPCFactory = (configuration:{read, write}) => {
     requiredDefined(content, 'content should be defined');
     requiredDefined(authorizations, 'authorizations should be defined');
 
-    const { isAuthorized, blockchainWallets } = await utils.rightService
+    const { isAuthorized, blockchainWallets, proxyWalletAddress } = await utils.rightService
       .verifyPayloadSignatures(params);
 
     if (isAuthorized === false) {
@@ -58,7 +73,18 @@ export const messagesJSONRPCFactory = (configuration:{read, write}) => {
     }
 
     try {
-      await configuration.write({ roomId, sectionId, content, authorizations, signature });
+      await configuration.write(
+        {
+          roomId,
+          sectionId,
+          payload: params,
+          network: networkParameters.network,
+          chainId: networkParameters.chainId,
+          blockchainWallet: firstBlockchainWallet,
+          proxyWallet: proxyWalletAddress,
+          signature
+        }
+      );
       return callback(null, content);
     } catch (e) {
       return callback(e);
