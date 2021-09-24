@@ -1,11 +1,11 @@
 import Web3 from 'web3';
 import { JWTGeneric } from './JWTGeneric';
 
-export const decoder = (message, signature) => new Web3().eth.accounts.recover(message, signature);
+export const decoder = (message, signature) => new Web3().eth.accounts.recover(message, signature).toLowerCase();
 const signerFactory = (privateKey) => (data) => new Web3().eth.accounts.sign(data, privateKey).signature;
 
 export const signerDecoder = (privateKey:string) => {
-  const address = new Web3().eth.accounts.privateKeyToAccount(privateKey).address;
+  const address = new Web3().eth.accounts.privateKeyToAccount(privateKey).address.toLowerCase();
   const signer = signerFactory(privateKey);
   return { signer, decoder, address };
 };

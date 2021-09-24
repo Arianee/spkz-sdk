@@ -25,7 +25,7 @@ export class RightService {
         const { iss, sub } = payload;
         const isValid = JWTDecoder(authorization).verify(iss);
 
-        const isProxyWalletAuthorized = sub === publicKeyToVerify;
+        const isProxyWalletAuthorized = sub.toLowerCase() === publicKeyToVerify.toLowerCase();
         return {
           blockchainWalletAddress: iss,
           proxyWallet: sub,

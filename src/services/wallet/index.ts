@@ -4,13 +4,16 @@ import { ProxyWalletService } from './services/proxyWalletService/proxyWalletSer
 import { RoomService } from './services/roomService/roomService';
 import { RoomsService } from './services/roomsService/roomsService';
 import { PayloadService } from './services/payloadService/payloadService';
+import { MetamaskService } from './services/metamask/metamaskService';
+import { network } from '../../models/network.enum';
 
 export class SPKZ {
     private container = container.createChildContainer();
     public wallets: ProxyWalletService = this.container.resolve(ProxyWalletService);
     public room: RoomService = this.container.resolve(RoomService);
     public rooms: RoomsService = this.container.resolve(RoomsService);
-    public payloadService:PayloadService=this.container.resolve(PayloadService)
+    public payloadService:PayloadService=this.container.resolve(PayloadService);
+    public metamaskService:MetamaskService =this.container.resolve(MetamaskService)
     public get privateKey () {
       return this.wallets.privateKey;
     }
@@ -23,3 +26,5 @@ export class SPKZ {
 
  public checkAuthorizations=this.wallets.checkBlockchainWalletAuthorizations;
 }
+
+export { network };
