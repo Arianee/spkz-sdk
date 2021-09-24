@@ -241,47 +241,118 @@ describe('Execute strategy', () => {
     });
   });
 });
-/*
 
-  describe('execute strategies of erc 721 balance of', () => {
-    test('wallet without erc 721 should be not authorized', async () => {
-      const strategyProvider = await executeStrategies([
-        [{
-          chainId: '77',
-          name: 'erc-721-balance-of',
-          address: '0x7B696108F5921F478A0C6F4E01280d272BaD318f',
-          params: {
-            minBalance: '12',
-            address: '0x512C1FCF401133680f373a386F3f752b98070BC5'
-          }
-        }]
-      ]);
+describe('execute strategies of erc 721 balance of', () => {
+  test('wallet without erc 721 should be not authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'erc-721-balance-of',
+        addresses: ['0xF0245F6251Bef9447A08766b9DA2B07b28aD80B0'],
+        params: {
+          // Have 1 visitor
+          minBalance: '1',
+          tokens: [{
+            address: '0x0a0bf65248805efa926c39bf51b6dd94e3d1a7af',
+            chainId: '137',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
 
-      expect(strategyProvider.strategies[0][0].message).toBeDefined();
-      expect(strategyProvider.strategies[0][0].code).toBe(1);
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(1);
 
-      expect(strategyProvider.isAuthorized).toBeFalsy();
-    });
-
-    test('wallet with erc 721 should be authorized', async () => {
-      const strategyProvider = await executeStrategies([
-        [{
-          chainId: '77',
-          name: 'erc-721-balance-of',
-          address: '0x7B696108F5921F478A0C6F4E01280d272BaD318f',
-          params: {
-            minBalance: '1',
-            address: '0x512C1FCF401133680f373a386F3f752b98070BC5'
-          }
-        }]
-      ]);
-
-      expect(strategyProvider.strategies[0][0].message).toBeDefined();
-      expect(strategyProvider.strategies[0][0].code).toBe(0);
-      expect(strategyProvider.isAuthorized).toBeTruthy();
-    });
+    expect(strategyProvider.isAuthorized).toBeFalsy();
   });
 
+  test('wallet with erc 721 should be authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'erc-721-balance-of',
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108'],
+        params: {
+          // Have 1 visitor
+          minBalance: '1',
+          tokens: [{
+            address: '0x0a0bf65248805efa926c39bf51b6dd94e3d1a7af',
+            chainId: '137',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+
+  test('wallet with balanceOf 2 different erc721 >= 2 should be authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'erc-721-balance-of',
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108', '0x5BC8da7dE68c1af47D329B14ADdBf1d7547A1747'],
+        params: {
+          // Have 1 visitor and/or 1 PolyDoge X QuickSwap (PDQuick) (sum >= 2)
+          minBalance: '2',
+          tokens: [{
+            address: '0x0a0bf65248805efa926c39bf51b6dd94e3d1a7af',
+            chainId: '137',
+            networkId: '1'
+          },
+          {
+            address: '0xe59fd80c8cb160ca490414c6069de003328148df',
+            chainId: '137',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+
+  test('wallet with 2 different erc 721 should be authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        // Have 1 visitor and 1 PolyDoge X QuickSwap (PDQuick)
+
+        name: 'erc-721-balance-of',
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108', '0x5BC8da7dE68c1af47D329B14ADdBf1d7547A1747'],
+        params: {
+          minBalance: '1',
+          tokens: [
+            {
+              address: '0xe59fd80c8cb160ca490414c6069de003328148df',
+              chainId: '137',
+              networkId: '1'
+            }]
+        }
+      },
+      {
+        name: 'erc-721-balance-of',
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108', '0x5BC8da7dE68c1af47D329B14ADdBf1d7547A1747'],
+        params: {
+          minBalance: '1',
+          tokens: [{
+            address: '0x0a0bf65248805efa926c39bf51b6dd94e3d1a7af',
+            chainId: '137',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+});
+
+/*
   describe('execute strategies of erc 721 owner of', () => {
     test('wallet of erc 721 is not owner of', async () => {
       const strategyProvider = await executeStrategies([
@@ -360,5 +431,6 @@ describe('Execute strategy', () => {
       expect(strategyProvider.isAuthorized).toBeTruthy();
     });
   });
+
 });
   */

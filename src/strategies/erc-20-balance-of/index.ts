@@ -12,7 +12,7 @@ import { sumBN } from '../helpers/sumBN/sumBN';
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC20Address, chainId } = token;
   requiredDefined(ERC20Address, 'address of token is required');
-  requiredDefined(ERC20Address, 'chainId of token is required');
+  requiredDefined(chainId, 'chainId of token is required');
 
   const web3Provider = web3Factory(chainId);
 
