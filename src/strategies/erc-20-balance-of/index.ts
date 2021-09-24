@@ -14,7 +14,7 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
   requiredDefined(ERC20Address, 'address of token is required');
   requiredDefined(ERC20Address, 'chainId of token is required');
 
-  const web3Provider = web3Factory(chainId);
+  const web3Provider = await web3Factory(chainId);
 
   const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, ERC20Address);
 
@@ -41,10 +41,10 @@ const getBalancesOfChains = async (strategy: Strategy): Promise<{ sum: string, b
     balances: flatBalances
   };
 };
-const getDecimalsAndSymbol = (param: ERC20BalanceOf) => {
+const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
   const { chainId, address: ERC20Address } = param;
 
-  const web3Provider = web3Factory(chainId);
+  const web3Provider = await web3Factory(chainId);
   const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, ERC20Address);
 
   return Promise.all([

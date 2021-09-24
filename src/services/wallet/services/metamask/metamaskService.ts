@@ -1,7 +1,6 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { network } from '../../../../models/network.enum';
-import axios from 'axios';
-import { NetworkInfos } from '../../../../models/networkInfos';
+import { getNetworkInfo } from '../../../../helpers/networkInfos/networkInfos.helper';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -35,7 +34,7 @@ export class MetamaskService {
   };
 
   public switchToNetwork = async (network: network): Promise<void> => {
-    const networkInfo = await this.getNetworkInfo(network);
+    const networkInfo = await getNetworkInfo(network);
 
     this._window.ethereum.request({
       method: 'wallet_addEthereumChain',
@@ -47,15 +46,6 @@ export class MetamaskService {
         blockExplorerUrls: networkInfo.explorers.map(explorer => explorer.url)
       }]
     });
-  }
-
-  private getNetworkInfo = async (chainId: network): Promise<NetworkInfos> => {
-    const infos = await axios('https://chainid.network/chains.json');
-    const chain = infos.data.filter(network => network.chainId === chainId);
-    if (chain.length === 0) {
-      throw new Error('Chain not found');
-    }
-    return chain[0];
   }
 
   public signData = (data: string): Promise<string> => {
