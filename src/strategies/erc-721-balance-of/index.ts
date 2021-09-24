@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { StrategyReturnPromise } from '../../models/strategyReturn';
 import assert from 'assert';
 import web3 from 'web3';

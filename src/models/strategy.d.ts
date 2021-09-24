@@ -1,8 +1,16 @@
-export interface Strategy {
-    chainId:string,
+export interface Strategy<T=ERC20BalancesOf> {
     name:string,
-    address:string,
-    params: {
-        [key: string]: string
-    }
+    addresses?:string[],
+    params: T
+}
+
+export interface ERC20BalancesOf {
+    minBalance:string,
+    tokens:Array<ERC20BalanceOf>
+}
+
+export interface ERC20BalanceOf {
+    chainId:string,
+    networkId:string,
+    address:string
 }

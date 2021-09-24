@@ -15,20 +15,17 @@ export const executeStrategies = async (strategies: Strategy[][]): Promise<Strat
     .forEach(orStrategies =>
       orStrategies.forEach(strategy => {
         const camelCaseName = camelCase(strategy.name);
-        assert(implementedStrategies[camelCaseName] !== undefined, `this strategy does not exist ${strategy.name}`);
+        requiredDefined(implementedStrategies[camelCaseName], `this strategy does not exist ${strategy.name}`);
       }));
 
   const strategiesResults = await Promise.all(
     strategies
       .map(orStrategy => {
         return Promise.all(orStrategy.map(strategy => {
-          requiredDefined(strategy.chainId, `chainId is not defined, ${strategy}`);
           requiredDefined(strategy.name, `name is not defined, ${strategy}`);
 
           const camelCaseName = camelCase(strategy.name);
-          const provider = chainConfig[strategy.chainId.toString()];
-          const web3Provider = new Web3(provider);
-          return implementedStrategies[camelCaseName](web3Provider)(strategy) as StrategyReturn;
+          return implementedStrategies[camelCaseName](strategy) as StrategyReturn;
         }));
       }));
 
@@ -43,13 +40,8 @@ export const executeStrategies = async (strategies: Strategy[][]): Promise<Strat
 
   isAuthorized = strategiesResults.length === 0 ? true : isAuthorized;
 
-  //    const isAuthorized = strategiesResults.map(d=>d.isAuthorized).includes(false) === false;
-
-  // strategiesResults[0][0].isAuthorized
   return {
     isAuthorized,
     strategies: strategiesResults
-    // isAuthorized,
-    // strategies: strategiesResults
   };
 };
