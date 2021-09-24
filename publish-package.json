@@ -14,8 +14,16 @@
   },
   "homepage": "https://github.com/Arianee/spkz-sdk#readme",
   "dependencies": {
+    "axios": "^0.21.4",
     "body-parser": "^1.19.0",
-    "express": "^4.17.1"
+    "ethers": "^5.4.7",
+    "express": "^4.17.1",
+    "jayson": "^3.6.4",
+    "js-base64": "^3.7.1",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13",
+    "tsyringe": "^4.6.0",
+    "web3": "^1.5.2"
   },
   "private": false
 }
