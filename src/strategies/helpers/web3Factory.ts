@@ -12,7 +12,7 @@ const config = {
   42: 'https://kovan.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6'
 };
 
-export const web3Factory = async (chainIdOrUrl: string) => {
+export const web3Factory = async (chainIdOrUrl: string):Promise<Web3> => {
   if (chainIdOrUrl.startsWith('http://') || chainIdOrUrl.startsWith('https://') || chainIdOrUrl.startsWith('ws://')) {
     return new Web3(chainIdOrUrl);
   } else if (config[chainIdOrUrl]) {
