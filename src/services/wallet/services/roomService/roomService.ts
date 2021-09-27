@@ -3,9 +3,10 @@ import { RPCJSONService } from '../httpService/RPCJSONService';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
 import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
-import { required, requiredDefined } from '../../../../helpers/required/required';
+import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
+import { UserProfile } from '../../../../models/userProfile';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -90,5 +91,37 @@ export class RoomService {
     return this.rightService.canReadSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
-  public getMembers (rooms:string|string[]) { console.info('not implemented'); }
+  public async joinSection (parameters:{roomId:string, sectionId:string, profile:UserProfile}) {
+    const { roomId, sectionId, profile } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+    requiredDefined(profile, 'profile is required');
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const { endpoint } = tokenContent;
+    const params = {
+      sectionId,
+      profile,
+      roomId
+    };
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.userUpdate, params);
+  }
+
+  public async getSectionUsers (parameters:{roomId:string, sectionId:string}) {
+    const { roomId, sectionId } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const { endpoint } = tokenContent;
+    const params = {
+      sectionId,
+      roomId
+    };
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.users, params);
+  }
 }

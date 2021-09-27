@@ -1,4 +1,5 @@
 import { executeStrategies } from './executeStrategy';
+import { isExactAddresses } from '../models/strategy';
 
 describe('Execute strategy', () => {
   const walletAddressWithAria:string = '0x5b1135819aDf7F5a8753cA49a162e8853EE01775';

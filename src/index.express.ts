@@ -1,7 +1,15 @@
 import 'reflect-metadata';
 import { SPKZJSONRPC } from './services/JSONRPCServer';
 import { SPKZ } from './services/wallet';
-import { ReadMessageParameters, WriteMessageParameters } from './models/jsonrpc/writeMessageParameters';
+import {
+  ReadMessageParameters,
+  RoomUser,
+  SectionUser,
+  WriteMessageParameters
+} from './models/jsonrpc/writeMessageParameters';
+import { requiredDefined } from './helpers/required/required';
+import { AsyncFunc } from './models/AsyncFunc';
+import { BouncerUser, BouncerUserQuery } from './models/jsonrpc/bouncer';
 
 const express = require('express');
 const app = express();
@@ -12,7 +20,12 @@ const messagesDB = {};
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const dbMessage = {};
+let dbMessage = {};
+let dbRoomUsers = {};
+let dbSectionUsers = {};
+let dbbouncerUserProfile = {};
+let dbProfile = {};
+let dbBouncerRoom = {};
 
 const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
 // @ts-ignore
@@ -27,25 +40,75 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
       return Promise.resolve({});
     }
   })
+  .setUsersMethod({
+    getUsers: (sectionUser: SectionUser) => {
+      const { sectionId, roomId } = sectionUser;
+      if (dbSectionUsers && dbSectionUsers[roomId + sectionId]) {
+        const sectionUsers: SectionUser[] = Object.values(dbSectionUsers[roomId + sectionId]);
+        return Promise.resolve(sectionUsers);
+      } else {
+        return Promise.resolve([]);
+      }
+    },
+    createOrUpdateRoomUser: (param: RoomUser) => {
+      const { roomId } = param;
+      if (!dbRoomUsers[roomId]) {
+        dbRoomUsers[roomId] = {};
+      }
+      dbRoomUsers[roomId][param.blockchainWallet] = param;
+      return Promise.resolve(param);
+    },
+    createOrUpdateSectionUser: (param: SectionUser) => {
+      const { sectionId, roomId, blockchainWallet } = param;
+      if (!dbSectionUsers[roomId + sectionId]) {
+        dbSectionUsers[roomId + sectionId] = {};
+      }
+      dbSectionUsers[roomId + sectionId][blockchainWallet] = param;
+      return Promise.resolve(param);
+    }
+  })
+  .setBouncerMethod({
+    updateProfile: (bouncerUser:BouncerUser):Promise<BouncerUser> => {
+      dbbouncerUserProfile[bouncerUser.blockchainWallet] = bouncerUser;
+      return Promise.resolve(dbbouncerUserProfile[bouncerUser.blockchainWallet]);
+    },
+    getMyProfile: (bouncerUser:BouncerUserQuery):Promise<BouncerUser> => {
+      return Promise.resolve(dbbouncerUserProfile[bouncerUser.blockchainWallet]);
+    },
+    getUserRooms: (bouncerUserQuery:BouncerUserQuery):Promise<RoomUser[]> => {
+      if (dbBouncerRoom[bouncerUserQuery.blockchainWallet]) {
+        const bouncerUserRoom: SectionUser[] = Object.values(dbBouncerRoom[bouncerUserQuery.blockchainWallet]);
+        return Promise.resolve(bouncerUserRoom);
+      } else {
+        return Promise.resolve([]);
+      }
+    },
+    joinRoom: (bouncerRoomUser:RoomUser):Promise<any> => {
+      if (!dbBouncerRoom[bouncerRoomUser.blockchainWallet]) {
+        dbBouncerRoom[bouncerRoomUser.blockchainWallet] = {};
+      }
+      dbBouncerRoom[bouncerRoomUser.blockchainWallet][bouncerRoomUser.roomId] = bouncerRoomUser;
+      return Promise.resolve(dbBouncerRoom[bouncerRoomUser.blockchainWallet][bouncerRoomUser.roomId]);
+    }
+  })
   .build();
 
 app.get('/ping', (req, res) => {
   res.send('pong');
 });
 
+app.get('/reset', (req, res) => {
+  console.info('reseting database');
+  dbMessage = {};
+  dbRoomUsers = {};
+  dbSectionUsers = {};
+  dbProfile = {};
+  dbbouncerUserProfile = {};
+  dbBouncerRoom = {};
+  res.send('database reset');
+});
 app.post('/spkz/rpc', spkzJSONRPC);
 
 app.listen(port, async () => {
   console.info(`Example app listening at http://localhost:${port}`);
-  const spkz = SPKZ.fromPrivateKey('0xc88c2enbe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161'); // 0x1462B397bf8845f6448a6C0e6F521ed2458F68D0
-  await spkz.wallets.addWalletFromPrivateKey('0x555a72847a70a73911029412fb98a0d347bbc7785128fc38e184c8607b6bec07'); // 0x0EfBf243b5105c2fe8F14943EB3EEE5f3D9D2A48
-  const r = await spkz.room.canJoin({ roomId: '0' });
-
-  await spkz.room.sendMessage({
-    roomId: '0',
-    sectionId: 'chat',
-    messageContent: {
-      title: 'hello world'
-    }
-  });
 });
