@@ -15,7 +15,8 @@ export class ProxyWalletService {
   constructor (
     private rightService:RightService,
     private metamaskService: MetamaskService
-  ) {}
+  ) {
+  }
 
   get authorizedAddresses () {
     return [...this._authorizedAddresses];
@@ -147,36 +148,3 @@ export class ProxyWalletService {
     };
   }
 }
-
-// ecdsa
-// 1 generer un wallet en local
-// 2 signature par un autre wallet avec la pubKey
-
-/** JWT
- header: authorization {
-    authorizations:[
-       OX1signJWT({address:0X3, scopes:'read write', iss:ox1, exp: 223443}),
-       OX2signJWT({address:0X3, scopes:'read write', iss:ox2, exp: 123443})
-    ],
-    iss: 0X3 (wallet which sign message)
-    exp:123343,
-    scopes:'read'
- }
-
- body: {
-  authorization {
-    authorizations:[
-       OX1signJWT({address:0X3, scopes:'read write', iss:ox1, exp: 223443}),
-       OX2signJWT({address:0X3, scopes:'read write', iss:ox2, exp: 123443})
-    ],
-    iss: 0X3 (wallet which sign message)
-    exp:123343,
-    scopes:'read'
-     content:{
-
-     },
-     hash?:string,
-     signature:'signMessage(body sans signature)'
- }
-
- */

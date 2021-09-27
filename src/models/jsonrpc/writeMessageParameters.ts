@@ -16,3 +16,25 @@ export interface ReadMessageParameters {
  network: string;
  limit: number;
 }
+
+export interface SectionUserGet{
+ roomId: string,
+ sectionId: string,
+ network: string,
+ chainId: string
+}
+export interface SectionUser {
+ roomId: string,
+ sectionId: string,
+ blockchainWallet: string,
+ chainId: string;
+ network: string;
+ payload: string
+}
+export interface RoomUser {
+ roomId: string,
+ blockchainWallet: string,
+ chainId: string;
+ network: string;
+ payload: string
+}

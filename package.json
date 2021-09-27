@@ -5,11 +5,12 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "test:jest": "start-server-and-test 'npm run start:express' http://localhost:3000/ping 'jest --coverage --runInBand'",
     "start:express": "nodemon dist/index.express.js",
     "start:w": "nodemon dist/index.js",
     "build": "tsc",
     "build:w": "tsc --watch",
-    "test": "gitool -cl=1 && npm run lint && jest --coverage",
+    "test": "gitool -cl=1 && npm run lint && npm run build && npm run test:jest",
     "test:w": "jest --watch",
     "lint": "./node_modules/.bin/eslint -c .eslintrc.json 'src/**/*.ts'",
     "lint:fix": "npm run lint -- --fix",
@@ -61,6 +62,7 @@
     "js-base64": "^3.7.1",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
+    "start-server-and-test": "^1.14.0",
     "tsyringe": "^4.6.0",
     "web3": "^1.5.2"
   }

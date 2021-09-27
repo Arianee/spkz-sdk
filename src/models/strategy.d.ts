@@ -12,7 +12,7 @@ export interface ERC20BalancesOf {
 }
 
 export interface isExactAddresses {
-    addresses?:Array<string>
+    addresses:Array<string>
 }
 
 export interface ERC20BalanceOf {

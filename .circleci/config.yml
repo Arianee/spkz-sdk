@@ -145,10 +145,10 @@ jobs:
 workflows:
   build_test_package:
     jobs:
-      - test
-      - build:
+      - build
+      - test:
           requires:
-            - test
+            - build
       - package-develop:
           requires:
             - build

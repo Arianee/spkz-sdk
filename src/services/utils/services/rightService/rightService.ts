@@ -111,6 +111,7 @@ export class RightService {
 
        const strategies = getStrategyHelperFactory(tokenContent, address)
          .getRoomStrategies();
+
        return executeStrategies(strategies);
      }
 
