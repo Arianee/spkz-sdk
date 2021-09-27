@@ -35,7 +35,7 @@ export const strategy = (web3Provider: web3) =>
     const issuerOf = await erc721SmartContracts.methods.issuerOf(params.tokenId).call().catch(() => null);
 
     const isAuthorized = address.toLowerCase() === issuerOf.toLowerCase();
-    const code = isAuthorized ? ErrorCode.SUCESS : ErrorCode.NOTISSUER;
+    const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTISSUER;
     const message = address === issuerOf ? `You are the issuer of ${params.tokenId}` : `You are not the issuer of ${params.tokenId}`;
 
     return {

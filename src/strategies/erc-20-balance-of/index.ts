@@ -1,6 +1,6 @@
 import { StrategyReturnPromise } from '../../models/strategyReturn';
 import web3 from 'web3';
-import { ERC20BalanceOf, Strategy } from '../../models/strategy';
+import { ERC20BalanceOf, ERC20BalancesOf, Strategy } from '../../models/strategy';
 import { erc20ABI } from '../../abi/erc20.abi';
 import { ErrorCode } from '../../models/errorCode';
 import { minMaxMessage } from '../helpers/messageHelper';
@@ -28,7 +28,7 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
   ));
 };
 
-const getBalancesOfChains = async (strategy: Strategy): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
+const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { addresses, params } = strategy;
 
   const balances:any[] = await Promise.all(params.tokens
@@ -52,7 +52,7 @@ const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
     erc20SmartContracts.methods.symbol().call()
   ]);
 };
-export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
+export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
   const balances = await getBalancesOfChains(strategy);
   const [decimals, symbol] = await getDecimalsAndSymbol(params.tokens[0]);
@@ -69,7 +69,7 @@ export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
     amountRequired: params.minBalance
   });
 
-  const code = isAuthorized ? ErrorCode.SUCESS : ErrorCode.NOTENOUGH;
+  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
 
   return {
     isAuthorized,

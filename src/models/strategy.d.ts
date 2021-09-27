@@ -1,16 +1,18 @@
 export interface Strategy<T=ERC20BalancesOf|isExactAddresses> {
     name:string,
     addresses?:string[],
-    params: any
+    params?: T
+    chainId?:string;
+    networkId?:string;
 }
 
 export interface ERC20BalancesOf {
     minBalance:string,
-    tokens:Array<ERC20BalanceOf>
+    tokens?:Array<ERC20BalanceOf>
 }
 
 export interface isExactAddresses {
-    adresses:Array<string>
+    addresses?:Array<string>
 }
 
 export interface ERC20BalanceOf {

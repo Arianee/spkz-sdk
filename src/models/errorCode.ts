@@ -1,5 +1,5 @@
 export const enum ErrorCode {
-    SUCESS,
+    SUCCESS,
     NOTENOUGH,
     NOTOWNER,
     NOTISSUER
