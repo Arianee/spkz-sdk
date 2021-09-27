@@ -18,7 +18,7 @@ export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeyOfCaller?:str
             return d;
           }));
     } else {
-      console.warn('startegies are return without an address');
+      console.warn('strategies are return without an address');
       return clonedStrategies;
     }
   };
