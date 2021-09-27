@@ -1,6 +1,7 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { network } from '../../../../models/network.enum';
 import { getNetworkInfo } from '../../../../helpers/networkInfos/networkInfos.helper';
+import { required, requiredDefined } from '../../../../helpers/required/required';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -10,9 +11,17 @@ export class MetamaskService {
   public hasMetamask;
   public currentChainId;
 
-  private _window: any = window;
+  private _window: any;
+
+  constructor () {
+    if (typeof window !== 'undefined') {
+      this._window = window;
+    }
+  }
 
   public initMetamaskSilently = async (): Promise<void> => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+
     if (this._window.ethereum) {
       this.hasMetamask = true;
       const isMMUnlock = await this._window.ethereum._metamask.isUnlocked();
@@ -26,6 +35,8 @@ export class MetamaskService {
   }
 
   public initMetamask = async (): Promise<void> => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+
     if (this._window.ethereum) {
       this.accounts = await this._window.ethereum.request({ method: 'eth_requestAccounts' });
       this.defaultAccount = this.accounts[0];
@@ -34,6 +45,8 @@ export class MetamaskService {
   };
 
   public switchToNetwork = async (network: network): Promise<void> => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+
     const networkInfo = await getNetworkInfo(network);
 
     this._window.ethereum.request({
@@ -49,6 +62,8 @@ export class MetamaskService {
   }
 
   public signData = (data: string): Promise<string> => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+
     return this._window.ethereum.request({
       method: 'personal_sign',
       params: [this.defaultAccount, data]

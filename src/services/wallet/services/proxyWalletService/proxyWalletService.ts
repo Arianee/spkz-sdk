@@ -63,20 +63,23 @@ export class ProxyWalletService {
    * @returns {[]}
    */
   private retrieveJWTAuthorizationsFromLocalStorage=():any[] => {
-    const valueFromStorage = localStorage.getItem(localStorageAuthorizationKey);
-    if (valueFromStorage) {
-      try {
-        const parseValue:any[] = JSON.parse(valueFromStorage);
-        const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
-        if (isAuthorized) {
-          return parseValue;
-        }
-      } catch (e) {
+    if (typeof localStorage !== 'undefined') {
+      const valueFromStorage = localStorage.getItem(localStorageAuthorizationKey);
+      if (valueFromStorage) {
+        try {
+          const parseValue:any[] = JSON.parse(valueFromStorage);
+          const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
+          if (isAuthorized) {
+            return parseValue;
+          }
+        } catch (e) {
 
+        }
       }
+
+      localStorage.removeItem(localStorageAuthorizationKey);
     }
 
-    localStorage.removeItem(localStorageAuthorizationKey);
     return [];
   }
 
@@ -123,7 +126,9 @@ export class ProxyWalletService {
     if (!this._authorizedAddresses.includes(issuer)) {
       this._authorizedAddresses.push(issuer);
       this._authorizations.push(jwt);
-      window.localStorage.setItem(localStorageAuthorizationKey, JSON.stringify(this.authorizations));
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(localStorageAuthorizationKey, JSON.stringify(this.authorizations));
+      }
     }
 
     return this;
