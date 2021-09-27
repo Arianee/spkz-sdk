@@ -5,7 +5,7 @@ import { requiredDefined } from '../helpers/required/required';
 
 const camelCase = require('camelcase');
 
-export const executeStrategies = async (strategies: Strategy[][]): Promise<StrategiesReturn> => {
+export const executeStrategies = async (strategies: Strategy[][], tokenId:string = '0'): Promise<StrategiesReturn> => {
   // Checking all strategies exist
   strategies
     .forEach(orStrategies =>
@@ -21,7 +21,7 @@ export const executeStrategies = async (strategies: Strategy[][]): Promise<Strat
           requiredDefined(strategy.name, `name is not defined, ${strategy}`);
 
           const camelCaseName = camelCase(strategy.name);
-          return implementedStrategies[camelCaseName](strategy) as StrategyReturn;
+          return implementedStrategies[camelCaseName](strategy, tokenId) as StrategyReturn;
         }));
       }));
 

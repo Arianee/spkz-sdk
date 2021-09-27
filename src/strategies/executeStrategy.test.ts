@@ -391,6 +391,39 @@ describe('execute strategies of erc 721 balance of', () => {
   });
 });
 
+describe('execute strategies of room-owner', () => {
+  test('wallet owner of room XX should be not authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'room-owner',
+        chainId: '80001',
+        networkId: '1',
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108']
+      }]
+    ], '0');
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(2);
+
+    expect(strategyProvider.isAuthorized).toBeFalsy();
+  });
+
+  test('wallet owner of room XX should be authorized', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'room-owner',
+        chainId: '80001',
+        networkId: '1',
+        addresses: ['0x8827B07B45067a347305E4DE51c4627859Af744c']
+      }]
+    ], '0');
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+});
+
 /*
   describe('execute strategies of erc 721 owner of', () => {
     test('wallet of erc 721 is not owner of', async () => {

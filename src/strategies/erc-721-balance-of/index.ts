@@ -69,7 +69,7 @@ export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
     amountRequired: params.minBalance
   });
 
-  const code = isAuthorized ? ErrorCode.SUCESS : ErrorCode.NOTENOUGH;
+  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
 
   return {
     isAuthorized,

@@ -35,7 +35,7 @@ export const strategy = (web3Provider: web3) =>
     const ownerOf = await erc721SmartContracts.methods.ownerOf(params.tokenId).call().catch(() => null);
 
     const isAuthorized = address.toLowerCase() === ownerOf.toLowerCase();
-    const code = isAuthorized ? ErrorCode.SUCESS : ErrorCode.NOTOWNER;
+    const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
     const message = address === ownerOf ? `You are the owner of ${params.tokenId}` : `You are not the owner of ${params.tokenId}`;
 
     return {
