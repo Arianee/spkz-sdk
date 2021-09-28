@@ -1,5 +1,5 @@
 import { JSONRPCMethods } from '../../../models/JSONRPCMethods.enum';
-import { requiredDefined } from '../../../helpers/required/required';
+import { requiredDefined, requiredType } from '../../../helpers/required/required';
 import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { AsyncFunc } from '../../../models/AsyncFunc';
@@ -42,6 +42,9 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
         roomId,
         sectionId
       });
+
+      messages.forEach(d => requiredType(d.payload, 'object', 'payload should be a json on return'));
+
       callback(null, messages);
     } catch (e) {
       callback(e);

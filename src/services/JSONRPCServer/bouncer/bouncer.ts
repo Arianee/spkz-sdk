@@ -2,17 +2,10 @@ import { JSONRPCMethods } from '../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../helpers/required/required';
 import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
-import { AsyncFunc } from '../../../models/AsyncFunc';
-import { RoomUser } from '../../../models/jsonrpc/writeMessageParameters';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
-import { BouncerUser, BouncerUserQuery } from '../../../models/jsonrpc/bouncer';
+import { BouncerParameters } from '../../../models/jsonrpc/JSONRPCParameters';
 
-export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: {
-    getMyProfile: AsyncFunc<BouncerUserQuery, BouncerUser>,
-  getUserRooms: AsyncFunc<BouncerUserQuery, RoomUser[]>,
-  joinRoom: AsyncFunc<RoomUser>,
-  updateProfile: AsyncFunc<BouncerUser, BouncerUser>
-}) => {
+export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: BouncerParameters) => {
   const { chainId, network } = networkParameters;
 
   const getMyProfile = async (params, callback) => {

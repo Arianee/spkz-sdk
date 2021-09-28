@@ -3,6 +3,7 @@ import { NFTROOM } from '../../../../models/NFTROOM';
 import Web3 from 'web3';
 import { erc721ABI } from '../../../../abi/erc721.abi';
 import { HttpService } from '../httpService/httpService';
+import cache from 'memory-cache';
 
 @scoped(Lifecycle.ContainerScoped)
 export class FetchRoomService {
@@ -14,8 +15,16 @@ export class FetchRoomService {
       .eth.Contract(erc721ABI as any, '0x395bE7b1443b6c3Ce5177b2300E5cc20bF22576E');
 
     public async fetchRoom (roomId:string):Promise<NFTROOM> {
-      const tokenURI = await this.erc721Contract.methods.tokenURI(roomId).call();
+      const nftRoom = cache.get(roomId);
+      if (!nftRoom) {
+        const tokenURI = await this.erc721Contract.methods.tokenURI(roomId).call();
 
-      return await this.httpService.fetch(tokenURI);
+        const cacheTimeout = 30 * 1000;
+        cache.put(roomId,
+          this.httpService.fetch(tokenURI),
+          cacheTimeout);
+      }
+
+      return cache.get(roomId);
     }
 }

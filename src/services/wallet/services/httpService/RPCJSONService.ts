@@ -18,15 +18,7 @@ export class RPCJSONService {
      * @returns {Promise<{jsonrpc: number; id: string; result?: resultType}>}
      * @constructor
      */
-    public signedRPCCall = async <resultType=any>(endpoint: string, rpcMethodName: string, params: any): Promise<{
-        jsonrpc: number,
-        id: string,
-        result?: resultType
-    }> => {
-      // {"jsonrpc": "2.0",
-      // "method": "subtract",
-      // "params": {"authorizations":[],"content": 42, "subtrahend": 23}, "id": 4}
-
+    public signedRPCCall = async <ResultType=any>(endpoint: string, rpcMethodName: string, params: any): Promise<ResultType> => {
       requiredDefined(endpoint, 'endpoint should be defined');
       requiredDefined(rpcMethodName, 'method should be defined');
       requiredDefined(params, 'params should be defined');

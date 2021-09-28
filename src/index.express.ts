@@ -1,14 +1,11 @@
 import 'reflect-metadata';
 import { SPKZJSONRPC } from './services/JSONRPCServer';
-import { SPKZ } from './services/wallet';
 import {
   ReadMessageParameters,
   RoomUser,
   SectionUser,
   WriteMessageParameters
 } from './models/jsonrpc/writeMessageParameters';
-import { requiredDefined } from './helpers/required/required';
-import { AsyncFunc } from './models/AsyncFunc';
 import { BouncerUser, BouncerUserQuery } from './models/jsonrpc/bouncer';
 
 const express = require('express');
@@ -50,15 +47,15 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
         return Promise.resolve([]);
       }
     },
-    createOrUpdateRoomUser: (param: RoomUser) => {
-      const { roomId } = param;
-      if (!dbRoomUsers[roomId]) {
-        dbRoomUsers[roomId] = {};
+    createOrUpdateProfile: (param: SectionUser) => {
+      const { sectionId, roomId, blockchainWallet } = param;
+      if (!dbRoomUsers[roomId + sectionId]) {
+        dbRoomUsers[roomId + sectionId] = {};
       }
-      dbRoomUsers[roomId][param.blockchainWallet] = param;
+      dbRoomUsers[roomId + sectionId][blockchainWallet] = param;
       return Promise.resolve(param);
     },
-    createOrUpdateSectionUser: (param: SectionUser) => {
+    joinSection: (param: SectionUser) => {
       const { sectionId, roomId, blockchainWallet } = param;
       if (!dbSectionUsers[roomId + sectionId]) {
         dbSectionUsers[roomId + sectionId] = {};
