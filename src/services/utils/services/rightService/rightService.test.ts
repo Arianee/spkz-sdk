@@ -37,16 +37,16 @@ describe('rightService', () => {
         const addressProxyWallet = '0xb4c96BB2b56f392A897182dd2970599BE10200A3';
 
         const blockchainWalletAuthorizingAddress = [
-          '0x1462B397bf8845f6448a6C0e6F521ed2458F68D0',
-          '0xe5551fad2300Cc16F5A7558487d39284011D53f0'
+          '0x2da33e874962b8a499089a0eccfc66a703a576aa', // pk: 0x871331b035f3b5bf8bccd9c223754f3f14999117014d7d0ff7b094b42eaf5d84
+          '0x81aee1da2f6a8593d9df6f5dd43a3fa0fb73fb23' // pk: 0x960a6657d50a9bceff1ff2e6eafca709b98c97627bee6818ca6c00969ac4afc7
         ];
 
         const blockchainWalletsAuthorizations = [
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweDE0NjJCMzk3YmY4ODQ1ZjY0NDhhNkMwZTZGNTIxZWQyNDU4RjY4RDAiLCJleHAiOjE2MzI4MzU1NTIyOTIsInN1YiI6IjB4YjRjOTZCQjJiNTZmMzkyQTg5NzE4MmRkMjk3MDU5OUJFMTAyMDBBMyJ9.0xfecfee448831d5371392fb180ae025cde21c6793ece6587231bcde8f190dfd2476cd7f33fc8ec3556f7e9591e47654d7b2a92a2cc5eadf57f1bcace87f503d381c',
-          'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGU1NTUxZmFkMjMwMENjMTZGNUE3NTU4NDg3ZDM5Mjg0MDExRDUzZjAiLCJleHAiOjE2MzI4MzU1NTM3OTgsInN1YiI6IjB4YjRjOTZCQjJiNTZmMzkyQTg5NzE4MmRkMjk3MDU5OUJFMTAyMDBBMyJ9.0xc38fffda46de7e123d051b46f3db6a6593781a969faca14dc7531a4449f6463a337c70c8cf022f7ca4619c857bdac49afb7f05adfcb286f37f96e74744e46a1b1b'
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweDJkYTMzZTg3NDk2MmI4YTQ5OTA4OWEwZWNjZmM2NmE3MDNhNTc2YWEiLCJleHAiOjMzMTY4ODQzNjIzNzM1LCJzdWIiOiIweGI0Yzk2YmIyYjU2ZjM5MmE4OTcxODJkZDI5NzA1OTliZTEwMjAwYTMifQ==.0x1b6f89c29f9a00bc88ac1be8aff774de0e6b131f4d4653e31a79b79cdd2c24207fd2fd67cd7d76c741ab1642e6a0783d578130898a1ea90599e82d99db3be28c1c',
+          'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweDgxYWVlMWRhMmY2YTg1OTNkOWRmNmY1ZGQ0M2EzZmEwZmI3M2ZiMjMiLCJleHAiOjMzMTY4ODQzNjIzNzY4LCJzdWIiOiIweGI0Yzk2YmIyYjU2ZjM5MmE4OTcxODJkZDI5NzA1OTliZTEwMjAwYTMifQ==.0x4b6552a886d5a495e055bb59eabeae034b912ea1c47bc7bed130e067ca6fa83849e523df37c90664c954ebe296c64e720db22a1664f8619d8e7ca1a9d168463a1c'
         ];
 
-        const { isAuthorized, blockchainWallets, proxyWalletAddress } = await RightService.extractBlockchainWalletAddressWhoAuthorizedProxyWallet(blockchainWalletsAuthorizations,
+        const { isAuthorized, blockchainWallets, proxyWalletAddress } = RightService.extractBlockchainWalletAddressWhoAuthorizedProxyWallet(blockchainWalletsAuthorizations,
           addressProxyWallet);
 
         expect(isAuthorized).toBeTruthy();

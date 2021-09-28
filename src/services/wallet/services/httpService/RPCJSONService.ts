@@ -23,7 +23,7 @@ export class RPCJSONService {
       requiredDefined(rpcMethodName, 'method should be defined');
       requiredDefined(params, 'params should be defined');
 
-      const signedPayload = await this.JSONRPCHydrateParameters(params);
+      const signedPayload = await this.payloadService.hydratePayloadParameters(params);
 
       const httpRequest = this.prepareRPCRequest(signedPayload, rpcMethodName);
 
@@ -37,13 +37,6 @@ export class RPCJSONService {
         RPCRes.result = (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
       }
       return RPCRes.result;
-    }
-
-    private JSONRPCHydrateParameters=async (params)
-:Promise<any> => {
-      params.authorizations = this.proxyWalletService.authorizations;
-      params.nonce = Date.now().toString();
-      return await this.payloadService.globalSignPayload(params);
     }
 
   private prepareRPCRequest = (params, rpcMethodName) => {

@@ -7,6 +7,7 @@ import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
+import { WebsocketService } from '../websocketService/websocketService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -14,7 +15,9 @@ export class RoomService {
                private messagingService:ProxyWalletService,
                private fetchRoomService:FetchRoomService,
                private rightService:RightService,
-               private httpService:RPCJSONService) {
+               private httpService:RPCJSONService,
+               private websocketService: WebsocketService
+  ) {
 
   }
 
@@ -158,5 +161,12 @@ export class RoomService {
     };
 
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.users, params);
+  }
+
+  public async joinNotificationserver (parameters: { roomId: string, sectionId: string }) {
+    const { roomId, sectionId } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+    this.websocketService.joinSection(parameters);
   }
 }
