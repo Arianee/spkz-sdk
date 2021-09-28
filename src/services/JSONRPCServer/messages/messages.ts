@@ -36,11 +36,11 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
 
     try {
       const messages = await configuration.read({
-        chainId,
+        chainId: chainId.toString(),
         limit,
-        network,
-        roomId,
-        sectionId
+        network: network.toString(),
+        roomId: roomId.toString(),
+        sectionId: sectionId.toString()
       });
 
       messages.forEach(d => requiredType(d.payload, 'object', 'payload should be a json on return'));
@@ -78,13 +78,12 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
     try {
       await configuration.write(
         {
-          roomId,
-          sectionId,
+          roomId: roomId.toString(),
+          sectionId: sectionId.toString(),
           payload: params,
-          network: networkParameters.network,
-          chainId: networkParameters.chainId,
-          blockchainWallet: firstBlockchainWallet,
-          proxyWallet: proxyWalletAddress,
+          network: networkParameters.network.toString(),
+          chainId: networkParameters.chainId.toString(),
+          blockchainWallet: firstBlockchainWallet.toString(),
           signature
         }
       );

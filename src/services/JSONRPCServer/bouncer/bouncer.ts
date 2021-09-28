@@ -70,10 +70,10 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (
     try {
       await configuration.joinRoom({
         payload: params,
-        blockchainWallet: firstBlockchainWallet,
-        chainId,
-        network,
-        roomId
+        blockchainWallet: firstBlockchainWallet.toString(),
+        chainId: chainId.toString(),
+        network: network.toString(),
+        roomId: roomId.toString()
       });
       callback(null, params);
     } catch (e) {
@@ -98,7 +98,7 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (
     try {
       await configuration.updateProfile({
         payload: params,
-        blockchainWallet: firstBlockchainWallet
+        blockchainWallet: firstBlockchainWallet.toString()
       });
       callback(null, params);
     } catch (e) {
