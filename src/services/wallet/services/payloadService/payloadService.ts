@@ -27,4 +27,11 @@ export class PayloadService {
 
     return payloadClone;
   }
+
+  public hydratePayloadParameters=async (params)
+    :Promise<any> => {
+    params.authorizations = this.messagingWallet.authorizations;
+    params.nonce = Date.now().toString();
+    return await this.globalSignPayload(params);
+  }
 }

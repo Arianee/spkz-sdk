@@ -9,7 +9,7 @@ import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
-  constructor (private fetchRoomService?:FetchRoomService) {
+  constructor (private fetchRoomService:FetchRoomService) {
 
   }
 

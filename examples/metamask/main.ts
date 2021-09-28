@@ -1,6 +1,6 @@
-import { createOrRetrieveWallet } from '../../src/services/walletBrowserCreator/walletCreator';
-import { network } from '../../src/services/wallet/index';
-import { clearWallet } from '../../src';
+import { createOrRetrieveWallet, clearWallet } from '../../src';
+import { network } from '../../src/models/network.enum';
+
 
 declare const window:any;
 
@@ -25,8 +25,15 @@ declare const window:any;
   window.clearLocalStorage = () => {
     clearWallet();
   };
+  window.joinRoom = () => {
+    spkz.room.joinNotificationserver({ roomId: '0', sectionId: 'chat' });
+  };
 
   function setAddressInFront (address:string) {
     document.getElementById('walletAddress').innerText = address;
+  }
+
+  function joinRoom () {
+
   }
 })();

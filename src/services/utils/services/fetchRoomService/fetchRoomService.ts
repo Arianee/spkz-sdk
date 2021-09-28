@@ -1,11 +1,11 @@
-import { Lifecycle, scoped } from 'tsyringe';
+import { Lifecycle, scoped, singleton } from 'tsyringe';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import Web3 from 'web3';
 import { erc721ABI } from '../../../../abi/erc721.abi';
 import { HttpService } from '../httpService/httpService';
 import cache from 'memory-cache';
 
-@scoped(Lifecycle.ContainerScoped)
+@singleton()
 export class FetchRoomService {
   constructor (private httpService:HttpService) {
 
