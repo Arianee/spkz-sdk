@@ -1,20 +1,11 @@
 import { JSONRPCMethods } from '../../../models/JSONRPCMethods.enum';
-import { requiredDefined } from '../../../helpers/required/required';
+import { requiredDefined, requiredType } from '../../../helpers/required/required';
 import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
-import { AsyncFunc } from '../../../models/AsyncFunc';
-import {
-  ReadMessageParameters, RoomUser,
-  SectionUser, SectionUserGet,
-  WriteMessageParameters
-} from '../../../models/jsonrpc/writeMessageParameters';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
+import { SectionUserParameters } from '../../../models/jsonrpc/JSONRPCParameters';
 
-export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: {
-    createOrUpdateSectionUser: AsyncFunc<SectionUser, any>,
-    createOrUpdateRoomUser: AsyncFunc<RoomUser, any>,
-  getUsers:AsyncFunc<SectionUserGet, SectionUser[]>
-}) => {
+export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: SectionUserParameters) => {
   const { chainId, network } = networkParameters;
 
   const userUpdate = async (params, callback) => {
@@ -43,23 +34,14 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
     }
 
     try {
-      await Promise.all([
-        configuration.createOrUpdateSectionUser({
-          roomId,
-          sectionId,
-          blockchainWallet: firstBlockchainWallet,
-          chainId,
-          network,
-          payload: params
-        }),
-        configuration.createOrUpdateRoomUser({
-          roomId,
-          blockchainWallet: firstBlockchainWallet,
-          chainId,
-          network,
-          payload: params
-        })
-      ]);
+      await configuration.createOrUpdateProfile({
+        roomId,
+        sectionId,
+        blockchainWallet: firstBlockchainWallet,
+        chainId,
+        network,
+        payload: params
+      });
 
       callback(null, params);
     } catch (e) {
@@ -99,13 +81,60 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
           chainId: networkParameters.chainId
         }
       );
+
+      sectionUsers.forEach(d => requiredType(d.payload, 'object', 'payload should be a json on return'));
+
       return callback(null, sectionUsers);
     } catch (e) {
       return callback(e);
     }
   };
+
+  const joinSection = async (params, callback) => {
+    requiredDefined(params, 'params should be defined');
+
+    const { authorizations, roomId, sectionId, userProfile } = params;
+    requiredDefined(roomId, 'roomId should be defined');
+    requiredDefined(sectionId, 'sectionId should be defined');
+    requiredDefined(authorizations, 'authorizations should be defined');
+
+    const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+
+    if (isAuthorized === false) {
+      callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+    }
+
+    const firstBlockchainWallet = blockchainWallets[0];
+    const hasRightToRead = await utils.rightService.canReadSection({
+      roomId,
+      sectionId,
+      address: firstBlockchainWallet
+    });
+
+    if (hasRightToRead.isAuthorized === false) {
+      callback(new Error(JSONRPCErrors.notHasReadRight));
+    }
+
+    try {
+      await configuration.joinSection({
+        roomId,
+        sectionId,
+        blockchainWallet: firstBlockchainWallet,
+        chainId,
+        network,
+        payload: params
+      });
+
+      callback(null, params);
+    } catch (e) {
+      callback(e);
+    }
+  };
+
   return {
-    [JSONRPCMethods.room.section.userUpdate]: userUpdate,
-    [JSONRPCMethods.room.section.users]: getUsers
+    [JSONRPCMethods.room.section.updateProfile]: userUpdate,
+    [JSONRPCMethods.room.section.users]: getUsers,
+    [JSONRPCMethods.room.section.join]: joinSection
+
   };
 };

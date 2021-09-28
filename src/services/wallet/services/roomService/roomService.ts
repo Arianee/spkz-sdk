@@ -91,6 +91,11 @@ export class RoomService {
     return this.rightService.canReadSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
+  /**
+   * Join section on this room. It will perform a profile update
+   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
   public async joinSection (parameters:{roomId:string, sectionId:string, profile:UserProfile}) {
     const { roomId, sectionId, profile } = parameters;
     requiredDefined(roomId, 'roomId is required');
@@ -106,10 +111,40 @@ export class RoomService {
       roomId
     };
 
-    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.userUpdate, params);
+    await this.updateProfile(parameters);
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.join, params);
   }
 
-  public async getSectionUsers (parameters:{roomId:string, sectionId:string}) {
+  /**
+   * Update profile of current user on this room
+   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
+  public async updateProfile (parameters:{roomId:string, sectionId:string, profile:UserProfile}) {
+    const { roomId, sectionId, profile } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+    requiredDefined(profile, 'profile is required');
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const { endpoint } = tokenContent;
+    const params = {
+      sectionId,
+      profile,
+      roomId
+    };
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.updateProfile, params);
+  }
+
+  /**
+   * Get list of section's users
+   * @param {{roomId: string; sectionId: string}} parameters
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
+  public async getSectionUsers (parameters:{roomId:string, sectionId:string}):Promise<any> {
     const { roomId, sectionId } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');

@@ -1,18 +1,10 @@
-import { AsyncFunc } from '../../models/AsyncFunc';
 import { messagesJSONRPCFactory } from './messages/messages';
 import * as jayson from 'jayson';
-import {
-  ReadMessageParameters,
-  RoomUser,
-  SectionUser,
-  SectionUserGet,
-  WriteMessageParameters
-} from '../../models/jsonrpc/writeMessageParameters';
 import { requiredDefined } from '../../helpers/required/required';
 import { NetworkParameters } from '../../models/jsonrpc/networkParameters';
 import { userJSONRPCFactory } from './users/users';
-import { BouncerUser, BouncerUserQuery } from '../../models/jsonrpc/bouncer';
 import { bouncerJSONRPCFactory } from './bouncer/bouncer';
+import { BouncerParameters, MessageParameters, SectionUserParameters } from '../../models/jsonrpc/JSONRPCParameters';
 
 export class SPKZJSONRPC {
     private messagesJSONRPC;
@@ -23,29 +15,17 @@ export class SPKZJSONRPC {
       requiredDefined(networkParameters.network, 'network is required');
     }
 
-    setMessagesMethod (parameters: {
-        read: AsyncFunc<ReadMessageParameters, any>,
-        write: AsyncFunc<WriteMessageParameters, any>,
-    }): SPKZJSONRPC {
+    setMessagesMethod (parameters: MessageParameters): SPKZJSONRPC {
       this.messagesJSONRPC = messagesJSONRPCFactory(this.networkParameters)(parameters);
       return this;
     }
 
-    setUsersMethod (parameters: {
-        createOrUpdateSectionUser: AsyncFunc<SectionUser, any>,
-        createOrUpdateRoomUser: AsyncFunc<RoomUser, any>,
-        getUsers:AsyncFunc<SectionUserGet, SectionUser[]>
-    }): SPKZJSONRPC {
+    setUsersMethod (parameters: SectionUserParameters): SPKZJSONRPC {
       this.usersJSONRPC = userJSONRPCFactory(this.networkParameters)(parameters);
       return this;
     }
 
-    setBouncerMethod (parameters: {
-        getMyProfile: AsyncFunc<BouncerUserQuery, BouncerUser>,
-        getUserRooms: AsyncFunc<BouncerUserQuery, RoomUser[]>,
-        joinRoom: AsyncFunc<RoomUser>,
-        updateProfile: AsyncFunc<BouncerUser, BouncerUser>
-    }): SPKZJSONRPC {
+    setBouncerMethod (parameters: BouncerParameters): SPKZJSONRPC {
       this.bouncerJSONRPC = bouncerJSONRPCFactory(this.networkParameters)(parameters);
       return this;
     }

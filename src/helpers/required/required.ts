@@ -9,6 +9,21 @@ export const required = (assertion, message) => {
   }
 };
 
+/**
+ * Requires variable to be defined
+ * @param variable
+ * @param message
+ */
 export const requiredDefined = (variable, message) => {
   return required(variable !== null && variable !== undefined, message);
+};
+
+/**
+ * Required type of variable
+ * @param variable
+ * @param {string} type
+ * @param message
+ */
+export const requiredType = (variable, type:string, message) => {
+  return required((typeof variable).toString() === type, message);
 };

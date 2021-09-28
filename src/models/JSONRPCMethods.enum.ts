@@ -17,8 +17,9 @@ export const JSONRPCMethods = {
       read: 'room.message.read'
     },
     section: {
+      updateProfile: 'room.section.updateProfile',
       users: 'room.section.getUsers',
-      userUpdate: 'room.section.userUpdate' // create profile or update + join section + join room
+      join: 'room.section.join'
     }
   }
 };

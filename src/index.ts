@@ -3,8 +3,9 @@ import { SPKZJSONRPC } from './services/JSONRPCServer';
 import { clearWallet, createOrRetrieveWallet } from './services/walletBrowserCreator/walletCreator';
 import { SPKZ } from './services/wallet';
 import { NetworkParameters } from './models/jsonrpc/networkParameters';
+import { utils } from './services/utils';
 
-export { SPKZJSONRPC, createOrRetrieveWallet, clearWallet, SPKZ, NetworkParameters };
+export { utils, SPKZJSONRPC, createOrRetrieveWallet, clearWallet, SPKZ, NetworkParameters };
 
 /* RPC methods:
 const payload=
