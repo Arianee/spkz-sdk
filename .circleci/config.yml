@@ -54,18 +54,18 @@ jobs:
       - run:
           name: set version in package.json
           command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION_SNAPSHOT/g" ./dist/package.json
-      - run:
-          name: rm version tag from npm
-          command: |
-            if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME} $VERSION_TAG
-            fi
-      - run:
-          name: unpublish old snapshot
-          command: |
-            if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}@$OLD_SNAPSHOT
-            fi
+#      - run:
+#          name: rm version tag from npm
+#          command: |
+#            if [ "$OLD_SNAPSHOT" != "" ]; then
+#              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME} $VERSION_TAG
+#            fi
+#      - run:
+#          name: unpublish old snapshot
+#          command: |
+#            if [ "$OLD_SNAPSHOT" != "" ]; then
+#              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}@$OLD_SNAPSHOT
+#            fi
       - run:
           working_directory: dist
           name: publish
