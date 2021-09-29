@@ -4,7 +4,6 @@ export interface WriteMessageParameters {
  payload: any;
  signature:string;
  blockchainWallet: string,
- proxyWallet: string,
  network: string,
  chainId: string
 }
