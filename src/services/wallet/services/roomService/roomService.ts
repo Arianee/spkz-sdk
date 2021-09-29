@@ -8,6 +8,7 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
+import { NFTROOM, RoomSection } from '../../../../models/NFTROOM';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -21,12 +22,14 @@ export class RoomService {
 
   }
 
+  public getNFTRoom:(roomId:string)=>Promise<NFTROOM> = this.fetchRoomService.fetchRoom;
+
   /**
    * Get all messages from roomId and section
    * @param {{roomId: string; sectionId: string}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  async getMessages (parameters:{roomId:string, sectionId:string}) {
+  async getMessages (parameters: { roomId: string, sectionId: string }) {
     const { roomId, sectionId } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
@@ -46,7 +49,7 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; messageContent: any}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  async sendMessage (parameters:{roomId:string, sectionId:string, messageContent:any}) {
+  async sendMessage (parameters: { roomId: string, sectionId: string, messageContent: any }) {
     const { roomId, sectionId, messageContent } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
@@ -69,7 +72,7 @@ export class RoomService {
    * @param {{roomId: string}} parameters
    * @returns {Promise<StrategiesReturn>}
    */
-  async canJoin (parameters:{roomId:string}):Promise<StrategiesReturn> {
+  async canJoin (parameters: { roomId: string }): Promise<StrategiesReturn> {
     return this.rightService.canJoinRoom({
       ...parameters,
       address: this.messagingService.authorizedAddresses[0]
@@ -81,7 +84,7 @@ export class RoomService {
    * @returns {Promise<StrategiesReturn>}
    * @param parameters
    */
-  async canWriteSection (parameters:{roomId:string, sectionId:string}):Promise<StrategiesReturn> {
+  async canWriteSection (parameters: { roomId: string, sectionId: string }): Promise<StrategiesReturn> {
     return this.rightService.canWriteSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
@@ -90,7 +93,7 @@ export class RoomService {
    * @returns {Promise<StrategiesReturn>}
    * @param parameters
    */
-  async canReadSection (parameters:{roomId:string, sectionId:string}):Promise<StrategiesReturn> {
+  async canReadSection (parameters: { roomId: string, sectionId: string }): Promise<StrategiesReturn> {
     return this.rightService.canReadSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
   }
 
@@ -99,7 +102,7 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async joinSection (parameters:{roomId:string, sectionId:string, profile:UserProfile}) {
+  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile }) {
     const { roomId, sectionId, profile } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
@@ -124,7 +127,7 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async updateProfile (parameters:{roomId:string, sectionId:string, profile:UserProfile}) {
+  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile }) {
     const { roomId, sectionId, profile } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
@@ -147,7 +150,7 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async getSectionUsers (parameters:{roomId:string, sectionId:string}):Promise<any> {
+  public async getSectionUsers (parameters: { roomId: string, sectionId: string }): Promise<any> {
     const { roomId, sectionId } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
