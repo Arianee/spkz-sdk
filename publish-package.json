@@ -23,6 +23,8 @@
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.2.0",
+    "socket.io-client": "^4.2.0",
     "start-server-and-test": "^1.14.0",
     "tsyringe": "^4.6.0",
     "web3": "^1.5.2"
