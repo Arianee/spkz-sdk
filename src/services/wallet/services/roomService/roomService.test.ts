@@ -66,4 +66,19 @@ describe('room', () => {
       expect(payload2.profile).toEqual(expectedPayload2.profile);
       done();
     });
+  describe('send message', () => {
+    test('send message', async () => {
+      const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+      const proxyWallet = createOrRetrieveWallet();
+
+      const expectedMessage = 'an expected message';
+      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+      await proxyWallet.room.sendMessage({ roomId: '0', messageContent: expectedMessage, sectionId: 'chat' });
+
+      const messages = await proxyWallet.room.getMessages({ roomId: '0', sectionId: 'chat' });
+
+      expect(messages).toHaveLength(1);
+      expect(messages[0].payload.content).toBe(expectedMessage);
+    });
+  });
 });

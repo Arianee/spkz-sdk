@@ -43,6 +43,7 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
         sectionId: sectionId.toString()
       });
 
+      requiredType(messages, 'array', 'messages should be an array');
       messages.forEach(d => requiredType(d.payload, 'object', 'payload should be a json on return'));
 
       callback(null, messages);
@@ -87,7 +88,7 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
           signature
         }
       );
-      return callback(null, content);
+      return callback(null, params);
     } catch (e) {
       return callback(e);
     }

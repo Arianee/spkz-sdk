@@ -5,6 +5,7 @@
  */
 export const required = (assertion, message) => {
   if (assertion !== true) {
+    console.error('Error from required:', message);
     throw new Error(message);
   }
 };
@@ -25,5 +26,8 @@ export const requiredDefined = (variable, message) => {
  * @param message
  */
 export const requiredType = (variable, type:string, message) => {
+  if (type === 'array') {
+    return required(Array.isArray(variable), message);
+  }
   return required((typeof variable).toString() === type, message);
 };
