@@ -7,31 +7,37 @@ import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
+import { MetamaskService } from '../metamask/metamaskService';
+import { HttpService } from '../../../utils/services/httpService/httpService';
+import { RecommendedOrFeaturedRooms } from '../../../../models/recommendedOrFeaturedRooms';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
   constructor (
-               private messagingService:ProxyWalletService,
-               private fetchRoomService:FetchRoomService,
-               private rightService:RightService,
-               private httpService:RPCJSONService) {
+      private messagingService:ProxyWalletService,
+      private fetchRoomService:FetchRoomService,
+      private rightService:RightService,
+      private rpcService: RPCJSONService,
+      private metamaskService: MetamaskService,
+      private httpService: HttpService
+  ) {
 
   }
 
   public getMyProfile () {
-    return this.httpService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
       JSONRPCMethods.bouncer.users.getMyProfile,
       {});
   }
 
   public updateMyProfile (profile:UserProfile) {
-    return this.httpService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
       JSONRPCMethods.bouncer.users.updateMyProfile,
       profile);
   }
 
   public async getUserRooms () {
-    return this.httpService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
   }
@@ -44,8 +50,20 @@ export class BouncerService {
       roomId
     };
 
-    return this.httpService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
       JSONRPCMethods.bouncer.rooms.join,
       params);
+  }
+
+  public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRooms> {
+    const chain = chainId || this.metamaskService.currentChainId.toString();
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
+    return this.httpService.fetchWithCache(url);
+  }
+
+  public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRooms> {
+    const chain = chainId || this.metamaskService.currentChainId.toString();
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
+    return this.httpService.fetchWithCache(url);
   }
 }
