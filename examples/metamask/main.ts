@@ -1,7 +1,6 @@
 import { createOrRetrieveWallet, clearWallet } from '../../src';
 import { network } from '../../src/models/network.enum';
 
-
 declare const window:any;
 
 (async () => {
@@ -28,12 +27,12 @@ declare const window:any;
   window.joinRoom = () => {
     spkz.room.joinNotificationserver({ roomId: '0', sectionId: 'chat' });
   };
+  window.sendMessage = () => {
+    const content = (<HTMLInputElement>document.getElementById('messageContent')).value;
+    spkz.room.sendMessage({ roomId: '0', sectionId: 'chat', messageContent: { content } });
+  };
 
   function setAddressInFront (address:string) {
     document.getElementById('walletAddress').innerText = address;
-  }
-
-  function joinRoom () {
-
   }
 })();

@@ -20,7 +20,7 @@
     "release:minor": "npm version minor --no-git-tag-version",
     "release:patch": "npm version patch --no-git-tag-version",
     "release:major": "npm version major --no-git-tag-version",
-    "serve": "parcel examples/metamask/index.html"
+    "serve": "webpack serve --open"
   },
   "browserslist": [
     "since 2017-06"
@@ -41,6 +41,8 @@
     "@types/node": "^12.7.1",
     "@typescript-eslint/eslint-plugin": "^2.29.0",
     "@typescript-eslint/parser": "^2.29.0",
+    "assert": "^2.0.0",
+    "crypto-browserify": "^3.12.0",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",
     "eslint-plugin-import": "^2.18.2",
@@ -48,12 +50,21 @@
     "eslint-plugin-node": "^10.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "html-webpack-plugin": "^5.3.2",
+    "https-browserify": "^1.0.0",
     "jest": "^24.8.0",
     "jest-localstorage-mock": "^2.4.17",
     "nodemon": "^1.19.1",
+    "os-browserify": "^0.3.0",
     "parcel": "^2.0.0-rc.0",
+    "process": "^0.11.10",
+    "stream-browserify": "^3.0.0",
+    "stream-http": "^3.2.0",
     "ts-jest": "^24.0.2",
-    "typescript": "^3.5.3"
+    "ts-loader": "^9.2.6",
+    "typescript": "^3.9.10",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
     "axios": "^0.21.4",
