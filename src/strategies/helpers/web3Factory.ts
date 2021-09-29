@@ -4,7 +4,7 @@ import { network } from '../../models/network.enum';
 
 const config = {
   77: 'https://sokol.arianee.net',
-  137: 'https://polygon.arianee.net',
+  137: 'https://polygon-rpc.com',
   80001: 'https://matic-mumbai.chainstacklabs.com',
   99: 'https://poa.arianee.net',
   1: 'https://mainnet.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
