@@ -5,7 +5,8 @@ import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 import { BouncerParameters } from '../../../models/jsonrpc/JSONRPCParameters';
 
-export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: BouncerParameters) => {
+export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
+    (configuration: BouncerParameters) => {
   const { chainId, network } = networkParameters;
 
   const getMyProfile = async (params, callback) => {
