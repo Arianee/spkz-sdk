@@ -22,12 +22,12 @@ export class WebsocketService {
     await this.subscribeToRoom(roomId, sectionId);
   }
 
-  private subscribeToRoom = (roomId:string, sectionId:string) => {
+  private subscribeToRoom = async (roomId:string, sectionId:string) => {
     const params = {
       sectionId,
       roomId
     };
-    const payload = this.payloadSerivce.hydratePayloadParameters(params);
+    const payload = await this.payloadSerivce.hydratePayloadParameters(params);
     this.websocket.emit('joinRoom', payload);
   }
 
@@ -43,7 +43,11 @@ export class WebsocketService {
   }
 
   private setWsListeners = () => {
-    this.websocket.on('data', (data) => {
+    this.websocket.on('connect', () => {
+      console.info('ws is connected');
+    });
+
+    this.websocket.on('message', (data) => {
       // TODO Send message to front
     });
   }
