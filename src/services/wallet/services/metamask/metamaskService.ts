@@ -9,7 +9,7 @@ export class MetamaskService {
   public defaultAccount: string;
 
   public hasMetamask;
-  public currentChainId;
+  public currentChainId=137;
 
   private _window: any;
 
