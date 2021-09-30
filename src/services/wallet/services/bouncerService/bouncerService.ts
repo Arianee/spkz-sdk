@@ -1,6 +1,5 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { RPCJSONService } from '../httpService/RPCJSONService';
-import { StrategiesReturn } from '../../../../models/strategyReturn';
 import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
@@ -13,6 +12,7 @@ import { RecommendedOrFeaturedRoom } from '../../../../models/recommendedOrFeatu
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
+  public bouncerURL='https://bouncer.spkz.io/spkz/rpc';
   constructor (
       private messagingService:ProxyWalletService,
       private fetchRoomService:FetchRoomService,
@@ -25,19 +25,19 @@ export class BouncerService {
   }
 
   public getMyProfile () {
-    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall(this.bouncerURL,
       JSONRPCMethods.bouncer.users.getMyProfile,
       {});
   }
 
   public updateMyProfile (profile:UserProfile) {
-    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall(this.bouncerURL,
       JSONRPCMethods.bouncer.users.updateMyProfile,
       profile);
   }
 
   public async getUserRooms () {
-    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall(this.bouncerURL,
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
   }
@@ -50,7 +50,7 @@ export class BouncerService {
       roomId
     };
 
-    return this.rpcService.signedRPCCall('http://localhost:3000/spkz/rpc',
+    return this.rpcService.signedRPCCall(this.bouncerURL,
       JSONRPCMethods.bouncer.rooms.join,
       params);
   }
