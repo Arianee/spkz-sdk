@@ -13,8 +13,8 @@ export interface Requirement {
         requiredAmount: string;
     }
 
-export interface RecommendedOrFeaturedRooms {
-        roomId: number;
+export interface RecommendedOrFeaturedRoom {
+        roomId: string;
         room: NFTROOM;
         membersNb: number;
         requirements: Requirement[];
