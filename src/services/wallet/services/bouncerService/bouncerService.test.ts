@@ -5,7 +5,6 @@ describe('bouncer service', () => {
   let proxyWallet:SPKZ;
   beforeEach(() => {
     proxyWallet = createOrRetrieveWallet();
-    proxyWallet.environmentService.swithEnv('dev');
   });
   describe('featured and recommended room', () => {
     test('fetch featured rooms', async () => {
@@ -26,10 +25,9 @@ describe('bouncer service', () => {
       await axios.get('http://localhost:3000/reset');
     });
     describe('favorite room', () => {
-      test('get favorite room from bouncer', async () => {
+      test('DEV get favorite room from bouncer', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-        proxyWallet.bouncer.bouncerURL = 'http://localhost:3000/spkz/rpc';
         const room0 = await proxyWallet.bouncer.getUserRooms();
         expect(room0).toHaveLength(0);
         await proxyWallet.bouncer.joinRoom({ roomId: 0 });
@@ -42,7 +40,6 @@ describe('bouncer service', () => {
       test('get profile and update', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-        proxyWallet.bouncer.bouncerURL = 'http://localhost:3000/spkz/rpc';
 
         const myProfile0 = await proxyWallet.bouncer.getMyProfile();
         expect(myProfile0).toBeNull();

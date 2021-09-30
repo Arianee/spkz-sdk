@@ -13,22 +13,29 @@ export const ContractAddresses = {
 };
 
 export const environment:{[key:string]:IEnvironment} = {
+  test: {
+    bouncerURL: 'http://localhost:3000/spkz/rpc',
+    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
+    roomContractAddress: ContractAddresses['80001'],
+    chainId: '80001',
+    networkdId: '80001'
+  },
   dev: {
-    bouncerURL: '',
+    bouncerURL: 'https://dev.bouncer.spkz.io/spkz/rpc',
     defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
   },
   uat: {
-    bouncerURL: '',
+    bouncerURL: 'https://uat.bouncer.spkz.io/spkz/rpc',
     defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
   },
   prod: {
-    bouncerURL: '',
+    bouncerURL: 'https://bouncer.spkz.io/spkz/rpc',
     defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mainnet',
     roomContractAddress: '',
     chainId: '137',

@@ -33,3 +33,13 @@ await proxyWallet.room.sendMessage({
 Boom! You have just sent your very first message. Behind the curtain, SPKZ-SDK add JWT authorizations and others cryptographic elements to be sure that no one can send a message on your behalf!
 
 
+## Environment
+Env is set to prod by default.
+
+```javascript
+process.env.spkzEnv='dev'
+```
+or 
+```javascript
+window.spkzEnv='dev';
+```

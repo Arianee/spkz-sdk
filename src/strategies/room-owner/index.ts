@@ -3,7 +3,7 @@ import { StrategyReturnPromise } from '../../models/strategyReturn';
 import { Strategy } from '../../models/strategy';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { ErrorCode } from '../../models/errorCode';
-import { ContractAddresses, environment } from '../../environment/environment';
+import { ContractAddresses } from '../../environment/environment';
 import { web3Factory } from '../helpers/web3Factory';
 import { requiredDefined } from '../../helpers/required/required';
 

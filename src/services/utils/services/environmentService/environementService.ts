@@ -1,35 +1,50 @@
 import { Lifecycle, scoped } from 'tsyringe';
-import { required, requiredDefined } from '../../../../helpers/required/required';
+import { requiredDefined } from '../../../../helpers/required/required';
 import { environment as environmentSettings, IEnvironment } from '../../../../environment/environment';
+import { get } from 'lodash';
+import { isBrowser, isNode } from '../../../../helpers/isNodeOrBrowser.helper';
 
 @scoped(Lifecycle.ContainerScoped)
 export class EnvironmentService {
-    public environment=environmentSettings.prod;
+    public environment:IEnvironment
 
     constructor () {
-      const { environment } = process.env;
+      this.setEnvFromProcessEnvOrWindow();
+    }
+
+    private setEnvFromProcessEnvOrWindow () {
+      let environment;
+      if (isBrowser) {
+        environment = get(window, 'spkzEnv');
+      } else if (isNode) {
+        environment = get(process, 'env.spkzEnv');
+      }
+
       if (environment) {
-        console.info('environment is set from process.env');
+        requiredDefined(environmentSettings[environment], `this env ${environment} does not exist`);
+        console.info(`environment is set from process.env to ${environment}`);
         this.environment = environmentSettings[environment];
+      } else {
+        this.environment = environmentSettings.prod;
       }
     }
 
-    swithEnv (env:string):IEnvironment {
+    swithEnv = (env:string): IEnvironment => {
       requiredDefined(environmentSettings[env], `this env ${env} does not exist`);
       this.environment = environmentSettings[env];
       return this.environment;
-    }
+    };
 
-    setEnv (env:IEnvironment) {
+    setEnv = (env:IEnvironment) => {
       this.environment = env;
       return this.environment;
-    }
+    };
 
-    setProvider (provider:string) {
+    setProvider = (provider:string) => {
       this.environment.defaultProvider = provider;
 
       return this.environment;
-    }
+    };
 };
 
 /**

@@ -9,7 +9,6 @@ describe('proxy wallet', () => {
   beforeEach(() => {
     localStorage.clear();
     proxyWallet = createOrRetrieveWallet();
-    proxyWallet.environmentService.swithEnv('dev');
   });
 
   test('should be able to add blockchainWallets', async () => {
