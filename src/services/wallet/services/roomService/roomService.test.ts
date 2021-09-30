@@ -46,6 +46,7 @@ describe('room', () => {
       };
       await proxyWallet.room.joinSection(expectedPayload);
 
+
       const users = await proxyWallet.room.getSectionUsers({ roomId: '0', sectionId: 'chat' });
       const { payload } = users[0];
       expect(payload.roomId).toBe(expectedPayload.roomId);

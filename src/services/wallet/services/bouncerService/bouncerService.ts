@@ -9,7 +9,7 @@ import { RightService } from '../../../utils/services/rightService/rightService'
 import { UserProfile } from '../../../../models/userProfile';
 import { MetamaskService } from '../metamask/metamaskService';
 import { HttpService } from '../../../utils/services/httpService/httpService';
-import { RecommendedOrFeaturedRooms } from '../../../../models/recommendedOrFeaturedRooms';
+import { RecommendedOrFeaturedRoom } from '../../../../models/recommendedOrFeaturedRoom';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
@@ -55,13 +55,13 @@ export class BouncerService {
       params);
   }
 
-  public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRooms> {
+  public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
     const chain = chainId || this.metamaskService.currentChainId.toString();
     const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
     return this.httpService.fetchWithCache(url);
   }
 
-  public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRooms> {
+  public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
     const chain = chainId || this.metamaskService.currentChainId.toString();
     const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
     return this.httpService.fetchWithCache(url);
