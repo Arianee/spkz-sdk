@@ -24,7 +24,11 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
 
         const firstBlockchainWallet = blockchainWallets[0];
 
-        const myProfile = await configuration.getMyProfile({ blockchainWallet: firstBlockchainWallet });
+        const myProfile = await configuration.getMyProfile({
+          blockchainWallet: firstBlockchainWallet,
+          network: networkParameters.network,
+          chainId: networkParameters.chainId
+        });
         return callback(null, myProfile);
       } catch (e) {
         return callback(e);
@@ -46,7 +50,11 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
 
         const firstBlockchainWallet = blockchainWallets[0];
 
-        const myRooms = await configuration.getUserRooms({ blockchainWallet: firstBlockchainWallet });
+        const myRooms = await configuration.getUserRooms({
+          blockchainWallet: firstBlockchainWallet,
+          network: networkParameters.network,
+          chainId: networkParameters.chainId
+        });
         return callback(null, myRooms);
       } catch (e) {
         return callback(e);
