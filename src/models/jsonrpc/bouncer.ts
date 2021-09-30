@@ -5,4 +5,6 @@ export interface BouncerUser {
 
 export interface BouncerUserQuery {
  blockchainWallet: string;
+ network:string;
+ chainId:string;
 }
