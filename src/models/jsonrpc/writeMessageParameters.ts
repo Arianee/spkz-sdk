@@ -1,3 +1,5 @@
+import { NFTROOM } from '../NFTROOM';
+
 export interface WriteMessageParameters {
  roomId:string;
  sectionId:string;
@@ -35,5 +37,6 @@ export interface RoomUser {
  blockchainWallet: string,
  chainId: string;
  network: string;
- payload: string
+ payload: string;
+ roomDetails?:NFTROOM
 }

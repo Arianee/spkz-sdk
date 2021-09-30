@@ -5,112 +5,113 @@ import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 import { BouncerParameters } from '../../../models/jsonrpc/JSONRPCParameters';
 
-export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: BouncerParameters) => {
-  const { chainId, network } = networkParameters;
+export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
+  (configuration: BouncerParameters) => {
+    const { chainId, network } = networkParameters;
 
-  const getMyProfile = async (params, callback) => {
-    requiredDefined(params, 'params should be defined');
+    const getMyProfile = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
 
-    const { authorizations, roomId, sectionId } = params;
-    requiredDefined(authorizations, 'authorizations should be defined');
+        const { authorizations, roomId, sectionId } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
 
-    const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
-    if (isAuthorized === false) {
-      callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
-    }
+        if (isAuthorized === false) {
+          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        }
 
-    const firstBlockchainWallet = blockchainWallets[0];
+        const firstBlockchainWallet = blockchainWallets[0];
 
-    try {
-      const myProfile = await configuration.getMyProfile({ blockchainWallet: firstBlockchainWallet });
-      callback(null, myProfile);
-    } catch (e) {
-      callback(e);
-    }
+        const myProfile = await configuration.getMyProfile({ blockchainWallet: firstBlockchainWallet });
+        return callback(null, myProfile);
+      } catch (e) {
+        return callback(e);
+      }
+    };
+
+    const getUserRooms = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
+
+        const { authorizations } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
+
+        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+
+        if (isAuthorized === false) {
+          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        }
+
+        const firstBlockchainWallet = blockchainWallets[0];
+
+        const myRooms = await configuration.getUserRooms({ blockchainWallet: firstBlockchainWallet });
+        return callback(null, myRooms);
+      } catch (e) {
+        return callback(e);
+      }
+    };
+
+    const joinRoom = async (params, callback) => {
+      requiredDefined(params, 'params should be defined');
+
+      const { authorizations, roomId, sectionId } = params;
+      requiredDefined(roomId, 'roomId should be defined');
+      requiredDefined(authorizations, 'authorizations should be defined');
+
+      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+
+      if (isAuthorized === false) {
+        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+      }
+
+      const firstBlockchainWallet = blockchainWallets[0];
+
+      try {
+        await configuration.joinRoom({
+          payload: params,
+          blockchainWallet: firstBlockchainWallet.toString(),
+          chainId: chainId.toString(),
+          network: network.toString(),
+          roomId: roomId.toString()
+        });
+        return callback(null, params);
+      } catch (e) {
+        return callback(e);
+      }
+    };
+
+    const updateMyProfile = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
+
+        const { authorizations, roomId, sectionId, userProfile } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
+
+        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+
+        if (isAuthorized === false) {
+          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        }
+
+        const firstBlockchainWallet = blockchainWallets[0];
+
+        await configuration.updateProfile({
+          payload: params,
+          blockchainWallet: firstBlockchainWallet.toString()
+        });
+        return callback(null, params);
+      } catch (e) {
+        return callback(e);
+      }
+    };
+
+    return {
+      [JSONRPCMethods.bouncer.rooms.getUserRooms]: getUserRooms,
+      [JSONRPCMethods.bouncer.users.getMyProfile]: getMyProfile,
+      [JSONRPCMethods.bouncer.users.updateMyProfile]: updateMyProfile,
+      [JSONRPCMethods.bouncer.rooms.join]: joinRoom
+
+    };
   };
-
-  const getUserRooms = async (params, callback) => {
-    requiredDefined(params, 'params should be defined');
-
-    const { authorizations } = params;
-    requiredDefined(authorizations, 'authorizations should be defined');
-
-    const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
-
-    if (isAuthorized === false) {
-      callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
-    }
-
-    const firstBlockchainWallet = blockchainWallets[0];
-
-    try {
-      const myRooms = await configuration.getUserRooms({ blockchainWallet: firstBlockchainWallet });
-      callback(null, myRooms);
-    } catch (e) {
-      callback(e);
-    }
-  };
-
-  const joinRoom = async (params, callback) => {
-    requiredDefined(params, 'params should be defined');
-
-    const { authorizations, roomId, sectionId } = params;
-    requiredDefined(roomId, 'roomId should be defined');
-    requiredDefined(authorizations, 'authorizations should be defined');
-
-    const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
-
-    if (isAuthorized === false) {
-      callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
-    }
-
-    const firstBlockchainWallet = blockchainWallets[0];
-
-    try {
-      await configuration.joinRoom({
-        payload: params,
-        blockchainWallet: firstBlockchainWallet.toString(),
-        chainId: chainId.toString(),
-        network: network.toString(),
-        roomId: roomId.toString()
-      });
-      callback(null, params);
-    } catch (e) {
-      callback(e);
-    }
-  };
-
-  const updateMyProfile = async (params, callback) => {
-    requiredDefined(params, 'params should be defined');
-
-    const { authorizations, roomId, sectionId, userProfile } = params;
-    requiredDefined(authorizations, 'authorizations should be defined');
-
-    const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
-
-    if (isAuthorized === false) {
-      callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
-    }
-
-    const firstBlockchainWallet = blockchainWallets[0];
-
-    try {
-      await configuration.updateProfile({
-        payload: params,
-        blockchainWallet: firstBlockchainWallet.toString()
-      });
-      callback(null, params);
-    } catch (e) {
-      callback(e);
-    }
-  };
-
-  return {
-    [JSONRPCMethods.bouncer.rooms.getUserRooms]: getUserRooms,
-    [JSONRPCMethods.bouncer.users.getMyProfile]: getMyProfile,
-    [JSONRPCMethods.bouncer.users.updateMyProfile]: updateMyProfile,
-    [JSONRPCMethods.bouncer.rooms.join]: joinRoom
-
-  };
-};
