@@ -34,8 +34,11 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
     },
     write: (parameters:WriteMessageParameters) => {
       const { roomId, sectionId } = parameters;
-      dbMessage[roomId + sectionId] = parameters;
-      return Promise.resolve({});
+      if (!dbMessage[roomId + sectionId]) {
+        dbMessage[roomId + sectionId] = [];
+      }
+      dbMessage[roomId + sectionId].push(parameters);
+      return Promise.resolve(parameters);
     }
   })
   .setUsersMethod({

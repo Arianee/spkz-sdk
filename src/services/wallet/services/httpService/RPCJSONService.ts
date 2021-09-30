@@ -34,7 +34,11 @@ export class RPCJSONService {
       }
 
       if (RPCRes.result) {
-        RPCRes.result = (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
+        try {
+          RPCRes.result = (typeof (RPCRes.result) === 'string') ? JSON.parse(RPCRes.result) : RPCRes.result;
+        } catch (e) {
+          console.error('result is not a json');
+        }
       }
       return RPCRes.result;
     }

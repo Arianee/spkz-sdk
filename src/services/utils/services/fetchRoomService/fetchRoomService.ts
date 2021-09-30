@@ -9,13 +9,12 @@ import { environment } from '../../../../environment/environment';
 @singleton()
 export class FetchRoomService {
   constructor (private httpService:HttpService) {
-
   }
 
     public erc721Contract=new (new Web3(environment.defaultProvider))
       .eth.Contract(erc721ABI as any, environment.roomContractAddress);
 
-    public async fetchRoom (roomId:string):Promise<NFTROOM> {
+    public fetchRoom= async (roomId:string):Promise<NFTROOM> => {
       const nftRoom = cache.get(roomId);
       if (!nftRoom) {
         const tokenURI = await this.erc721Contract.methods.tokenURI(roomId).call();
