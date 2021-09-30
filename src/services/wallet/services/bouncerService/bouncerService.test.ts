@@ -1,10 +1,14 @@
 import axios from 'axios';
-import { createOrRetrieveWallet } from '../../../..';
+import { createOrRetrieveWallet, SPKZ } from '../../../..';
 
 describe('bouncer service', () => {
+  let proxyWallet:SPKZ;
+  beforeEach(() => {
+    proxyWallet = createOrRetrieveWallet();
+    proxyWallet.environmentService.swithEnv('dev');
+  });
   describe('featured and recommended room', () => {
     test('fetch featured rooms', async () => {
-      const proxyWallet = createOrRetrieveWallet();
       const d = await proxyWallet.bouncer.getFeaturedRooms('80001');
 
       expect(d).toBeDefined();
@@ -24,7 +28,6 @@ describe('bouncer service', () => {
     describe('favorite room', () => {
       test('get favorite room from bouncer', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-        const proxyWallet = createOrRetrieveWallet();
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
         proxyWallet.bouncer.bouncerURL = 'http://localhost:3000/spkz/rpc';
         const room0 = await proxyWallet.bouncer.getUserRooms();
@@ -38,7 +41,6 @@ describe('bouncer service', () => {
     describe('user profile', () => {
       test('get profile and update', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-        const proxyWallet = createOrRetrieveWallet();
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
         proxyWallet.bouncer.bouncerURL = 'http://localhost:3000/spkz/rpc';
 

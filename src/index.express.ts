@@ -7,7 +7,6 @@ import {
   WriteMessageParameters
 } from './models/jsonrpc/writeMessageParameters';
 import { BouncerUser, BouncerUserQuery } from './models/jsonrpc/bouncer';
-import { utils } from './services/utils';
 
 const express = require('express');
 const app = express();

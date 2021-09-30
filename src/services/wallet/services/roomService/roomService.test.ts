@@ -1,16 +1,19 @@
 import axios from 'axios';
-import { createOrRetrieveWallet } from '../../../..';
+import { createOrRetrieveWallet, SPKZ } from '../../../..';
 
 jest.setTimeout(60000);
 
 describe('room', () => {
+  let proxyWallet:SPKZ;
+
   beforeEach(async () => {
     await axios.get('http://localhost:3000/reset');
+    proxyWallet = createOrRetrieveWallet();
+    proxyWallet.environmentService.swithEnv('dev');
   });
 
   test('user should get users if user has right', async (done) => {
     const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-    const proxyWallet = createOrRetrieveWallet();
 
     await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
 
@@ -35,7 +38,6 @@ describe('room', () => {
   test('user can join section and it performs a profile update and user can update ',
     async (done) => {
       const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-      const proxyWallet = createOrRetrieveWallet();
 
       await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
 
@@ -69,7 +71,6 @@ describe('room', () => {
   describe('send message', () => {
     test('send message', async () => {
       const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-      const proxyWallet = createOrRetrieveWallet();
 
       const expectedMessage = 'an expected message';
       await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
