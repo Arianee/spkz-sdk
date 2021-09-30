@@ -15,7 +15,7 @@ export interface Requirement {
 
 export interface RecommendedOrFeaturedRoom {
         roomId: string;
-        room: NFTROOM;
+        roomDetails: NFTROOM;
         membersNb: number;
         requirements: Requirement[];
     }
