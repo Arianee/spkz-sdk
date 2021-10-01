@@ -9,35 +9,36 @@ import { UserProfile } from '../../../../models/userProfile';
 import { MetamaskService } from '../metamask/metamaskService';
 import { HttpService } from '../../../utils/services/httpService/httpService';
 import { RecommendedOrFeaturedRoom } from '../../../../models/recommendedOrFeaturedRoom';
+import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
-  public bouncerURL='https://bouncer.spkz.io/spkz/rpc';
   constructor (
       private messagingService:ProxyWalletService,
       private fetchRoomService:FetchRoomService,
       private rightService:RightService,
       private rpcService: RPCJSONService,
       private metamaskService: MetamaskService,
-      private httpService: HttpService
+      private httpService: HttpService,
+      private environementService:EnvironmentService
   ) {
 
   }
 
   public getMyProfile () {
-    return this.rpcService.signedRPCCall(this.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
       JSONRPCMethods.bouncer.users.getMyProfile,
       {});
   }
 
   public updateMyProfile (profile:UserProfile) {
-    return this.rpcService.signedRPCCall(this.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
       JSONRPCMethods.bouncer.users.updateMyProfile,
       profile);
   }
 
   public async getUserRooms () {
-    return this.rpcService.signedRPCCall(this.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
   }
@@ -50,7 +51,7 @@ export class BouncerService {
       roomId
     };
 
-    return this.rpcService.signedRPCCall(this.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
       JSONRPCMethods.bouncer.rooms.join,
       params);
   }

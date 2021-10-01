@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
-    "test:jest": "start-server-and-test 'npm run start:express' http://localhost:3000/ping 'environment='dev' jest --coverage --runInBand --bail'",
+    "test:jest": "start-server-and-test 'npm run start:express' http://localhost:3000/ping 'jest --coverage --runInBand --bail'",
     "start:express:w": "fuser -k -s 3000/tcp && nodemon dist/index.express.js",
-    "start:express": "environment='dev' node dist/index.express.js",
+    "start:express": "spkzEnv='test' node dist/index.express.js",
     "start:w": "nodemon dist/index.js",
     "build": "tsc",
     "build:w": "tsc --watch",

@@ -9,7 +9,6 @@ describe('room', () => {
   beforeEach(async () => {
     await axios.get('http://localhost:3000/reset');
     proxyWallet = createOrRetrieveWallet();
-    proxyWallet.environmentService.swithEnv('dev');
   });
 
   test('user should get users if user has right', async (done) => {
