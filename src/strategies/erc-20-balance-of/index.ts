@@ -5,7 +5,7 @@ import { erc20ABI } from '../../abi/erc20.abi';
 import { ErrorCode } from '../../models/errorCode';
 import { minMaxMessage } from '../helpers/messageHelper';
 import { web3Factory } from '../helpers/web3Factory';
-import { requiredDefined } from '../../helpers/required/required';
+import { requiredDefined, requiredType } from '../../helpers/required/required';
 import { flattenDeep, sumBy } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
 
@@ -18,13 +18,16 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
 
   const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, ERC20Address);
 
-  return await Promise.all(addresses.map(address =>
-    erc20SmartContracts.methods.balanceOf(address).call()
+  requiredType(addresses, 'array', 'addresses has to an array');
+
+  return await Promise.all(addresses.map(address => {
+    return erc20SmartContracts.methods.balanceOf(address).call()
       .then(balanceOf => ({
         address,
         balanceOf,
         chainId
-      }))
+      }));
+  }
   ));
 };
 
@@ -54,6 +57,7 @@ const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
 };
 export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
+
   const balances = await getBalancesOfChains(strategy);
   const [decimals, symbol] = await getDecimalsAndSymbol(params.tokens[0]);
 

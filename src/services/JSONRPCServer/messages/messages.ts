@@ -5,6 +5,7 @@ import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { AsyncFunc } from '../../../models/AsyncFunc';
 import { ReadMessageParameters, WriteMessageParameters } from '../../../models/jsonrpc/writeMessageParameters';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
+import { ErrorPayload } from '../../../models/jsonrpc/errorPayload';
 
 export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (configuration: {
   read: AsyncFunc<ReadMessageParameters, any>,
@@ -25,14 +26,17 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
       const hasRightToRead = await utils.rightService.canReadSection({ roomId, sectionId, address: firstBlockchainWallet });
 
       if (hasRightToRead.isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.notHasReadRight));
+        const errorPayload = JSONRPCErrors.notHasReadRight;
+        errorPayload.details = hasRightToRead.strategies;
+        return callback(errorPayload);
       }
 
       const messages = await configuration.read({
@@ -48,7 +52,9 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
 
       return callback(null, messages);
     } catch (e) {
-      return callback(e);
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
     }
   };
 
@@ -66,15 +72,17 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
-
       const firstBlockchainWallet = blockchainWallets[0];
       const hasRightToRead = await utils.rightService.canWriteSection(
         { roomId, sectionId, address: firstBlockchainWallet });
 
       if (hasRightToRead.isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.notHasWriteRight));
+        const errorPayload = JSONRPCErrors.notHasWriteRight;
+        errorPayload.details = hasRightToRead.strategies;
+        return callback(errorPayload);
       }
 
       await configuration.write(
@@ -90,7 +98,9 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       );
       return callback(null, params);
     } catch (e) {
-      return callback(e);
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
     }
   };
   return {

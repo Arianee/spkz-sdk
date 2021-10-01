@@ -4,6 +4,7 @@ import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 import { SectionUserParameters } from '../../../models/jsonrpc/JSONRPCParameters';
+import { ErrorPayload } from '../../../models/jsonrpc/errorPayload';
 
 export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: SectionUserParameters) => {
   const { chainId, network } = networkParameters;
@@ -20,7 +21,8 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
@@ -31,7 +33,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       });
 
       if (hasRightToRead.isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.notHasReadRight));
+        const errorPayload = JSONRPCErrors.notHasReadRight;
+        errorPayload.details = hasRightToRead.strategies;
+        return callback(errorPayload);
       }
 
       await configuration.createOrUpdateProfile({
@@ -45,7 +49,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
 
       return callback(null, params);
     } catch (e) {
-      return callback(e);
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
     }
   };
 
@@ -62,7 +68,8 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
@@ -70,7 +77,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         { roomId, sectionId, address: firstBlockchainWallet });
 
       if (hasRightToRead.isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.notHasWriteRight));
+        const errorPayload = JSONRPCErrors.notHasReadRight;
+        errorPayload.details = hasRightToRead.strategies;
+        return callback(errorPayload);
       }
 
       const sectionUsers = await configuration.getUsers(
@@ -86,7 +95,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
 
       return callback(null, sectionUsers);
     } catch (e) {
-      return callback(e);
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
     }
   };
 
@@ -102,7 +113,8 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
@@ -113,7 +125,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       });
 
       if (hasRightToRead.isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.notHasReadRight));
+        const errorPayload = JSONRPCErrors.notHasReadRight;
+        errorPayload.details = hasRightToRead.strategies;
+        return callback(errorPayload);
       }
 
       await configuration.joinSection({
@@ -127,7 +141,9 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
 
       return callback(null, params);
     } catch (e) {
-      return callback(e);
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
     }
   };
 

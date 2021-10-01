@@ -3,18 +3,18 @@ import { Strategy } from '../../models/strategy';
 import { cloneDeep } from 'lodash';
 import { NFTROOM } from '../../models/NFTROOM';
 
-export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeyOfCaller?:string) => {
+export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:string[]) => {
   requiredDefined(nftRoom, 'nft room must be defined');
   required(typeof nftRoom === 'object', 'nft room must be an object');
 
   const replaceAddressInStrategies = (strategies) => {
     const clonedStrategies = cloneDeep(strategies);
 
-    if (publicKeyOfCaller) {
+    if (publicKeySOfCaller) {
       return clonedStrategies
         .map(orStrategy =>
           orStrategy.map(d => {
-            d.address = publicKeyOfCaller;
+            d.addresses = publicKeySOfCaller;
             return d;
           }));
     } else {
