@@ -8,7 +8,8 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
-import { NFTROOM, RoomSection } from '../../../../models/NFTROOM';
+import { NFTROOM } from '../../../../models/NFTROOM';
+import { MessageService } from '../messageService/messageService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -17,7 +18,8 @@ export class RoomService {
                private fetchRoomService:FetchRoomService,
                private rightService:RightService,
                private httpService:RPCJSONService,
-               private websocketService: WebsocketService
+               private websocketService: WebsocketService,
+              private messageService: MessageService
   ) {
 
   }
@@ -40,8 +42,11 @@ export class RoomService {
       sectionId,
       roomId
     };
-
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.read, params);
+  }
+
+  newMessageListener (cb) {
+    this.messageService.messageEvent(cb);
   }
 
   /**

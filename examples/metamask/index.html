@@ -6,7 +6,9 @@
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Metamask Integration</title>
-
+  <script>
+    window.spkzEnv = "dev";
+  </script>
   <script src="./main.ts"></script>
 
 </head>
@@ -17,7 +19,9 @@
 <p>Wallet address : <span id="walletAddress"></span></p>
 <button onclick="switchNetwork()">Switch to mumbai</button>
 <button onclick="addMMWallet()">Add MM Wallet to proxy wallet</button>
+<button onclick="getMessage()">get messages</button>
 <button onclick="joinRoom()">connect to ws</button>
+
 <br/>
 
 <input type="text" id="messageContent"><button onclick="sendMessage()">Send Message</button>
