@@ -1,10 +1,10 @@
-import { singleton } from 'tsyringe';
+import { Lifecycle, scoped } from 'tsyringe';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { HttpService } from '../httpService/httpService';
 import cache from 'memory-cache';
 import { ContractService } from '../contractService/contractService';
 
-@singleton()
+@scoped(Lifecycle.ContainerScoped)
 export class FetchRoomService {
   constructor (private httpService:HttpService, private contractService:ContractService) {
   }
