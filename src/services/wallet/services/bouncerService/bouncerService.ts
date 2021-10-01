@@ -10,6 +10,7 @@ import { MetamaskService } from '../metamask/metamaskService';
 import { HttpService } from '../../../utils/services/httpService/httpService';
 import { RecommendedOrFeaturedRoom } from '../../../../models/recommendedOrFeaturedRoom';
 import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
+import { RoomUser } from '../../../../models/jsonrpc/writeMessageParameters';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
@@ -37,7 +38,7 @@ export class BouncerService {
       profile);
   }
 
-  public async getUserRooms () {
+  public async getUserRooms ():Promise<RoomUser[]> {
     return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
@@ -57,13 +58,13 @@ export class BouncerService {
   }
 
   public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.metamaskService.currentChainId.toString();
+    const chain = chainId || this.environementService.environment.chainId;
     const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
     return this.httpService.fetchWithCache(url);
   }
 
   public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.metamaskService.currentChainId.toString();
+    const chain = chainId || this.environementService.environment.chainId;
     const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
     return this.httpService.fetchWithCache(url);
   }

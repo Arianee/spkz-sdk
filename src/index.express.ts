@@ -7,12 +7,13 @@ import {
   WriteMessageParameters
 } from './models/jsonrpc/writeMessageParameters';
 import { BouncerUser, BouncerUserQuery } from './models/jsonrpc/bouncer';
-
+import cors from 'cors';
 const express = require('express');
 const app = express();
 const port = 3000;
 var bodyParser = require('body-parser');
 const messagesDB = {};
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -29,6 +30,10 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
   .setMessagesMethod({
     read: (parameters:ReadMessageParameters) => {
       const { roomId, sectionId } = parameters;
+
+      if (!dbMessage[roomId + sectionId]) {
+        return Promise.resolve([]);
+      };
       return Promise.resolve(dbMessage[roomId + sectionId]);
     },
     write: (parameters:WriteMessageParameters) => {
@@ -88,6 +93,7 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
         dbBouncerRoom[bouncerRoomUser.blockchainWallet] = {};
       }
       dbBouncerRoom[bouncerRoomUser.blockchainWallet][bouncerRoomUser.roomId] = bouncerRoomUser;
+
       return Promise.resolve(dbBouncerRoom[bouncerRoomUser.blockchainWallet][bouncerRoomUser.roomId]);
     }
   })
