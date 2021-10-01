@@ -151,13 +151,13 @@ workflows:
             - build
       - package-develop:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: develop
       - release:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: master
