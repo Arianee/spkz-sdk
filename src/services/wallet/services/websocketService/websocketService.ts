@@ -3,12 +3,14 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client/build/socket';
 import { PayloadService } from '../payloadService/payloadService';
+import { MessageService } from '../messageService/messageService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class WebsocketService {
   constructor (
     private fetchRoomService: FetchRoomService,
-    private payloadSerivce: PayloadService
+    private payloadSerivce: PayloadService,
+    private messageService: MessageService
   ) {
   }
 
@@ -48,7 +50,7 @@ export class WebsocketService {
     });
 
     this.websocket.on('message', (data) => {
-      // TODO Send message to front
+      this.messageService.emitMessage(data);
     });
   }
 }
