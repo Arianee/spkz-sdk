@@ -30,7 +30,7 @@ export class RPCJSONService {
       const RPCRes = await this.httpService.fetch(endpoint, httpRequest);
 
       if (RPCRes.error) {
-        throw new Error(JSON.stringify(RPCRes.error));
+        throw RPCRes.error;
       }
 
       if (RPCRes.result) {

@@ -109,7 +109,7 @@ export class RightService {
 
        const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
-       const strategies = getStrategyHelperFactory(tokenContent, address)
+       const strategies = getStrategyHelperFactory(tokenContent, [address])
          .getRoomStrategies();
 
        return executeStrategies(strategies);
@@ -123,7 +123,7 @@ export class RightService {
 
       const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
-      const strategies = getStrategyHelperFactory(tokenContent, address)
+      const strategies = getStrategyHelperFactory(tokenContent, [address])
         .getSectionWriteStrategies(sectionId);
 
       return executeStrategies(strategies);
@@ -137,7 +137,7 @@ export class RightService {
 
       const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
-      const strategies = getStrategyHelperFactory(tokenContent, address)
+      const strategies = getStrategyHelperFactory(tokenContent, [address])
         .getSectionReadStrategies(sectionId);
 
       return executeStrategies(strategies);

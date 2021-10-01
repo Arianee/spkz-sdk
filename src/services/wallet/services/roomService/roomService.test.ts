@@ -81,4 +81,25 @@ describe('room', () => {
       expect(messages[0].payload.content).toBe(expectedMessage);
     });
   });
+
+  describe('error', () => {
+    test('get message error should return value of error', async () => {
+      const pkBlockchainWallet1 = '0x68b2e8504d8f65010750e3c1af10743d9f42a4da4fa3819fdaa0b4ffb29842ad';
+      const addressBlockchainWallet1 = '0xa226D0C579CD0ffb3Dc85cfA9A07D534d9301fD8';
+
+      const expectedMessage = 'an expected message';
+      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+      let inError = false;
+      try {
+        const messages = await proxyWallet
+          .room
+          .getMessages({ roomId: '2', sectionId: 'chat' });
+      } catch (e) {
+        inError = true;
+        expect(e.code).toBe(2);
+      };
+
+      expect(inError).toBeTruthy();
+    });
+  });
 });

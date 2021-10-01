@@ -4,6 +4,7 @@ import { utils } from '../../utils';
 import { JSONRPCErrors } from '../../../models/JSONRPCError';
 import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 import { BouncerParameters } from '../../../models/jsonrpc/JSONRPCParameters';
+import { ErrorPayload } from '../../../models/jsonrpc/errorPayload';
 
 export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
   (configuration: BouncerParameters) => {
@@ -19,7 +20,8 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          return callback(errorPayload);
         }
 
         const firstBlockchainWallet = blockchainWallets[0];
@@ -31,7 +33,9 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         });
         return callback(null, myProfile);
       } catch (e) {
-        return callback(e);
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
       }
     };
 
@@ -45,7 +49,8 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          return callback(errorPayload);
         }
 
         const firstBlockchainWallet = blockchainWallets[0];
@@ -71,7 +76,8 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
       const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
@@ -100,7 +106,8 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          return callback(new Error(JSONRPCErrors.wrongSignatureForPayload));
+          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          return callback(errorPayload);
         }
 
         const firstBlockchainWallet = blockchainWallets[0];
@@ -111,7 +118,9 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         });
         return callback(null, params);
       } catch (e) {
-        return callback(e);
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
       }
     };
 

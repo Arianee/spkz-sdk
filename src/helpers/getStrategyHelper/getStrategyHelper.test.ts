@@ -131,13 +131,14 @@ describe('startegies finder helper', () => {
 
   describe('replace address with address of caller', () => {
     test('it should return write strategies if there is with addres', () => {
-      const strategyHelper = getStrategyHelperFactory(mockNFTROOM, '0x3f6F937912AeCb1E966514AAeE0D26F09E163976');
+      const strategyHelper = getStrategyHelperFactory(mockNFTROOM,
+        ['0x3f6F937912AeCb1E966514AAeE0D26F09E163976']);
 
       const expectedWriteStrategy = [[
         {
           chainId: '137',
           name: 'erc-20-balance-of',
-          address: '0x3f6F937912AeCb1E966514AAeE0D26F09E163976',
+          addresses: ['0x3f6F937912AeCb1E966514AAeE0D26F09E163976'],
           params: {
             minBalance: '1000000000000000000',
             address: '0x46F48FbdedAa6F5500993BEDE9539ef85F4BeE8e'
