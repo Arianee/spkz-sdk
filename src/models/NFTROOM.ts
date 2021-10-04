@@ -3,6 +3,7 @@ export interface NFTROOM{
   sections: RoomSection[];
 
   endpoint: string;
+  notificationEndpoint?:string;
 
   [key: string]: any
 }

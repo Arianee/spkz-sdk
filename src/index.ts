@@ -1,11 +1,10 @@
 import 'reflect-metadata';
 import { clearWallet, createOrRetrieveWallet } from './services/walletBrowserCreator/walletCreator';
 import { SPKZ } from './services/wallet';
-import { NetworkParameters } from './models/jsonrpc/networkParameters';
 import { utils } from './services/utils';
 
-export { utils, createOrRetrieveWallet, clearWallet, SPKZ, NetworkParameters };
-
+export { utils, createOrRetrieveWallet, clearWallet, SPKZ };
+export * from './models/public-api';
 /* RPC methods:
 const payload=
 {
