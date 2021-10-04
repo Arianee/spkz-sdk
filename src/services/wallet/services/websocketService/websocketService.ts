@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client/build/socket';
 import { PayloadService } from '../payloadService/payloadService';
 import { MessageService } from '../messageService/messageService';
+import { createHash } from 'crypto';
 
 @scoped(Lifecycle.ContainerScoped)
 export class WebsocketService {
@@ -14,13 +15,12 @@ export class WebsocketService {
   ) {
   }
 
-  private websocket:Socket;
+  private websockets:{[key:string]:Socket} = {};
 
   public joinSection = async (parameters:{ roomId: string, sectionId: string }) => {
     const { roomId, sectionId } = parameters;
 
     await this.connectToWebSocket(roomId);
-    this.setWsListeners();
     await this.subscribeToRoom(roomId, sectionId);
   }
 
@@ -30,7 +30,10 @@ export class WebsocketService {
       roomId
     };
     const payload = await this.payloadSerivce.hydratePayloadParameters(params);
-    this.websocket.emit('joinRoom', payload);
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+    const notificationEndpointHash = this.hashString(tokenContent.notificationEndpoint);
+    this.websockets[notificationEndpointHash].emit('joinRoom', payload);
   }
 
   private connectToWebSocket = async (roomId:string) => {
@@ -40,17 +43,26 @@ export class WebsocketService {
     if (!notificationEndpoint) {
       throw new Error('there is no notification endpoint');
     }
-
-    this.websocket = io(notificationEndpoint);
+    const notificationEndpointHash = this.hashString(notificationEndpoint);
+    if (!this.websockets[notificationEndpointHash]) {
+      this.websockets[notificationEndpointHash] = io(notificationEndpoint);
+      this.setWsListeners(notificationEndpointHash);
+    }
   }
 
-  private setWsListeners = () => {
-    this.websocket.on('connect', () => {
+  private setWsListeners = (notificationEndpointHash:string) => {
+    this.websockets[notificationEndpointHash].on('connect', () => {
       console.info('ws is connected');
     });
 
-    this.websocket.on('message', (data) => {
+    this.websockets[notificationEndpointHash].on('message', (data) => {
       this.messageService.emitMessage(data);
     });
+  }
+
+  private hashString = (data:string) => {
+    const hash = createHash('sha256');
+    hash.update(data);
+    return hash.digest('hex');
   }
 }
