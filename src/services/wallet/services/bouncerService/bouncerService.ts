@@ -27,19 +27,19 @@ export class BouncerService {
   }
 
   public getMyProfile () {
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.users.getMyProfile,
       {});
   }
 
   public updateMyProfile (profile:UserProfile) {
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.users.updateMyProfile,
       profile);
   }
 
   public async getUserRooms ():Promise<RoomUser[]> {
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
   }
@@ -52,20 +52,18 @@ export class BouncerService {
       roomId
     };
 
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerURL,
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.rooms.join,
       params);
   }
 
-  public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.environementService.environment.chainId;
-    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
+  public async getRecommendedRooms ():Promise<RecommendedOrFeaturedRoom[]> {
+    const url = `${this.environementService.environment.bouncerURL}/rooms/recommended`;
     return this.httpService.fetchWithCache(url);
   }
 
-  public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.environementService.environment.chainId;
-    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
+  public async getFeaturedRooms ():Promise<RecommendedOrFeaturedRoom[]> {
+    const url = `${this.environementService.environment.bouncerURL}/rooms/featured`;
     return this.httpService.fetchWithCache(url);
   }
 }

@@ -6,16 +6,17 @@ describe('bouncer service', () => {
   beforeEach(() => {
     proxyWallet = createOrRetrieveWallet();
   });
-  describe('featured and recommended room', () => {
+  describe('[dev env] featured and recommended room', () => {
     test('fetch featured rooms', async () => {
-      const d = await proxyWallet.bouncer.getFeaturedRooms('80001');
+      proxyWallet.environmentService.swithEnv('dev');
+      const d = await proxyWallet.bouncer.getFeaturedRooms();
 
       expect(d).toBeDefined();
     });
 
     test('fetch recommended rooms', async () => {
-      const proxyWallet = createOrRetrieveWallet();
-      const d = await proxyWallet.bouncer.getRecommendedRooms('80001');
+      proxyWallet.environmentService.swithEnv('dev');
+      const d = await proxyWallet.bouncer.getRecommendedRooms();
 
       expect(d).toBeDefined();
     });
@@ -25,7 +26,7 @@ describe('bouncer service', () => {
       await axios.get('http://localhost:3000/reset');
     });
     describe('favorite room', () => {
-      test('DEV get favorite room from bouncer', async () => {
+      test('get favorite room from bouncer', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
         const room0 = await proxyWallet.bouncer.getUserRooms();
