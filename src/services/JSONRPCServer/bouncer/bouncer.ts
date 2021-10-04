@@ -62,7 +62,9 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         });
         return callback(null, myRooms);
       } catch (e) {
-        return callback(e);
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
       }
     };
 
@@ -92,7 +94,9 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         });
         return callback(null, params);
       } catch (e) {
-        return callback(e);
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
       }
     };
 
