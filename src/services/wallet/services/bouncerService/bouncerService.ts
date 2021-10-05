@@ -8,7 +8,7 @@ import { RightService } from '../../../utils/services/rightService/rightService'
 import { UserProfile } from '../../../../models/userProfile';
 import { MetamaskService } from '../metamask/metamaskService';
 import { HttpService } from '../../../utils/services/httpService/httpService';
-import { RecommendedOrFeaturedRoom } from '../../../../models/recommendedOrFeaturedRoom';
+import { RecommendedOrFeaturedRoom } from '../../../..';
 import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 import { RoomUser } from '../../../../models/jsonrpc/writeMessageParameters';
 
@@ -39,9 +39,12 @@ export class BouncerService {
   }
 
   public async getUserRooms ():Promise<RoomUser[]> {
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+    const userRooms:RoomUser[] = await this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.rooms.getUserRooms,
       {});
+
+    userRooms.forEach(room => this.fetchRoomService.addToCache(room.roomId, room.roomDetails));
+    return userRooms;
   }
 
   public async joinRoom (parameters:{roomId}) {
@@ -57,13 +60,19 @@ export class BouncerService {
       params);
   }
 
-  public async getRecommendedRooms ():Promise<RecommendedOrFeaturedRoom[]> {
-    const url = `${this.environementService.environment.bouncerURL}/rooms/recommended`;
-    return this.httpService.fetchWithCache(url);
+  public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
+    const chain = chainId || this.environementService.environment.chainId;
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
+    const recommendedRooms:RecommendedOrFeaturedRoom[] = await this.httpService.fetchWithCache(url);
+    recommendedRooms.forEach(d => this.fetchRoomService.addToCache(d.roomId, d.roomDetails));
+    return recommendedRooms;
   }
 
-  public async getFeaturedRooms ():Promise<RecommendedOrFeaturedRoom[]> {
-    const url = `${this.environementService.environment.bouncerURL}/rooms/featured`;
-    return this.httpService.fetchWithCache(url);
+  public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
+    const chain = chainId || this.environementService.environment.chainId;
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
+    const featuredRooms = await this.httpService.fetchWithCache(url);
+    featuredRooms.forEach(d => this.fetchRoomService.addToCache(d.roomId, d.roomDetails));
+    return featuredRooms;
   }
 }
