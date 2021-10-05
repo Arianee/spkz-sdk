@@ -118,15 +118,16 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
-      const hasRightToRead = await utils.rightService.canReadSection({
+
+      const hasRights = await utils.rightService.canJoinSection({
         roomId,
         sectionId,
         address: firstBlockchainWallet
       });
 
-      if (hasRightToRead.isAuthorized === false) {
+      if (hasRights.isAuthorized === false) {
         const errorPayload = JSONRPCErrors.notHasReadRight;
-        errorPayload.details = hasRightToRead.strategies;
+        errorPayload.details = hasRights;
         return callback(errorPayload);
       }
 
@@ -139,7 +140,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         payload: params
       });
 
-      return callback(null, params);
+      return callback(null, hasRights);
     } catch (e) {
       const errorPayload = JSONRPCErrors.unknownError;
       errorPayload.details = JSON.stringify(e);

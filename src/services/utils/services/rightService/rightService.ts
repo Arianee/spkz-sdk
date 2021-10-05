@@ -6,6 +6,7 @@ import { Lifecycle, scoped } from 'tsyringe';
 import { requiredDefined } from '../../../../helpers/required/required';
 import { decoder, JWTDecoder } from '../../../../helpers/JWTGeneric/signerAndDecoderFromPrivateKey';
 import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
+import { StrategiesReturn } from '../../../../models/strategyReturn';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
@@ -102,18 +103,44 @@ export class RightService {
 
     public verifyPayloadSignatures=RightService.verifyPayloadSignatures;
 
-     canJoinRoom=async (parameters:{ roomId: string, address:string}) => {
-       const { roomId, address } = parameters;
-       requiredDefined(address, 'address must be defined');
-       requiredDefined(roomId, 'roomId must be defined');
+  /**
+   * Can user join section
+   * @param {{roomId: string; sectionId: string; address: string}} parameters
+   * @returns {Promise<{isAuthorized: boolean; read: StrategiesReturn; write: StrategiesReturn}>}
+   */
+  public canJoinSection = async (parameters: { roomId: string, sectionId: string, address: string }): Promise<{
+    isAuthorized: boolean,
+    read: StrategiesReturn,
+    write: StrategiesReturn
+  }> => {
+    const { roomId, address, sectionId } = parameters;
+    requiredDefined(address, 'address must be defined');
+    requiredDefined(roomId, 'roomId must be defined');
+    requiredDefined(sectionId, 'sectionId must be defined');
 
-       const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+    const [read, write] = await Promise.all([
+      this.canReadSection(parameters),
+      this.canWriteSection(parameters)
+    ]);
+    return {
+      isAuthorized: read.isAuthorized,
+      read,
+      write
+    };
+  };
 
-       const strategies = getStrategyHelperFactory(tokenContent, [address])
-         .getRoomStrategies();
+  public canJoinRoom = async (parameters: { roomId: string, address: string }) => {
+    const { roomId, address } = parameters;
+    requiredDefined(address, 'address must be defined');
+    requiredDefined(roomId, 'roomId must be defined');
 
-       return executeStrategies(strategies);
-     }
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const strategies = getStrategyHelperFactory(tokenContent, [address])
+      .getRoomStrategies();
+
+    return executeStrategies(strategies);
+  };
 
     canWriteSection=async (parameters:{ roomId: string, sectionId:string, address:string}) => {
       const { roomId, address, sectionId } = parameters;
