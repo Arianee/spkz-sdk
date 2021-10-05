@@ -8,6 +8,7 @@ import { MetamaskService } from './services/metamask/metamaskService';
 import { network } from '../../models/network.enum';
 import { BouncerService } from './services/bouncerService/bouncerService';
 import { EnvironmentService } from '../utils/services/environmentService/environementService';
+import { FetchRoomService } from '../utils/services/fetchRoomService/fetchRoomService';
 
 export class SPKZ {
     private container = container.createChildContainer();
@@ -18,6 +19,7 @@ export class SPKZ {
     public rooms: RoomsService = this.container.resolve(RoomsService);
     public payloadService:PayloadService=this.container.resolve(PayloadService);
     public metamaskService:MetamaskService =this.container.resolve(MetamaskService);
+    public fetchRoomService:FetchRoomService=this.container.resolve(FetchRoomService);
 
     public get privateKey () {
       return this.wallets.privateKey;

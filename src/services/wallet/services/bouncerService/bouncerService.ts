@@ -61,16 +61,14 @@ export class BouncerService {
   }
 
   public async getRecommendedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.environementService.environment.chainId;
-    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/recommended-rooms.json`;
+    const url = `${this.environementService.environment.bouncerURL}/rooms/recommended`;
     const recommendedRooms:RecommendedOrFeaturedRoom[] = await this.httpService.fetchWithCache(url);
     recommendedRooms.forEach(d => this.fetchRoomService.addToCache(d.roomId, d.roomDetails));
     return recommendedRooms;
   }
 
   public async getFeaturedRooms (chainId?: string):Promise<RecommendedOrFeaturedRoom[]> {
-    const chain = chainId || this.environementService.environment.chainId;
-    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chain}/featured-rooms.json`;
+    const url = `${this.environementService.environment.bouncerURL}/rooms/featured`;
     const featuredRooms = await this.httpService.fetchWithCache(url);
     featuredRooms.forEach(d => this.fetchRoomService.addToCache(d.roomId, d.roomDetails));
     return featuredRooms;
