@@ -5,7 +5,7 @@ import { network } from '../../models/network.enum';
 const config = {
   77: 'https://sokol.arianee.net',
   137: 'https://polygon.arianee.net',
-  80001: 'https://matic-mumbai.chainstacklabs.com',
+  80001: 'https://speedy-nodes-nyc.moralis.io/5685425d2d9a5b4b4fe38355/polygon/mumbai',
   99: 'https://poa.arianee.net',
   1: 'https://mainnet.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
   3: 'https://ropsten.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
