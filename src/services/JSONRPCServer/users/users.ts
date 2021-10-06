@@ -26,15 +26,14 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
-      const hasRightToRead = await utils.rightService.canReadSection({
+      const hasRightToJoin = await utils.rightService.canJoinRoom({
         roomId,
-        sectionId,
         address: firstBlockchainWallet
       });
 
-      if (hasRightToRead.isAuthorized === false) {
+      if (hasRightToJoin.isAuthorized === false) {
         const errorPayload = JSONRPCErrors.notHasReadRight;
-        errorPayload.details = hasRightToRead.strategies;
+        errorPayload.details = hasRightToJoin;
         return callback(errorPayload);
       }
 
