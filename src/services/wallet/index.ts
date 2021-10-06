@@ -9,6 +9,7 @@ import { network } from '../../models/network.enum';
 import { BouncerService } from './services/bouncerService/bouncerService';
 import { EnvironmentService } from '../utils/services/environmentService/environementService';
 import { FetchRoomService } from '../utils/services/fetchRoomService/fetchRoomService';
+import { RightService } from '../utils/services/rightService/rightService';
 
 export class SPKZ {
     private container = container.createChildContainer();
@@ -20,6 +21,7 @@ export class SPKZ {
     public payloadService:PayloadService=this.container.resolve(PayloadService);
     public metamaskService:MetamaskService =this.container.resolve(MetamaskService);
     public fetchRoomService:FetchRoomService=this.container.resolve(FetchRoomService);
+    public rightService:RightService=this.container.resolve(RightService);
 
     public get privateKey () {
       return this.wallets.privateKey;

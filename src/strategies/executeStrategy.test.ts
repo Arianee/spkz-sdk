@@ -7,11 +7,14 @@ describe('Execute strategy', () => {
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 
   describe('execute strategies of erc 20 balance of', () => {
-    test(' wallet without aria should be not authorized', async () => {
+    test('erc 20 balance of without addresses should return enriched informations', async () => {
       const strategyProvider = await executeStrategies([
         [{
           name: 'erc-20-balance-of',
-          addresses: [walletAddressWithoutAria],
+          acquireURLs: [{
+            title: 'a title',
+            url: 'https://lemonde.fr'
+          }],
           params: {
             minBalance: '12',
             tokens: [
@@ -30,8 +33,48 @@ describe('Execute strategy', () => {
         }]
       ]);
 
-      expect(strategyProvider.strategies[0][0].message).toBeDefined();
-      expect(strategyProvider.strategies[0][0].code).toBe(1);
+      const { enrichedInformations, message, code } = strategyProvider.strategies[0][0];
+      expect(enrichedInformations).toBeDefined();
+      expect(enrichedInformations.acquireURLs).toHaveLength(1);
+      expect(enrichedInformations.logo).toBeDefined();
+      expect(message).toBeDefined();
+      expect(code).toBe(1);
+
+      expect(strategyProvider.isAuthorized).toBeFalsy();
+    });
+    test('wallet without aria should be not authorized', async () => {
+      const strategyProvider = await executeStrategies([
+        [{
+          name: 'erc-20-balance-of',
+          addresses: [walletAddressWithoutAria],
+          acquireURLs: [{
+            title: 'a title',
+            url: 'https://lemonde.fr'
+          }],
+          params: {
+            minBalance: '12',
+            tokens: [
+              {
+                chainId: '77',
+                networkId: '1',
+                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+              },
+              {
+                chainId: '1',
+                networkId: '1',
+                address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+              }
+            ]
+          }
+        }]
+      ]);
+
+      const { enrichedInformations, message, code } = strategyProvider.strategies[0][0];
+      expect(enrichedInformations).toBeDefined();
+      expect(enrichedInformations.acquireURLs).toHaveLength(1);
+      expect(enrichedInformations.logo).toBeDefined();
+      expect(message).toBeDefined();
+      expect(code).toBe(1);
 
       expect(strategyProvider.isAuthorized).toBeFalsy();
     });
@@ -394,18 +437,33 @@ describe('execute strategies of erc 721 balance of', () => {
 });
 
 describe('execute strategies of room-owner', () => {
-  test('wallet owner of room XX should be not authorized', async () => {
+  test('wallet not-owner of room XX should be not authorized', async () => {
     const strategyProvider = await executeStrategies([
       [{
         name: 'room-owner',
-        chainId: '80001',
-        networkId: '1',
-        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108']
+        addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108'],
+        params: {
+          chainId: '80001',
+          networkId: '1'
+        }
       }]
     ], '0');
 
+    expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(2);
+  });
+
+  test('wallet without address', async () => {
+    const strategyProvider = await executeStrategies([
+      [{
+        name: 'room-owner',
+        params: {
+          chainId: '80001',
+          networkId: '1'
+        }
+      }]
+    ], '0');
 
     expect(strategyProvider.isAuthorized).toBeFalsy();
   });
@@ -414,9 +472,11 @@ describe('execute strategies of room-owner', () => {
     const strategyProvider = await executeStrategies([
       [{
         name: 'room-owner',
-        chainId: '80001',
-        networkId: '1',
-        addresses: ['0x8827B07B45067a347305E4DE51c4627859Af744c']
+        addresses: ['0x8827B07B45067a347305E4DE51c4627859Af744c'],
+        params: {
+          chainId: '80001',
+          networkId: '1'
+        }
       }]
     ], '0');
 

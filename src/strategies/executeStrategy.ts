@@ -21,6 +21,8 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
           requiredDefined(strategy.name, `name is not defined, ${strategy}`);
 
           const camelCaseName = camelCase(strategy.name);
+          // remove null and undefined adresses
+          strategy.addresses = strategy.addresses ? strategy.addresses.filter(d => d) : [];
           return implementedStrategies[camelCaseName](strategy, tokenId) as StrategyReturn;
         }));
       }));

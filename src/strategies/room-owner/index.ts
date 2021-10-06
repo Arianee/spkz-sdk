@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { StrategyReturnPromise } from '../../models/strategyReturn';
-import { Strategy } from '../../models/strategy';
+import { RoomOwner, Strategy } from '../../models/strategy';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { ErrorCode } from '../../models/errorCode';
 import { ContractAddresses } from '../../environment/environment';
@@ -18,16 +18,23 @@ import { requiredDefined } from '../../helpers/required/required';
  * @param web3Provider
  */
 
-export const strategy = async (strategy: Strategy, tokenId:string): StrategyReturnPromise => {
-  const web3Provider = await web3Factory(strategy.chainId);
+export const strategy = async (strategy: Strategy<RoomOwner>, tokenId:string): StrategyReturnPromise => {
+  const web3Provider = await web3Factory(strategy.params.chainId);
 
-  const contractAddress = ContractAddresses[strategy.chainId];
+  const contractAddress = ContractAddresses[strategy.params.chainId];
   requiredDefined(contractAddress, 'this chainId does not have a spkz nft contract');
-  const roomContract = new web3Provider.eth.Contract(erc721ABI as any, contractAddress);
-  const ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
-  const isAuthorized = strategy.addresses[0].toLowerCase() === ownerOf.toLowerCase();
-  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
-  const message = strategy.addresses[0] === ownerOf ? `You are the owner of Room #${tokenId}` : `You are not the owner of Room #${tokenId}`;
+  let isAuthorized = false;
+  let code;
+  let message;
+  if (strategy.addresses && strategy.addresses.length > 0) {
+    const roomContract = new web3Provider.eth.Contract(erc721ABI as any, contractAddress);
+    const ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
+    isAuthorized = strategy.addresses[0].toLowerCase() === ownerOf.toLowerCase();
+    code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
+    message = (strategy.addresses[0] && strategy.addresses[0] === ownerOf)
+      ? `You are the owner of Room #${tokenId}`
+      : `You are not the owner of Room #${tokenId}`;
+  }
 
   return {
     isAuthorized,

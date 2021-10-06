@@ -1,9 +1,8 @@
-export interface Strategy<T=ERC20BalancesOf|isExactAddresses> {
+export interface Strategy<T=ERC20BalancesOf|isExactAddresses | RoomOwner> {
     name:string,
     addresses?:string[],
-    params?: T
-    chainId?:string;
-    networkId?:string;
+    params?: T,
+    acquireURLs?:{title:string, url:string}[]
 }
 
 export interface ERC20BalancesOf {
@@ -20,3 +19,7 @@ export interface ERC20BalanceOf {
     networkId:string,
     address:string
 }
+
+export interface RoomOwner {
+    chainId: string,
+    networkId: string}
