@@ -31,7 +31,7 @@ export const environment:{[key:string]:IEnvironment} = {
     networkdId: '80001'
   },
   uat: {
-    bouncerURL: 'https://dev.bouncer.spkz.io',
+    bouncerURL: 'https://uat.bouncer.spkz.io',
     bouncerRPCURL: 'https://uat.bouncer.spkz.io/spkz/rpc',
     defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
