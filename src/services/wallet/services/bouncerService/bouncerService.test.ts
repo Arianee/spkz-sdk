@@ -44,7 +44,27 @@ describe('bouncer service', () => {
 
         const myProfile0 = await proxyWallet.bouncer.getMyProfile();
         expect(myProfile0).toBeNull();
-        await proxyWallet.bouncer.updateMyProfile({ avatar: 'myavatar.com' });
+        await proxyWallet.bouncer.updateMyProfile({
+          biography: 'labiography',
+          ens: {
+            name: 'lename',
+            tokenId: '3'
+          },
+          avatar: {
+            tokenId: '2',
+            contract: {
+              address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
+              chainId: '1',
+              networkId: '1',
+              schemaName: 'ERC721'
+            },
+            picture: {
+              originalUrl: 'ipfs://mchin/truc/2',
+              previewUrl: 'https://machin.org/token/2'
+            },
+            metadataUri: 'https://medatauri'
+          }
+        });
         const myProfile1 = await proxyWallet.bouncer.getMyProfile();
         expect(myProfile1).toBeDefined();
       });
