@@ -115,6 +115,7 @@ export class RoomService {
 
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
+    console.log(tokenContent.endpoint)
     const { endpoint } = tokenContent;
     const params = {
       sectionId,
@@ -124,6 +125,7 @@ export class RoomService {
 
     await this.updateProfile(parameters);
 
+    console.log(params);
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.join, params);
   }
 

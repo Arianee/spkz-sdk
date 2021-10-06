@@ -1,9 +1,8 @@
 import { RightService } from './rightService';
 import { FetchRoomService } from '../fetchRoomService/fetchRoomService';
 import { NFTROOM } from '../../../../models/NFTROOM';
-import { ProxyWalletService } from '../../../wallet/services/proxyWalletService/proxyWalletService';
-import { createOrRetrieveWallet } from '../../../walletBrowserCreator/walletCreator';
-import { JWTDecoder } from '../../../../helpers/JWTGeneric/signerAndDecoderFromPrivateKey';
+import { container } from 'tsyringe';
+import { utils } from '../../index';
 
 describe('rightService', () => {
   describe('canReadSection', () => {
@@ -73,6 +72,180 @@ describe('rightService', () => {
             proxyWalletAddress: '0x931e35f78f7948dff3ea7d3bf45cb294f53c93cd'
           });
       });
+    });
+  });
+  describe('can join section', () => {
+    const room0 = {
+      $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
+      endpoint: 'http://localhost:3000/spkz/rpc',
+      notificationEndpoint: 'ws://localhost:3001',
+      name: 'ARIA20 Backroom',
+      description: 'Welcome to the ARIA20 Backroom, a space exclusively reserved for holders of the ARIA20 token.',
+      external_url: 'https://beta.spkz.io/room/8200974',
+      image: 'https://firebasestorage.googleapis.com/v0/b/speakez-front.appspot.com/o/8d26efad-9721-46c5-a4b3-04ba735cac29?alt=media&token=4263d07b-68eb-48e9-b581-23025d470a68',
+      logo: 'https://firebasestorage.googleapis.com/v0/b/speakez-front.appspot.com/o/42925e27-8003-4892-bec8-42f001b6475d?alt=media&token=3cc2d782-4dc1-430a-883a-048cc99ea7dc',
+      strategies: [
+        []
+      ],
+      sections: [
+        {
+          title: 'Chat',
+          id: 'chat'
+        },
+        {
+          title: 'VIP Room',
+          id: 'viproom',
+          strategiesRead: []
+        },
+        {
+          title: 'Announcement',
+          id: 'annoucement',
+          strategiesWrite: [],
+          writeStrategies: [
+            [
+              {
+                name: 'erc-721-balance-of',
+                logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+                params: {
+                  minBalance: '2',
+                  tokens: [
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3'
+                    }
+                  ]
+                }
+              }
+            ]
+          ]
+        },
+        {
+          title: 'VIP Room! (min 2 MaticPunks)',
+          id: 'veryviproom',
+          readStrategies: [
+            [
+              {
+                name: 'erc-721-balance-of',
+                params: {
+                  minBalance: '2',
+                  logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+                  tokens: [
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3'
+                    }
+                  ]
+                }
+              }
+            ]
+          ],
+          writeStrategies: [
+            [
+              {
+                name: 'erc-721-balance-of',
+                logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+                params: {
+                  minBalance: '2',
+                  tokens: [
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3'
+                    }
+                  ]
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    };
+
+    const room2 = {
+      endpoint: 'https://dev.node0.spkz.io/spkz/rpc',
+      notificationEndpoint: 'wss://dev.node0-ws.spkz.io',
+      name: 'MaticPunks',
+      description: 'Welcome to the MaticPunks, a space exclusively reserved for holders of MaticPunks NFTs.',
+      external_url: 'https://dev.spkz.io/app/lounges/5',
+      image: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+      logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+      strategies: [[{
+        name: 'erc-721-balance-of',
+        params: {
+          minBalance: '1',
+          logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+          tokens: [{ chainId: '137', networkId: '1', address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3' }]
+        }
+      }]],
+      sections: [{
+        title: 'Announcement',
+        id: 'announcement',
+        writeStrategies: [[{ name: 'room-owner', chainId: '80001', networkId: '1' }]]
+      }, { title: 'Chat', id: 'chat' }, {
+        title: 'VIP Room (min 2 MaticPunks)',
+        id: 'viproom',
+        readStrategies: [[{
+          name: 'erc-721-balance-of',
+          params: {
+            minBalance: '2',
+            logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+            tokens: [{ chainId: '137', networkId: '1', address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3' }]
+          }
+        }]],
+        writeStrategies: [[{
+          name: 'erc-721-balance-of',
+          logo: 'https://lh3.googleusercontent.com/6FualWHu5EplmvGViY2U0qhQqZDqKe1fun8NOxgIpthLmD2dJ_y0EpS1IGg-lxMZbqdeozsH80rAD0uRrC3kjgkDCZcfZyu_kyaWnA=s130',
+          params: {
+            minBalance: '2',
+            tokens: [{ chainId: '137', networkId: '1', address: '0x76c52b2c4b2d2666663ce3318a5f35f912bd25c3' }]
+          }
+        }]]
+      }]
+    };
+
+    beforeEach(() => {
+      jest.resetAllMocks();
+      container.clearInstances();
+      container.reset();
+      utils.fetchRoomService.addToCache('0', room0);
+      utils.fetchRoomService.addToCache('2', room2);
+    });
+
+    test('should return global (false) read (false) and write (false) if address has no rights', async () => {
+      utils.fetchRoomService.addToCache('0', room0);
+      const r = await utils.rightService.canJoinSection({
+        address: '0x2bc0b60C58AC96CfF37E9A168d0963157bdb6efB',
+        roomId: '0',
+        sectionId: 'veryviproom'
+      });
+
+      expect(r.isAuthorized).toBeFalsy();
+      expect(r.read.isAuthorized).toBeFalsy();
+      expect(r.write.isAuthorized).toBeFalsy();
+    });
+    test('should return global (true) read (true) and write (false) if address has only read rights', async () => {
+      const r3 = await utils.rightService.canJoinSection({
+        address: '0x2bc0b60C58AC96CfF37E9A168d0963157bdb6efB',
+        roomId: '0',
+        sectionId: 'annoucement'
+      });
+
+      expect(r3.isAuthorized).toBeTruthy();
+      expect(r3.read.isAuthorized).toBeTruthy();
+      expect(r3.write.isAuthorized).toBeFalsy();
+    });
+    test('should return global (true) read (true) and write (true) if address has all rights', async () => {
+      const r2 = await utils.rightService.canJoinSection({
+        address: '0x2bc0b60C58AC96CfF37E9A168d0963157bdb6efB',
+        roomId: '0',
+        sectionId: 'chat'
+      });
+
+      expect(r2.isAuthorized).toBeTruthy();
+      expect(r2.read.isAuthorized).toBeTruthy();
+      expect(r2.write.isAuthorized).toBeTruthy();
     });
   });
 });

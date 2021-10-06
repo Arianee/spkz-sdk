@@ -26,15 +26,14 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
-      const hasRightToRead = await utils.rightService.canReadSection({
+      const hasRightToJoin = await utils.rightService.canJoinRoom({
         roomId,
-        sectionId,
         address: firstBlockchainWallet
       });
 
-      if (hasRightToRead.isAuthorized === false) {
+      if (hasRightToJoin.isAuthorized === false) {
         const errorPayload = JSONRPCErrors.notHasReadRight;
-        errorPayload.details = hasRightToRead.strategies;
+        errorPayload.details = hasRightToJoin;
         return callback(errorPayload);
       }
 
@@ -102,6 +101,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
   };
 
   const joinSection = async (params, callback) => {
+    console.log('zefzef')
     try {
       requiredDefined(params, 'params should be defined');
 
@@ -119,12 +119,14 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
 
       const firstBlockchainWallet = blockchainWallets[0];
 
+      console.log('before');
       const hasRights = await utils.rightService.canJoinSection({
         roomId,
         sectionId,
         address: firstBlockchainWallet
       });
 
+      console.log('after');
       if (hasRights.isAuthorized === false) {
         const errorPayload = JSONRPCErrors.notHasReadRight;
         errorPayload.details = hasRights;
@@ -142,10 +144,12 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
 
       return callback(null, hasRights);
     } catch (e) {
+      console.log('error');
       const errorPayload = JSONRPCErrors.unknownError;
       errorPayload.details = JSON.stringify(e);
       return callback(errorPayload);
     }
+
   };
 
   return {
