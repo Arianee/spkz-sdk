@@ -22,13 +22,57 @@ describe('room', () => {
     await proxyWallet.room.joinSection({
       roomId: '0',
       sectionId: 'chat',
-      profile: { avatar: 'myavatar.com' }
+      profile: {
+        biography: 'labiography',
+        ens: {
+          name: 'lename',
+          tokenId: '3'
+        },
+        avatar: {
+          tokenId: '2',
+          contract: {
+            address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
+            chainId: '1',
+            networkId: '1',
+            schemaName: 'ERC721'
+          },
+          picture: {
+            originalUrl: 'ipfs://mchin/truc/2',
+            previewUrl: 'https://machin.org/token/2'
+          },
+          metadataUri: 'https://medatauri'
+        }
+      }
     });
 
     const users1 = await proxyWallet.room.getSectionUsers({ roomId: '0', sectionId: 'chat' });
     expect(users1).toHaveLength(1);
     await proxyWallet.room.joinSection(
-      { roomId: '0', sectionId: 'chat', profile: { avatar: 'myavatar.com' } });
+      {
+        roomId: '0',
+        sectionId: 'chat',
+        profile: {
+          biography: 'labiography',
+          ens: {
+            name: 'lename',
+            tokenId: '3'
+          },
+          avatar: {
+            tokenId: '2',
+            contract: {
+              address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
+              chainId: '1',
+              networkId: '1',
+              schemaName: 'ERC721'
+            },
+            picture: {
+              originalUrl: 'ipfs://mchin/truc/2',
+              previewUrl: 'https://machin.org/token/2'
+            },
+            metadataUri: 'https://medatauri'
+          }
+        }
+      });
     const users2 = await proxyWallet.room.getSectionUsers({ roomId: '0', sectionId: 'chat' });
     expect(users2).toHaveLength(1);
     done();
@@ -43,7 +87,27 @@ describe('room', () => {
       const expectedPayload = {
         roomId: '0',
         sectionId: 'chat',
-        profile: { avatar: 'myavatar.com' }
+        profile: {
+          biography: 'labiography',
+          ens: {
+            name: 'lename',
+            tokenId: '3'
+          },
+          avatar: {
+            tokenId: '2',
+            contract: {
+              address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
+              chainId: '1',
+              networkId: '1',
+              schemaName: 'ERC721'
+            },
+            picture: {
+              originalUrl: 'ipfs://mchin/truc/2',
+              previewUrl: 'https://machin.org/token/2'
+            },
+            metadataUri: 'https://medatauri'
+          }
+        }
       };
       await proxyWallet.room.joinSection(expectedPayload);
 
@@ -56,7 +120,27 @@ describe('room', () => {
       const expectedPayload2 = {
         roomId: '0',
         sectionId: 'chat',
-        profile: { avatar: 'myavatar.com' }
+        profile: {
+          biography: 'labiography',
+          ens: {
+            name: 'lename',
+            tokenId: '3'
+          },
+          avatar: {
+            tokenId: '2',
+            contract: {
+              address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
+              chainId: '1',
+              networkId: '1',
+              schemaName: 'ERC721'
+            },
+            picture: {
+              originalUrl: 'ipfs://mchin/truc/2',
+              previewUrl: 'https://machin.org/token/2'
+            },
+            metadataUri: 'https://medatauri'
+          }
+        }
       };
       await proxyWallet.room.updateProfile(expectedPayload2);
       const users2 = await proxyWallet.room.getSectionUsers({ roomId: '0', sectionId: 'chat' });
