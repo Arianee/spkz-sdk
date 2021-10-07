@@ -1,11 +1,18 @@
 import { Strategy } from './strategy';
 
+export interface EnrichedInformations{
+    acquireURLs?:{title:string, url:string} []
+    logo?:string
+}
 export interface StrategyReturn {
     strategy: Strategy
     isAuthorized: boolean,
     code:number,
     message:string,
-    details?:any
+    enrichedInformations?:EnrichedInformations,
+    details?:{
+        [key:string]:any
+    }
 }
 
 export type StrategyReturnPromise = Promise<StrategyReturn>;

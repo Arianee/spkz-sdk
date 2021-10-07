@@ -8,7 +8,7 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
-import { NFTROOM } from '../../../../models/NFTROOM';
+import { FullRoomStrategies, NFTROOM } from '../../../../models/NFTROOM';
 import { MessageService } from '../messageService/messageService';
 
 @scoped(Lifecycle.ContainerScoped)
@@ -176,5 +176,12 @@ export class RoomService {
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     this.websocketService.joinSection(parameters);
+  }
+
+  public fullRoomStrategies (parameters:{roomId:string}) {
+    const { roomId } = parameters;
+    const address = this.messagingService.authorizedAddresses[0];
+
+    this.rightService.fullRoomStrategies({ roomId, address });
   }
 }

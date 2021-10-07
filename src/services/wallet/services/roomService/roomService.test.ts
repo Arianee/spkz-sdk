@@ -7,7 +7,7 @@ describe('room', () => {
   let proxyWallet:SPKZ;
 
   beforeEach(async () => {
-    await axios.get('http://localhost:3000/reset');
+    // await axios.get('http://localhost:3000/reset');
     proxyWallet = createOrRetrieveWallet();
   });
 

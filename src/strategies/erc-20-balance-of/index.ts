@@ -1,4 +1,4 @@
-import { StrategyReturnPromise } from '../../models/strategyReturn';
+import { EnrichedInformations, StrategyReturnPromise } from '../../models/strategyReturn';
 import web3 from 'web3';
 import { ERC20BalanceOf, ERC20BalancesOf, Strategy } from '../../models/strategy';
 import { erc20ABI } from '../../abi/erc20.abi';
@@ -6,7 +6,7 @@ import { ErrorCode } from '../../models/errorCode';
 import { minMaxMessage } from '../helpers/messageHelper';
 import { web3Factory } from '../helpers/web3Factory';
 import { requiredDefined, requiredType } from '../../helpers/required/required';
-import { flattenDeep, sumBy } from 'lodash';
+import { flattenDeep } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
@@ -55,6 +55,29 @@ const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
     erc20SmartContracts.methods.symbol().call()
   ]);
 };
+
+const getImageUrl = (token: string, chainId: string) => {
+  requiredType(chainId, 'string', 'chainId should be a string');
+  requiredType(chainId, 'string', 'token should be a string');
+
+  const chainName = chainId === '1' ? 'ethereum' : 'polygon';
+
+  return `https://storage.googleapis.com/zapper-fi-assets/tokens/${chainName}/${token}.png`;
+};
+
+const getEnrichedInformation = (strategy: Strategy<ERC20BalancesOf>):EnrichedInformations => {
+  //
+  // [https://storage.googleapis.com/zapper-fi-assets/tokens/polygon/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619.png](https://storage.googleapis.com/zapper-fi-assets/tokens/polygon/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619.png)
+
+  const tokenOnChain = strategy.params.tokens.find(d => d.chainId === '1' || d.chainId === '132');
+
+  const logo = tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : '';
+
+  return {
+    logo,
+    acquireURLs: strategy.acquireURLs
+  };
+};
 export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
 
@@ -74,12 +97,14 @@ export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyRet
   });
 
   const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
+  const enrichedInformations = getEnrichedInformation(strategy);
 
   return {
     isAuthorized,
     strategy: strategy,
     message: message,
     code,
-    details: balances
+    details: balances,
+    enrichedInformations
   };
 };

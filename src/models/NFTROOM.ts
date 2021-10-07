@@ -1,3 +1,5 @@
+import { StrategiesReturn, StrategyReturn } from './strategyReturn';
+
 export interface NFTROOM{
   strategies: Array<any[]>;
   sections: RoomSection[];
@@ -13,4 +15,15 @@ export interface RoomSection{
   writeStrategies?:any,
   readStrategies?:any,
   title:string
+}
+
+export interface FullRoomStrategies{
+  roomId:string,
+  room:StrategiesReturn,
+  sections:{
+    [sectionId:string]:{
+      read:StrategiesReturn,
+      write:StrategiesReturn
+    }
+  }
 }
