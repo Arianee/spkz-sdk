@@ -20,5 +20,10 @@ export const JSONRPCErrors = {
     code: 3,
     details: {},
     message: 'Blockchain wallet does not pass strategy to write'
+  },
+  notHasJoinRoomRight: {
+    code: 4,
+    details: {},
+    message: 'Blockchain wallet does not pass strategy to join room'
   }
 };
