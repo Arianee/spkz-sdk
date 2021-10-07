@@ -32,7 +32,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
       });
 
       if (hasRightToJoin.isAuthorized === false) {
-        const errorPayload = JSONRPCErrors.notHasReadRight;
+        const errorPayload = JSONRPCErrors.notHasJoinRoomRight;
         errorPayload.details = hasRightToJoin;
         return callback(errorPayload);
       }

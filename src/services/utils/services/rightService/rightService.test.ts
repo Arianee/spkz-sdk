@@ -254,7 +254,6 @@ describe('rightService', () => {
       expect(r2.write.isAuthorized).toBeTruthy();
     });
   });
-
   describe('fullRoomStrategies', () => {
     ['2', '3', '4', '5', '6'].map(roomId => {
       test(`it should work without address for room Id ${roomId}`, async (done) => {

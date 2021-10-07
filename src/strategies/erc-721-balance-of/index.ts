@@ -1,7 +1,7 @@
 // @ts-nocheck
-import { StrategyReturnPromise } from '../../models/strategyReturn';
+import { EnrichedInformations, StrategyReturnPromise } from '../../models/strategyReturn';
 import web3 from 'web3';
-import { Strategy } from '../../models/strategy';
+import { ERC20BalancesOf, Strategy } from '../../models/strategy';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { ErrorCode } from '../../models/errorCode';
 import { minMaxMessage } from '../helpers/messageHelper';
@@ -52,6 +52,7 @@ const getSymbol = async (param: ERC20BalanceOf) => {
     erc20SmartContracts.methods.symbol().call()
   ]);
 };
+
 export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
   const { params } = strategy;
   const balances = await getBalancesOfChains(strategy);
@@ -71,11 +72,17 @@ export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
 
   const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
 
+  const enrichedInformations: EnrichedInformations = {
+    symbol: symbol,
+    logo: strategy.logo,
+    acquireURLs: strategy.acquireURLs
+  };
   return {
     isAuthorized,
     strategy: strategy,
     message: message,
     code,
+    enrichedInformations,
     details: balances
   };
 };

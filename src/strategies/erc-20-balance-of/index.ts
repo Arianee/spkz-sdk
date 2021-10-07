@@ -65,16 +65,15 @@ const getImageUrl = (token: string, chainId: string) => {
   return `https://storage.googleapis.com/zapper-fi-assets/tokens/${chainName}/${token}.png`;
 };
 
-const getEnrichedInformation = (strategy: Strategy<ERC20BalancesOf>):EnrichedInformations => {
-  //
-  // [https://storage.googleapis.com/zapper-fi-assets/tokens/polygon/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619.png](https://storage.googleapis.com/zapper-fi-assets/tokens/polygon/0x7ceb23fd6bc0add59e62ac25578270cff1b9f619.png)
-
+const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promise<EnrichedInformations> => {
   const tokenOnChain = strategy.params.tokens.find(d => d.chainId === '1' || d.chainId === '132');
 
   const logo = tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : '';
 
+  const [decimals, symbol] = await getDecimalsAndSymbol(strategy.params.tokens[0]);
   return {
     logo,
+    symbol,
     acquireURLs: strategy.acquireURLs
   };
 };
@@ -97,7 +96,7 @@ export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyRet
   });
 
   const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
-  const enrichedInformations = getEnrichedInformation(strategy);
+  const enrichedInformations = await getEnrichedInformation(strategy);
 
   return {
     isAuthorized,
