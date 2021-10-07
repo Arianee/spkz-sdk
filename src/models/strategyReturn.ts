@@ -1,7 +1,7 @@
 import { Strategy } from './strategy';
 
 export interface EnrichedInformations{
-    acquireURLs?:{title:string, url:string} []
+    acquireURLs?:{title:string, url:string, logo?:string} []
     logo?:string,
     symbol?:string
 }
