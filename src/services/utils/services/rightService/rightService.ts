@@ -1,5 +1,5 @@
 import { getStrategyHelperFactory } from '../../../../helpers/getStrategyHelper/getStrategyHelper.helper';
-import { executeStrategies } from '../../../../strategies/executeStrategy';
+import { executeStrategies, executeStrategiesWithCache } from '../../../../strategies/executeStrategy';
 import { FetchRoomService } from '../fetchRoomService/fetchRoomService';
 import { cloneDeep } from 'lodash';
 import { Lifecycle, scoped } from 'tsyringe';
@@ -138,7 +138,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getRoomStrategies();
 
-    return executeStrategies(strategies);
+    return executeStrategiesWithCache(strategies);
   };
 
   public canWriteSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -151,7 +151,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionWriteStrategies(sectionId);
 
-    return executeStrategies(strategies);
+    return executeStrategiesWithCache(strategies);
   }
 
   public canReadSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -164,7 +164,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionReadStrategies(sectionId);
 
-    return executeStrategies(strategies);
+    return executeStrategiesWithCache(strategies);
   }
 
   /**
