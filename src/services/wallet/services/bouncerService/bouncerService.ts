@@ -91,4 +91,18 @@ export class BouncerService {
     featuredRooms.forEach(d => this.fetchRoomService.addToCache(d.roomId, d.roomDetails));
     return featuredRooms;
   }
+
+  public async getVerifiedRoomsId ():Promise<string[]> {
+    const chainId = this.environementService.environment.chainId;
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chainId}/verified-rooms.json`;
+    const verifiedRoomsId = await this.httpService.fetchWithCache(url);
+    return verifiedRoomsId;
+  }
+
+  public async getSpecialRoomsId ():Promise<string[]> {
+    const chainId = this.environementService.environment.chainId;
+    const url = `https://raw.githubusercontent.com/Arianee/spkz-metadata/main/${chainId}/special-rooms.json`;
+    const specialRoomsId = await this.httpService.fetchWithCache(url);
+    return specialRoomsId;
+  }
 }

@@ -41,6 +41,9 @@ const roomId = '0';
     spkz.room.sendMessage({ roomId: roomId, sectionId: 'chat', messageContent: { content } });
   };
 
+  const verifiedId = await spkz.bouncer.getVerifiedRoomsId();
+  console.log(verifiedId);  
+
   function setAddressInFront (address:string) {
     document.getElementById('walletAddress').innerText = address;
   }
