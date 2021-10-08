@@ -67,12 +67,17 @@ export class FetchRoomService {
       this.memCache.put(roomId,
         this.rawFetchRoom(roomId)
           .then(d => {
+            if (typeof d !== 'object') {
+              throw new Error(`This nft ${roomId} is not a json.`);
+            }
             if (this._setCacheRoom) {
               this.memCache.del(roomId);
               this._setCacheRoom({ roomId: roomId, content: d });
             }
             return d;
-          }), cacheTimeout);
+          })
+          .catch(e => this.memCache.del(roomId))
+        , cacheTimeout);
     }
 
     return this.memCache.get(roomId);
