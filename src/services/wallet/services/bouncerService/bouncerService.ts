@@ -29,11 +29,11 @@ export class BouncerService {
 
   }
 
-  public getMyProfile (): Promise<UserProfile> {
+  public async getMyProfile (): Promise<UserProfile> {
     if (!this._cache.get('bouncerUserProfile')) {
       this._cache.put('bouncerUserProfile', this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
         JSONRPCMethods.bouncer.users.getMyProfile,
-        {}));
+        {}).then(profile => profile?.payload || null));
     }
 
     return this._cache.get('bouncerUserProfile');

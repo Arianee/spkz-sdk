@@ -2,6 +2,7 @@ export interface UserProfile {
   avatar?: ProfileAvatar;
   ens?: ProfileEns;
   biography?: string;
+  address?: string;
 }
 
 export interface ProfileEns{
@@ -11,6 +12,7 @@ export interface ProfileEns{
 
 export interface ProfileAvatar{
   tokenId:string;
+  name:string;
   contract:{
     chainId:string;
     networkId:string;

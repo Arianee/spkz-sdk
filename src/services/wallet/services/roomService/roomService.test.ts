@@ -30,6 +30,7 @@ describe('room', () => {
         },
         avatar: {
           tokenId: '2',
+          name: 'lename',
           contract: {
             address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
             chainId: '1',
@@ -59,6 +60,7 @@ describe('room', () => {
           },
           avatar: {
             tokenId: '2',
+            name: 'lename',
             contract: {
               address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
               chainId: '1',
@@ -95,6 +97,7 @@ describe('room', () => {
           },
           avatar: {
             tokenId: '2',
+            name: 'lename',
             contract: {
               address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
               chainId: '1',
@@ -128,6 +131,7 @@ describe('room', () => {
           },
           avatar: {
             tokenId: '2',
+            name: 'lename',
             contract: {
               address: '0xfaff15c6cdaca61a4f87d329689293e07c98f578',
               chainId: '1',
