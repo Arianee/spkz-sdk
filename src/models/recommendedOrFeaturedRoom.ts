@@ -17,5 +17,7 @@ export interface RecommendedOrFeaturedRoom {
         roomId: string;
         roomDetails: NFTROOM;
         membersNb: number;
+        verified?: boolean;
+        special?: boolean;
         requirements: Requirement[];
     }
