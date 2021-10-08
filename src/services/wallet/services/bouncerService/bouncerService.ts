@@ -11,9 +11,12 @@ import { HttpService } from '../../../utils/services/httpService/httpService';
 import { RecommendedOrFeaturedRoom } from '../../../..';
 import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 import { RoomUser } from '../../../../models/jsonrpc/writeMessageParameters';
+import cache from 'memory-cache';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
+  private _cache = new cache.Cache();
+
   constructor (
       private messagingService:ProxyWalletService,
       private fetchRoomService:FetchRoomService,
@@ -26,28 +29,43 @@ export class BouncerService {
 
   }
 
-  public getMyProfile () {
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
-      JSONRPCMethods.bouncer.users.getMyProfile,
-      {});
+  public getMyProfile (): Promise<UserProfile> {
+    if (!this._cache.get('bouncerUserProfile')) {
+      this._cache.put('bouncerUserProfile', this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+        JSONRPCMethods.bouncer.users.getMyProfile,
+        {}));
+    }
+
+    return this._cache.get('bouncerUserProfile');
   }
 
   public updateMyProfile (profile:UserProfile) {
+    this._cache.del('bouncerUserProfile');
+
     return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.users.updateMyProfile,
       profile);
   }
 
   public async getUserRooms ():Promise<RoomUser[]> {
-    const userRooms:RoomUser[] = await this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
-      JSONRPCMethods.bouncer.rooms.getUserRooms,
-      {});
+    if (!this._cache.get('bouncerUserRooms')) {
+      const getUserRoom = async () => {
+        const userRooms: RoomUser[] = await this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+          JSONRPCMethods.bouncer.rooms.getUserRooms,
+          {});
 
-    userRooms.forEach(room => this.fetchRoomService.addToCache(room.roomId, room.roomDetails));
-    return userRooms;
+        userRooms.forEach(room => this.fetchRoomService.addToCache(room.roomId, room.roomDetails));
+        return userRooms;
+      };
+      this._cache.put('bouncerUserRooms', getUserRoom());
+    }
+
+    return this._cache.get('bouncerUserRooms');
   }
 
   public async joinRoom (parameters:{roomId}) {
+    this._cache.del('bouncerUserRooms');
+
     const { roomId } = parameters;
     requiredDefined(roomId, 'roomId is required');
 
