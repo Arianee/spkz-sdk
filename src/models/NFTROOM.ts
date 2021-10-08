@@ -14,7 +14,9 @@ export interface RoomSection{
   id:string,
   writeStrategies?:any,
   readStrategies?:any,
-  title:string
+  title:string,
+  type?:string,
+  url?:string
 }
 
 export interface FullRoomStrategies{
