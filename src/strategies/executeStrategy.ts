@@ -2,6 +2,7 @@ import { Strategy } from '../models/strategy';
 import * as implementedStrategies from './strategies';
 import { StrategiesReturn, StrategyReturn } from '../models/strategyReturn';
 import { requiredDefined } from '../helpers/required/required';
+import { CacheStrategyWrapper } from '../helpers/cacheWrapper/cacheStrategyWrapper';
 
 const camelCase = require('camelcase');
 
@@ -42,3 +43,6 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
     strategies: strategiesResults
   };
 };
+
+const cacheWrapper = new CacheStrategyWrapper().create(executeStrategies);
+export const executeStrategiesWithCache:(strategies: Strategy[][], tokenId?:string)=>Promise<StrategiesReturn> = cacheWrapper;

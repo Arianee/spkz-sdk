@@ -1,4 +1,4 @@
-import { executeStrategies } from './executeStrategy';
+import { executeStrategies, executeStrategiesWithCache } from './executeStrategy';
 
 jest.setTimeout(60000);
 
@@ -483,6 +483,87 @@ describe('execute strategies of room-owner', () => {
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);
     expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+});
+describe('execute strategies with cache', () => {
+  test('strategy if authorized false should not be cache', async () => {
+    const strategies = [
+      [
+        {
+          name: 'erc-20-balance-of',
+          addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+          params: {
+            minBalance: '100000000',
+            tokens: [
+              {
+                chainId: '77',
+                networkId: '1',
+                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+              }
+            ]
+          }
+        }]];
+    const now = Date.now();
+    const strategyProvider1 = await executeStrategiesWithCache(strategies, '0');
+    const time1 = Date.now() - now;
+
+    const now2 = Date.now();
+
+    const strategyProvider2 = await executeStrategiesWithCache(strategies, '0');
+    const time2 = Date.now() - now2;
+
+    expect(strategyProvider2.isAuthorized).toBeFalsy();
+    expect(time2 > 10).toBeTruthy();
+    expect(strategyProvider2).toEqual(strategyProvider1);
+    expect(strategyProvider2.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider2.strategies[0][0].code).toBeDefined();
+  });
+  test('strategy if authorized with cache should be very faster second times', async () => {
+    const strategies = [
+      [
+        {
+          name: 'erc-20-balance-of',
+          addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+          params: {
+            minBalance: '0',
+            tokens: [
+              {
+                chainId: '77',
+                networkId: '1',
+                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
+              },
+              {
+                chainId: '1',
+                networkId: '1',
+                address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+              }
+            ]
+          }
+        },
+        {
+          name: 'is-exact-address',
+          addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+          params: {
+            addresses: [
+              '0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'
+            ]
+          }
+        }]];
+    const now = Date.now();
+    const strategyProvider1 = await executeStrategiesWithCache(strategies, '0');
+    const time1 = Date.now() - now;
+
+    const now2 = Date.now();
+
+    const strategyProvider2 = await executeStrategiesWithCache(strategies, '0');
+    const time2 = Date.now() - now2;
+
+    expect(time2 < 10).toBeTruthy();
+    expect(time2 < time1).toBeTruthy();
+    expect(strategyProvider2).toEqual(strategyProvider1);
+    expect(strategyProvider2.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider2.strategies[0][0].code).toBeDefined();
+    expect(strategyProvider2.isAuthorized).toBeTruthy();
   });
 });
 
