@@ -9,7 +9,7 @@ import { RightService } from '../../../utils/services/rightService/rightService'
 import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
 
-const localStorageAuthorizationKey = 'authorizations';
+const localStorageAuthorizationKey = 'spkz_authorizations';
 @scoped(Lifecycle.ContainerScoped)
 export class ProxyWalletService {
   constructor (

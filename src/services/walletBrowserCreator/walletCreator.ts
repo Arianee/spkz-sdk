@@ -3,7 +3,7 @@ import { isPrivateKeyValid } from '../../helpers/isPrivateKeyValid/isPrivateKeyV
 import { SPKZ } from '../wallet';
 import { required, requiredDefined } from '../../helpers/required/required';
 
-const key = 'messagingPrivateKey';
+const key = 'spkz_proxyWalletPK';
 
 const createOrRetrieveWallet = () => {
   requiredDefined(window, '1/ this method is intended to be used on a browser');
