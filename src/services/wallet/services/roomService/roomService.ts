@@ -8,7 +8,7 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
-import { FullRoomStrategies, NFTROOM } from '../../../../models/NFTROOM';
+import { NFTROOM } from '../../../../models/NFTROOM';
 import { MessageService } from '../messageService/messageService';
 
 @scoped(Lifecycle.ContainerScoped)
@@ -107,8 +107,8 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile }) {
-    const { roomId, sectionId, profile } = parameters;
+  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?:boolean }) {
+    const { roomId, sectionId, profile, dry } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     requiredDefined(profile, 'profile is required');
@@ -119,7 +119,8 @@ export class RoomService {
     const params = {
       sectionId,
       profile,
-      roomId
+      roomId,
+      dry
     };
 
     await this.updateProfile(parameters);
@@ -132,8 +133,8 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile }) {
-    const { roomId, sectionId, profile } = parameters;
+  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?:boolean }) {
+    const { roomId, sectionId, profile, dry } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     requiredDefined(profile, 'profile is required');
@@ -144,7 +145,8 @@ export class RoomService {
     const params = {
       sectionId,
       profile,
-      roomId
+      roomId,
+      dry
     };
 
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.updateProfile, params);
