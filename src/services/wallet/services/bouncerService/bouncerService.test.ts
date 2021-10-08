@@ -65,7 +65,7 @@ describe('bouncer service', () => {
           }
         };
         const myProfile0 = await proxyWallet.bouncer.getMyProfile();
-        expect(myProfile0).toBeNull();
+        expect(myProfile0).toMatchObject({});
         await proxyWallet.bouncer.updateMyProfile({
           biography: 'labiography',
           ens: {

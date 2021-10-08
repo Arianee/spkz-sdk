@@ -33,7 +33,7 @@ export class BouncerService {
     if (!this._cache.get('bouncerUserProfile')) {
       this._cache.put('bouncerUserProfile', this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
         JSONRPCMethods.bouncer.users.getMyProfile,
-        {}).then(profile => profile?.payload || null));
+        {}).then(profile => profile?.payload || {}));
     }
 
     return this._cache.get('bouncerUserProfile');
