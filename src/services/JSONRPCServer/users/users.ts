@@ -7,21 +7,32 @@ import { SectionUserParameters } from '../../../models/jsonrpc/JSONRPCParameters
 import { ErrorPayload } from '../../../models/jsonrpc/errorPayload';
 
 export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: SectionUserParameters) => {
-  const { chainId, network } = networkParameters;
+  const {
+    chainId,
+    network
+  } = networkParameters;
 
   const userUpdate = async (params, callback) => {
     try {
       requiredDefined(params, 'params should be defined');
-
-      const { authorizations, roomId, sectionId, userProfile } = params;
+      const {
+        authorizations,
+        roomId,
+        sectionId,
+        userProfile,
+        dry
+      } = params;
       requiredDefined(roomId, 'roomId should be defined');
       requiredDefined(sectionId, 'sectionId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+      const {
+        isAuthorized,
+        blockchainWallets
+      } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
         return callback(errorPayload);
       }
 
@@ -37,14 +48,16 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         return callback(errorPayload);
       }
 
-      await configuration.createOrUpdateProfile({
-        roomId,
-        sectionId,
-        blockchainWallet: firstBlockchainWallet,
-        chainId,
-        network,
-        payload: params
-      });
+      if (dry !== true) {
+        await configuration.createOrUpdateProfile({
+          roomId,
+          sectionId,
+          blockchainWallet: firstBlockchainWallet,
+          chainId,
+          network,
+          payload: params
+        });
+      }
 
       return callback(null, params);
     } catch (e) {
@@ -58,22 +71,34 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
     try {
       requiredDefined(params, 'params should be defined');
 
-      const { authorizations, roomId, sectionId } = params;
+      const {
+        authorizations,
+        roomId,
+        sectionId
+      } = params;
       requiredDefined(roomId, 'roomId should be defined');
       requiredDefined(sectionId, 'sectionId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets, proxyWalletAddress } = await utils.rightService
+      const {
+        isAuthorized,
+        blockchainWallets,
+        proxyWalletAddress
+      } = await utils.rightService
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
         return callback(errorPayload);
       }
 
       const firstBlockchainWallet = blockchainWallets[0];
       const hasRightToRead = await utils.rightService.canReadSection(
-        { roomId, sectionId, address: firstBlockchainWallet });
+        {
+          roomId,
+          sectionId,
+          address: firstBlockchainWallet
+        });
 
       if (hasRightToRead.isAuthorized === false) {
         const errorPayload = JSONRPCErrors.notHasReadRight;
@@ -103,16 +128,23 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
   const joinSection = async (params, callback) => {
     try {
       requiredDefined(params, 'params should be defined');
-
-      const { authorizations, roomId, sectionId, userProfile } = params;
+      const {
+        authorizations,
+        roomId,
+        sectionId,
+        userProfile
+      } = params;
       requiredDefined(roomId, 'roomId should be defined');
       requiredDefined(sectionId, 'sectionId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+      const {
+        isAuthorized,
+        blockchainWallets
+      } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
         return callback(errorPayload);
       }
 
@@ -130,14 +162,16 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         return callback(errorPayload);
       }
 
-      await configuration.joinSection({
-        roomId,
-        sectionId,
-        blockchainWallet: firstBlockchainWallet,
-        chainId,
-        network,
-        payload: params
-      });
+      if (params.dry !== true) {
+        await configuration.joinSection({
+          roomId,
+          sectionId,
+          blockchainWallet: firstBlockchainWallet,
+          chainId,
+          network,
+          payload: params
+        });
+      }
 
       return callback(null, hasRights);
     } catch (e) {
