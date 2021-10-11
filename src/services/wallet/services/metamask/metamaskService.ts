@@ -2,6 +2,7 @@ import { Lifecycle, scoped } from 'tsyringe';
 import { network } from '../../../../models/network.enum';
 import { getNetworkInfo } from '../../../../helpers/networkInfos/networkInfos.helper';
 import { required, requiredDefined } from '../../../../helpers/required/required';
+import { Signaturev4 } from '../../../../models/signaturev4';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -67,6 +68,15 @@ export class MetamaskService {
     return this._window.ethereum.request({
       method: 'personal_sign',
       params: [this.defaultAccount, data]
+    });
+  }
+
+  public signDatav4 = (data: Signaturev4): Promise<string> => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+    const payload = JSON.stringify(data);
+    return this._window.ethereum.request({
+      method: 'eth_signTypedData_v4',
+      params: [this.defaultAccount, payload]
     });
   }
 }
