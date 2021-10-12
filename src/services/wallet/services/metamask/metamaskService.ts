@@ -27,10 +27,7 @@ export class MetamaskService {
       this.hasMetamask = true;
       const isMMUnlock = await this._window.ethereum._metamask.isUnlocked();
       if (isMMUnlock) {
-        const permissions = await this._window.ethereum.request({ method: 'wallet_getPermissions' });
-        if (permissions.length > 0) {
-          await this.initMetamask();
-        }
+        await this.initMetamask();
       }
     }
   }
