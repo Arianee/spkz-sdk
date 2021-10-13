@@ -83,7 +83,7 @@ const getImageUrl = (token: string, chainId: string) => {
 const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promise<EnrichedInformations> => {
   const tokenOnChain = strategy.params.tokens.find(d => d.chainId === '1' || d.chainId === '132');
 
-  const logo = tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : '';
+  const logo = tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : strategy.params.logo;
 
   const [decimals, symbol] = await getDecimalsAndSymbol(strategy.params.tokens[0]);
   return {
