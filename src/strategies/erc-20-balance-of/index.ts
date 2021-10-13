@@ -8,6 +8,7 @@ import { web3Factory } from '../helpers/web3Factory';
 import { requiredDefined, requiredType } from '../../helpers/required/required';
 import { flattenDeep } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
+import BigNumber from 'bignumber.js';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC20Address, chainId } = token;
@@ -31,16 +32,30 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
   ));
 };
 
-const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
+const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>, decimals:string): Promise<{
+  sumWithDecimals:string,
+  sum: string,
+  decimals:string,
+  balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { addresses, params } = strategy;
 
   const balances:any[] = await Promise.all(params.tokens
     .map(param => getBalancesOfFromChain(param, addresses)));
 
   const flatBalances = flattenDeep(balances);
+  const sumWithDecimals = sumBN(flatBalances.map(d => d.balanceOf));
+
+  const amountWithDecimals = new BigNumber(sumWithDecimals);
+  const bnDecimals = new BigNumber(10).pow(new BigNumber(decimals));
+
+  const sum = amountWithDecimals
+    .div(bnDecimals)
+    .toFixed();
 
   return {
-    sum: sumBN(flatBalances.map(d => d.balanceOf)),
+    decimals,
+    sumWithDecimals: amountWithDecimals.toFixed(),
+    sum,
     balances: flatBalances
   };
 };
@@ -79,11 +94,10 @@ const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promi
 };
 export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
-
-  const balances = await getBalancesOfChains(strategy);
   const [decimals, symbol] = await getDecimalsAndSymbol(params.tokens[0]);
+  const balances = await getBalancesOfChains(strategy, decimals);
 
-  const amount = web3.utils.toBN(balances.sum);
+  const amount = web3.utils.toBN(balances.sumWithDecimals);
   const minAmount = web3.utils.toBN(params.minBalance);
 
   const isAuthorized = amount.gte(minAmount);
@@ -91,7 +105,7 @@ export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyRet
   const message = minMaxMessage({
     symbol,
     decimals,
-    balance: balances.sum,
+    balance: balances.sumWithDecimals,
     amountRequired: params.minBalance
   });
 
