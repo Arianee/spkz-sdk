@@ -7,7 +7,8 @@ export interface Strategy<T=ERC20BalancesOf|isExactAddresses | RoomOwner> {
 
 export interface ERC20BalancesOf {
     minBalance:string,
-    tokens?:Array<ERC20BalanceOf>
+    tokens?:Array<ERC20BalanceOf>,
+    logo?:string
 }
 
 export interface isExactAddresses {
