@@ -32,6 +32,22 @@ export class MetamaskService {
     }
   }
 
+  public getInstallationLink = (dappUrl:string): string => {
+    requiredDefined(this._window, "You can't use metamask on nodejs");
+    required(!dappUrl.includes('https'), 'You need to pass the url without the protocol');
+
+    const isMobile = this.mobileAndTabletCheck();
+    if (isMobile) {
+      return `https://metamask.app.link/dapp/${dappUrl}`;
+    }
+
+    return 'https://metamask.io/';
+  }
+
+  private mobileAndTabletCheck () {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  };
+
   public initMetamask = async (): Promise<void> => {
     requiredDefined(this._window, "You can't use metamask on nodejs");
 
