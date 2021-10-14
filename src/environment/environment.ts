@@ -42,7 +42,7 @@ export const environment:{[key:string]:IEnvironment} = {
     bouncerURL: 'https://bouncer.spkz.io',
     bouncerRPCURL: 'https://bouncer.spkz.io/spkz/rpc',
     defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mainnet',
-    roomContractAddress: '',
+    roomContractAddress: ContractAddresses['137'],
     chainId: '137',
     networkdId: '1'
   }

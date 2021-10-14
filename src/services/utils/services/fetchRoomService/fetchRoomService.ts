@@ -76,7 +76,10 @@ export class FetchRoomService {
             }
             return d;
           })
-          .catch(e => this.memCache.del(roomId))
+          .catch(e => {
+            console.error('fetchRoom error', e.toString());
+            return this.memCache.del(roomId);
+          })
         , cacheTimeout);
     }
 
