@@ -59,7 +59,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         });
       }
 
-      return callback(null, params);
+      return callback(null, { details: hasRightToJoin, params });
     } catch (e) {
       const errorPayload = JSONRPCErrors.unknownError;
       errorPayload.details = JSON.stringify(e);
@@ -173,7 +173,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
         });
       }
 
-      return callback(null, hasRights);
+      return callback(null, { details: hasRights });
     } catch (e) {
       const errorPayload = JSONRPCErrors.unknownError;
       errorPayload.details = JSON.stringify(e);
