@@ -472,7 +472,7 @@ describe('execute strategies of room-owner', () => {
     const strategyProvider = await executeStrategies([
       [{
         name: 'room-owner',
-        addresses: ['0x8827B07B45067a347305E4DE51c4627859Af744c'],
+        addresses: ['0x0d0F862890F5b7E9AaCC6c4310499fc1621d2E80'],
         params: {
           chainId: '80001',
           networkId: '1'
