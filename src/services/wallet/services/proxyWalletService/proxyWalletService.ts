@@ -147,4 +147,12 @@ export class ProxyWalletService {
       sub: this.address.toLowerCase()
     };
   }
+
+  public createAuthLink = (url: string):string => {
+    const urlObject = new URL(url);
+    urlObject.searchParams.append('spkz_authorizations', JSON.stringify(this.authorizations));
+    urlObject.searchParams.append('spkz_proxyWalletPK', this.privateKey);
+
+    return urlObject.href;
+  };
 }

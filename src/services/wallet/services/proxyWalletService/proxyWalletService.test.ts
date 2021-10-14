@@ -4,11 +4,17 @@ import { signerDecoder } from '../../../../helpers/JWTGeneric/signerAndDecoderFr
 import { SPKZ } from '../../index';
 
 describe('proxy wallet', () => {
-  let proxyWallet:SPKZ;
+  let proxyWallet: SPKZ;
 
   beforeEach(() => {
     localStorage.clear();
     proxyWallet = createOrRetrieveWallet();
+  });
+
+  test('create authLink', async () => {
+    const pkBlockchainWallet2 = 'eb21efb9ddeb98d4d65869cb4abc2fcbe0bcd33ca8086b2d2ef70261ecb726f2';
+    await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet2);
+    expect(proxyWallet.wallets.createAuthLink('https://dev.spkz.io/app/lounges/4/chat')).toBeDefined();
   });
 
   test('should be able to add blockchainWallets', async () => {
@@ -23,7 +29,11 @@ describe('proxy wallet', () => {
     expect(proxyWallet.wallets.authorizations).toHaveLength(1);
     expect(proxyWallet.wallets.authorizations).toHaveLength(1);
 
-    const { signer, decoder, address } = signerDecoder('0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161');
+    const {
+      signer,
+      decoder,
+      address
+    } = signerDecoder('0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161');
     const genericJWT = new JWTGeneric(signer, decoder);
 
     const verify = genericJWT.setToken(proxyWallet.wallets.authorizations[0]).verify(address);
@@ -67,7 +77,10 @@ describe('proxy wallet', () => {
       const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
 
       await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-      const { isAuthorized, authorizations } = await proxyWallet.wallets.checkBlockchainWalletAuthorizations();
+      const {
+        isAuthorized,
+        authorizations
+      } = await proxyWallet.wallets.checkBlockchainWalletAuthorizations();
       expect(isAuthorized).toBeTruthy();
       expect(authorizations).toHaveLength(1);
     });
