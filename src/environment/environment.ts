@@ -10,7 +10,7 @@ export interface IEnvironment{
 
 export const ContractAddresses = {
   80001: '0x56c35dF413b3cd753f85427e55A8dF66A79f1bd7',
-  137: '0x56c35dF413b3cd753f85427e55A8dF66A79f1bd7'
+  137: '0xd429262030B75De758Ff807282405fc3b32F8416'
 };
 
 export const environment:{[key:string]:IEnvironment} = {
