@@ -67,7 +67,8 @@ const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
 
   return Promise.all([
     erc20SmartContracts.methods.decimals().call(),
-    erc20SmartContracts.methods.symbol().call()
+    erc20SmartContracts.methods.symbol().call(),
+    erc20SmartContracts.methods.name().call()
   ]);
 };
 
@@ -87,10 +88,11 @@ const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promi
 
   const logo = isErc20Token && tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : strategy.params.logo;
 
-  const [decimals, symbol] = await getDecimalsAndSymbol(strategy.params.tokens[0]);
+  const [decimals, symbol, name] = await getDecimalsAndSymbol(strategy.params.tokens[0]);
   return {
     logo,
     symbol,
+    name,
     acquireURLs: strategy.acquireURLs
   };
 };

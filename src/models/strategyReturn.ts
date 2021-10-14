@@ -3,7 +3,8 @@ import { Strategy } from './strategy';
 export interface EnrichedInformations{
     acquireURLs?:{title:string, url:string, logo?:string} []
     logo?:string,
-    symbol?:string
+    symbol?:string,
+    name?:string
 }
 export interface StrategyReturn {
     strategy: Strategy
