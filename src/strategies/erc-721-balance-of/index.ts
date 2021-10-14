@@ -49,14 +49,15 @@ const getSymbol = async (param: ERC20BalanceOf) => {
   const erc20SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, ERC20Address);
 
   return Promise.all([
-    erc20SmartContracts.methods.symbol().call()
+    erc20SmartContracts.methods.symbol().call(),
+    erc20SmartContracts.methods.name().call()
   ]);
 };
 
 export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
   const { params } = strategy;
   const balances = await getBalancesOfChains(strategy);
-  const [symbol] = await getSymbol(params.tokens[0]);
+  const [symbol, name] = await getSymbol(params.tokens[0]);
 
   const amount = web3.utils.toBN(balances.sum);
   const minAmount = web3.utils.toBN(params.minBalance);
@@ -65,6 +66,7 @@ export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
 
   const message = minMaxMessage({
     symbol,
+    name,
     decimals: 0,
     balance: balances.sum,
     amountRequired: params.minBalance
@@ -74,6 +76,7 @@ export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
 
   const enrichedInformations: EnrichedInformations = {
     symbol: symbol,
+    name: name,
     logo: strategy.logo,
     acquireURLs: strategy.acquireURLs
   };
