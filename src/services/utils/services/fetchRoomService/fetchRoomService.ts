@@ -42,7 +42,11 @@ export class FetchRoomService {
   };
 
   public rawFetchRoom = async (roomId) => {
-    const tokenURI = await this.contractService.erc721Contract().methods.tokenURI(roomId).call();
+    const tokenURI = await this.contractService.erc721Contract().methods.tokenURI(roomId)
+      .call().catch((e) => { console.error('error fetchingRoom', e); return undefined; });
+    if (tokenURI === undefined) {
+      return undefined;
+    }
     return this.httpService.fetch(tokenURI);
   };
 
@@ -78,7 +82,7 @@ export class FetchRoomService {
           })
           .catch(e => {
             console.error('fetchRoom error', e.toString());
-            return this.memCache.del(roomId);
+            this.memCache.del(roomId);
           })
         , cacheTimeout);
     }

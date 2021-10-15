@@ -1,5 +1,8 @@
 import { container } from 'tsyringe';
 import { FetchRoomService } from './fetchRoomService';
+import { HttpService } from '../httpService/httpService';
+import { Contract } from 'ethers';
+import { ContractService } from '../contractService/contractService';
 
 describe('fetchRoom', () => {
   let fetchRoomService: FetchRoomService;
@@ -90,5 +93,11 @@ describe('fetchRoom', () => {
     ]);
 
     expect(fetchRoomService.rawFetchRoom).toHaveBeenCalledTimes(3);
+  });
+
+  test('fetchroom should return undefined if room doesn\'t exist', async () => {
+    fetchRoomService.rawFetchRoom = () => { return Promise.resolve(undefined); };
+    const roomUndefined = await fetchRoomService.fetchRoom('1');
+    expect(roomUndefined).toBeUndefined();
   });
 });
