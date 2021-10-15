@@ -9,6 +9,7 @@ import { requiredDefined, requiredType } from '../../helpers/required/required';
 import { flattenDeep } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
 import BigNumber from 'bignumber.js';
+import { abbreviateStringNumber } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC20Address, chainId } = token;
@@ -52,10 +53,11 @@ const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>, decimals
     .div(bnDecimals)
     .toFixed();
 
+  const abbreviatedSum:string = abbreviateStringNumber(sum);
   return {
     decimals,
     sumWithDecimals: amountWithDecimals.toFixed(),
-    sum,
+    sum: abbreviatedSum,
     balances: flatBalances
   };
 };
