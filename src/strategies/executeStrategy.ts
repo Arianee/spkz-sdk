@@ -5,8 +5,9 @@ import { requiredDefined } from '../helpers/required/required';
 import { CacheStrategyWrapper } from '../helpers/cacheWrapper/cacheStrategyWrapper';
 
 const camelCase = require('camelcase');
+const cacheWrapper = new CacheStrategyWrapper();
 
-export const executeStrategies = async (strategies: Strategy[][], tokenId:string = '0'): Promise<StrategiesReturn> => {
+export const executeStrategies = async (strategies: Strategy[][], tokenId:string = '0', cache = false): Promise<StrategiesReturn> => {
   // Checking all strategies exist
   strategies
     .forEach(orStrategies =>
@@ -24,7 +25,13 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
           const camelCaseName = camelCase(strategy.name);
           // remove null and undefined adresses
           strategy.addresses = strategy.addresses ? strategy.addresses.filter(d => d) : [];
-          return implementedStrategies[camelCaseName](strategy, tokenId) as StrategyReturn;
+          strategy.tokenId = tokenId;
+          const factoryFunc = () => implementedStrategies[camelCaseName](strategy);
+          if (cache) {
+            return cacheWrapper.execute(strategy, factoryFunc);
+          } else {
+            return factoryFunc();
+          }
         }));
       }));
 
@@ -44,5 +51,5 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
   };
 };
 
-const cacheWrapper = new CacheStrategyWrapper().create(executeStrategies);
-export const executeStrategiesWithCache:(strategies: Strategy[][], tokenId?:string)=>Promise<StrategiesReturn> = cacheWrapper;
+export const executeStrategiesWithCache = (strategies: Strategy[][], tokenId:string = '0') =>
+  executeStrategies(strategies, tokenId, true);

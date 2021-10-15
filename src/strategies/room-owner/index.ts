@@ -18,11 +18,13 @@ import { requiredDefined } from '../../helpers/required/required';
  * @param web3Provider
  */
 
-export const strategy = async (strategy: Strategy<RoomOwner>, tokenId:string): StrategyReturnPromise => {
+export const strategy = async (strategy: Strategy<RoomOwner>): StrategyReturnPromise => {
   const web3Provider = await web3Factory(strategy.params.chainId);
-
+  const { tokenId } = strategy;
   const contractAddress = ContractAddresses[strategy.params.chainId];
   requiredDefined(contractAddress, 'this chainId does not have a spkz nft contract');
+  requiredDefined(tokenId, 'this tokenId is not defined');
+
   let isAuthorized = false;
   let code;
   let message;

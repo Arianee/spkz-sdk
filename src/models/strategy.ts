@@ -2,6 +2,7 @@ export interface Strategy<T=ERC20BalancesOf|isExactAddresses | RoomOwner> {
     name:string,
     addresses?:string[],
     params?: T,
+    tokenId?:string;
     acquireURLs?:{title:string, url:string}[]
 }
 
