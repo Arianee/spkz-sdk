@@ -7,7 +7,7 @@ describe('Execute strategy', () => {
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 
   describe('execute strategies of erc 20 balance of', () => {
-    test('erc 20 balance of without addresses should return enriched informations', async () => {
+    test('DEV erc 20 balance of without addresses should return enriched informations', async () => {
       const strategyProvider = await executeStrategies([
         [{
           name: 'erc-20-balance-of',
@@ -34,6 +34,7 @@ describe('Execute strategy', () => {
       ]);
 
       const { enrichedInformations, message, code } = strategyProvider.strategies[0][0];
+
       expect(enrichedInformations).toBeDefined();
       expect(enrichedInformations.acquireURLs).toHaveLength(1);
       expect(enrichedInformations.logo).toBeDefined();
