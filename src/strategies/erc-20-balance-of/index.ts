@@ -80,7 +80,7 @@ const getImageUrl = (token: string, chainId: string) => {
 
   const chainName = chainId === '1' ? 'ethereum' : 'polygon';
 
-  return `https://storage.googleapis.com/zapper-fi-assets/tokens/${chainName}/${token}.png`;
+  return `https://storage.googleapis.com/zapper-fi-assets/tokens/${chainName}/${token.toLowerCase()}.png`;
 };
 
 const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promise<EnrichedInformations> => {
