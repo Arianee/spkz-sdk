@@ -9,7 +9,7 @@ import { requiredDefined, requiredType } from '../../helpers/required/required';
 import { flattenDeep } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
 import BigNumber from 'bignumber.js';
-import { abbreviateStringNumber } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
+import { abbreviateStringNumber, abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC20Address, chainId } = token;
@@ -46,18 +46,11 @@ const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>, decimals
   const flatBalances = flattenDeep(balances);
   const sumWithDecimals = sumBN(flatBalances.map(d => d.balanceOf));
 
-  const amountWithDecimals = new BigNumber(sumWithDecimals);
-  const bnDecimals = new BigNumber(10).pow(new BigNumber(decimals));
-
-  const sum = amountWithDecimals
-    .div(bnDecimals)
-    .toFixed();
-
-  const abbreviatedSum:string = abbreviateStringNumber(sum);
+  const abbreviatedSum = abbreviateTokenBN(sumWithDecimals, decimals);
   return {
     decimals,
-    sumWithDecimals: amountWithDecimals.toFixed(),
-    sum: abbreviatedSum,
+    sumWithDecimals: abbreviatedSum.withDecimals,
+    sum: abbreviatedSum.abbreviated,
     balances: flatBalances
   };
 };
@@ -115,6 +108,13 @@ export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyRet
     amountRequired: params.minBalance
   });
 
+  const minBalanceAbbreviated = abbreviateTokenBN(params.minBalance, decimals);
+
+  const details = {
+    ...balances,
+    minBalance: minBalanceAbbreviated.abbreviated,
+    minBalanceWithDecimals: minBalanceAbbreviated.withoutDecimals
+  };
   const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
   const enrichedInformations = await getEnrichedInformation(strategy);
 
@@ -123,7 +123,7 @@ export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyRet
     strategy: strategy,
     message: message,
     code,
-    details: balances,
+    details,
     enrichedInformations
   };
 };
