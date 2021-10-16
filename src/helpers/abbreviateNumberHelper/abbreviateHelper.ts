@@ -7,7 +7,7 @@ export const abbreviateStringNumber = (num:string):string => {
 
   if (smallNumber) {
     const numToNumber = +num;
-    const isTooSmall = numToNumber < 0.0001;
+    const isTooSmall = numToNumber < 0.0001 && numToNumber > 0;
     const roundedNumber = (Math.round(numToNumber * 1000) / 1000).toString();
     return isTooSmall ? 'few' : roundedNumber;
   } else {

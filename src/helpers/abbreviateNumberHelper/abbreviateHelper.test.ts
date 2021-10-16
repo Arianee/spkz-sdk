@@ -22,6 +22,11 @@ describe('abbreviate helper', () => {
     expect(abbreviateStringNumber('100000000000')).toBe('100B');
   });
 
+  test('should return for 0 number', () => {
+    expect(abbreviateStringNumber('0.0')).toBe('0');
+    expect(abbreviateStringNumber('0')).toBe('0');
+  });
+
   test('should return for small number', () => {
     expect(abbreviateStringNumber('0.00001')).toBe('few');
     expect(abbreviateStringNumber('0.001')).toBe('0.001');
@@ -39,6 +44,12 @@ describe('abbreviate helper', () => {
       expect(withDecimals).toBe('10000000000000000000');
       expect(withoutDecimals).toBe('10');
       expect(abbreviated).toBe('10');
+    });
+    test('should return for 0 number', () => {
+      const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('0', '18');
+      expect(withDecimals).toBe('0');
+      expect(withoutDecimals).toBe('0');
+      expect(abbreviated).toBe('0');
     });
     test('should return for small number', () => {
       const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('1', '18');
