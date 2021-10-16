@@ -1,4 +1,5 @@
 import { abbreviate } from '@pqt/abbreviate';
+import BigNumber from 'bignumber.js';
 
 export const abbreviateStringNumber = (num:string):string => {
   const numbersSplitted = num.split('.');
@@ -12,4 +13,24 @@ export const abbreviateStringNumber = (num:string):string => {
   } else {
     return abbreviate(+num, 4);
   }
+};
+
+export const abbreviateTokenBN = (num:string, decimals:string):{
+  abbreviated:string,
+  withoutDecimals:string,
+  withDecimals:string} => {
+  const amountWithDecimals = new BigNumber(num);
+  const bnDecimals = new BigNumber(10).pow(new BigNumber(decimals));
+
+  const bnWithoutDecimals = amountWithDecimals
+    .div(bnDecimals)
+    .toFixed();
+
+  const abbreviated:string = abbreviateStringNumber(bnWithoutDecimals);
+
+  return {
+    abbreviated,
+    withoutDecimals: bnWithoutDecimals,
+    withDecimals: num
+  };
 };

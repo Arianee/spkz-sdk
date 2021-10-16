@@ -1,4 +1,4 @@
-import { abbreviateStringNumber } from './abbreviateHelper';
+import { abbreviateStringNumber, abbreviateTokenBN } from './abbreviateHelper';
 
 describe('abbreviate helper', () => {
   test('should return k for 1000', () => {
@@ -26,5 +26,25 @@ describe('abbreviate helper', () => {
     expect(abbreviateStringNumber('0.00001')).toBe('few');
     expect(abbreviateStringNumber('0.001')).toBe('0.001');
     expect(abbreviateStringNumber('0.0020001')).toBe('0.002');
+  });
+  describe('abbreviateTokenBN', () => {
+    test('should return for very big number', () => {
+      const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('100000000000000000000000', '18');
+      expect(withDecimals).toBe('100000000000000000000000');
+      expect(withoutDecimals).toBe('100000');
+      expect(abbreviated).toBe('100K');
+    });
+    test('should return for big number', () => {
+      const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('10000000000000000000', '18');
+      expect(withDecimals).toBe('10000000000000000000');
+      expect(withoutDecimals).toBe('10');
+      expect(abbreviated).toBe('10');
+    });
+    test('should return for small number', () => {
+      const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('1', '18');
+      expect(withDecimals).toBe('1');
+      expect(withoutDecimals).toBe('0.000000000000000001');
+      expect(abbreviated).toBe('few');
+    });
   });
 });
