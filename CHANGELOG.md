@@ -1,5 +1,10 @@
 #  Spkz SDK
 #  Release notes
+## v1.2.0 ( 2021-10-18 )
+
+### **release (1):**
+ - release(version): Increase next develop version of v1.1.0
+
 ## v1.1.0 ( 2021-10-18 )
 
 ### **feat (60):**
