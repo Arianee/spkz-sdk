@@ -47,15 +47,14 @@ export class CacheStrategyWrapper {
         this.addStrategyCache(strategy, executingStrat, this.cacheTimeout.authorized);
 
         executingStrat
-          .catch(e => {
-            this.deleteStraetgyCache(strategy);
-            return e;
-          })
           .then((d: StrategyReturn) => {
             if (d.isAuthorized === false) {
               this.addStrategyCache(strategy, executingStrat, this.cacheTimeout.notAuthorized);
             }
             return d;
+          }).catch(e => {
+            this.deleteStraetgyCache(strategy);
+            return e;
           });
       }
     } catch (e) {
