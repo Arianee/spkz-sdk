@@ -3,7 +3,8 @@ export interface Strategy<T=ERC20BalancesOf|isExactAddresses | RoomOwner> {
     addresses?:string[],
     params?: T,
     tokenId?:string;
-    acquireURLs?:{title:string, url:string}[]
+    acquireURLs?:{title:string, url:string}[],
+    logo?:string
 }
 
 export interface ERC20BalancesOf {
