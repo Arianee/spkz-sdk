@@ -30,8 +30,17 @@ export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:st
       });
       requiredType(strats, 'array', error(1));
       required(strats.length > 0, error(2));
-      requiredType(strats[0], 'array', error(3));
-      required(strats[0].length >= 0, error(4));
+
+      strats.forEach(strat => {
+        requiredType(strat, 'array', error(3));
+        strat.forEach(subStrat => {
+          requiredDefined(subStrat.name, {
+            code: 4,
+            content: nftRoom,
+            message: 'Your strategy has no name.'
+          });
+        });
+      });
     };
 
     requiredDefined(nftRoom.strategies, 'main strategies should be defined');
