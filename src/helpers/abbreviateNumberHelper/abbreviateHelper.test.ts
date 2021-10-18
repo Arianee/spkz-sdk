@@ -1,6 +1,12 @@
 import { abbreviateStringNumber, abbreviateTokenBN } from './abbreviateHelper';
 
 describe('abbreviate helper', () => {
+  test('simple number', () => {
+    expect(abbreviateStringNumber('2.290012287139148')).toBe('2.29');
+    expect(abbreviateStringNumber('2.291112287139148')).toBe('2.291');
+    expect(abbreviateStringNumber('2.291512287139148')).toBe('2.292');
+  });
+
   test('should return k for 1000', () => {
     expect(abbreviateStringNumber('1000')).toBe('1K');
     expect(abbreviateStringNumber('9999')).toBe('9.999K');
