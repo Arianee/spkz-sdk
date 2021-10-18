@@ -8,16 +8,18 @@ orbs:
 jobs:
   test:
     docker:
-      - image: cimg/node:10.19.0
+      - image: cimg/node:14.17.6
     steps:
       - checkout
       - node/install-packages
       - run:
           name: test
           command: npm run test
+      - store_artifacts:
+          path: coverage
   build:
     docker:
-      - image: cimg/node:10.19.0
+      - image: cimg/node:14.17.6
     steps:
       - checkout
       - node/install-packages
@@ -30,7 +32,7 @@ jobs:
             - '*'
   package-develop:
     docker:
-      - image: cimg/node:10.19.0
+      - image: cimg/node:14.17.6
     steps:
       - checkout
       - node/install-packages
@@ -52,18 +54,18 @@ jobs:
       - run:
           name: set version in package.json
           command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION_SNAPSHOT/g" ./dist/package.json
-      - run:
-          name: rm version tag from npm
-          command: |
-            if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME}-ci $VERSION_TAG
-            fi
-      - run:
-          name: unpublish old snapshot
-          command: |
-            if [ "$OLD_SNAPSHOT" != "" ]; then
-              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$OLD_SNAPSHOT
-            fi
+#      - run:
+#          name: rm version tag from npm
+#          command: |
+#            if [ "$OLD_SNAPSHOT" != "" ]; then
+#              npm dist-tag rm @arianee/${CIRCLE_PROJECT_REPONAME} $VERSION_TAG
+#            fi
+#      - run:
+#          name: unpublish old snapshot
+#          command: |
+#            if [ "$OLD_SNAPSHOT" != "" ]; then
+#              npm unpublish @arianee/${CIRCLE_PROJECT_REPONAME}@$OLD_SNAPSHOT
+#            fi
       - run:
           working_directory: dist
           name: publish
@@ -71,11 +73,11 @@ jobs:
       - run:
           working_directory: dist
           name: tag
-          command: npm dist-tag add @arianee/${CIRCLE_PROJECT_REPONAME}-ci@$VERSION_SNAPSHOT $VERSION_TAG
+          command: npm dist-tag add @arianee/${CIRCLE_PROJECT_REPONAME}@$VERSION_SNAPSHOT $VERSION_TAG
 
   release:
     docker:
-      - image: cimg/node:10.19.0
+      - image: cimg/node:14.17.6
     steps:
       - checkout
       - node/install-packages
@@ -100,10 +102,16 @@ jobs:
           name: push tag && update version
           command: node ./.circleci/update-version.js ${VERSION}
       - run:
-          name: copie changelog to package
+          name: version
+          command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
+      - run:
+          name: push tag && update version
+          command: node ./.circleci/update-version.js ${VERSION}
+      - run:
+          name: copy changelog to package
           command: cp ./CHANGELOG.md ./dist/CHANGELOG.md
       - run:
-          name: copie readme to package
+          name: copy readme to package
           command: cp ./readme.md ./dist/readme.md
       - persist_to_workspace:
           root: ./dist
@@ -112,7 +120,7 @@ jobs:
 
   package-master:
     docker:
-      - image: cimg/node:10.19.0
+      - image: cimg/node:14.17.6
     steps:
       - checkout
       - node/install-packages
@@ -137,19 +145,19 @@ jobs:
 workflows:
   build_test_package:
     jobs:
-      - test
-      - build:
-          requires:
-            - test
-      - package-develop:
+      - build
+      - test:
           requires:
             - build
+      - package-develop:
+          requires:
+            - test
           filters:
             branches:
               only: develop
       - release:
           requires:
-            - build
+            - test
           filters:
             branches:
               only: master

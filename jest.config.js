@@ -1,13 +1,13 @@
 module.exports = {
   roots: [
-    '<rootDir>/src',
-    '<rootDir>/test'
-
+    '<rootDir>/src'
   ],
-  testEnvironment: 'jest-environment-node',
   transform: {
     '^.+\\.tsx?$': 'ts-jest'
   },
+  resetMocks: false,
+  setupFiles: ['jest-localstorage-mock', './jestSetup.js'],
+  testEnvironment: 'node',
   moduleFileExtensions: [
     'ts',
     'tsx',
