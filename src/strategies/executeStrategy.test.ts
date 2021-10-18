@@ -1,8 +1,146 @@
 import { executeStrategies, executeStrategiesWithCache } from './executeStrategy';
+import { createOrRetrieveWallet } from '../index';
+import { getStrategyHelperFactory } from '../helpers/getStrategyHelper/getStrategyHelper.helper';
 
 jest.setTimeout(60000);
 
 describe('Execute strategy', () => {
+  test.only('', async () => {
+    const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+    const proxyWallet = createOrRetrieveWallet();
+    await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+
+    const strategyToTest = {
+      endpoint: 'https://node0.spkz.io/spkz/rpc',
+      notificationEndpoint: 'wss://node0-ws.spkz.io',
+      name: 'Arianee',
+      description: 'Arianee lounge for Aria20 holders',
+      external_url: 'https://spkz.io/app/lounges/2',
+      image: 'https://transparianee.herokuapp.com/aria.png',
+      logo: 'https://transparianee.herokuapp.com/arianee-logo.png',
+      strategies: [
+        [
+          {
+            name: 'erc-20-balance-of',
+            params: {
+              minBalance: '100000000000000000000',
+              tokens: [
+                {
+                  chainId: '1',
+                  networkId: '1',
+                  address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+                },
+                {
+                  chainId: '137',
+                  networkId: '1',
+                  address: '0x46f48fbdedaa6f5500993bede9539ef85f4bee8e'
+                }
+              ]
+            }
+          }
+        ]
+      ],
+      sections: [
+        {
+          title: 'Announcement',
+          id: 'announcement',
+          writeStrategies: [
+            [
+              {
+                name: 'room-owner',
+                params: {
+                  chainId: '137',
+                  networkId: '1'
+                }
+              }
+            ]
+          ]
+        },
+        {
+          title: 'General',
+          id: 'general'
+        },
+        {
+          title: 'Tech',
+          id: 'tech'
+        },
+        {
+          title: 'LP Providers',
+          id: 'lpprovider',
+          readStrategies: [
+            [
+              {
+                name: 'erc-20-balance-of',
+                params: {
+                  minBalance: '3000000000000000000',
+                  tokens: [
+                    {
+                      chainId: '1',
+                      networkId: '1',
+                      address: '0xc5202e3f5f60423d7106a68278c627fd091b5c7d'
+                    },
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0xd88810f3fe698862669448dce29808b242b9a1bc'
+                    }
+                  ]
+                }
+              }
+            ]
+          ]
+        },
+        {
+          title: 'Whales',
+          id: 'whales',
+          readStrategies: [
+            [
+              {
+                name: 'erc-20-balance-of',
+                params: {
+                  minBalance: '10000000000000000000000',
+                  tokens: [
+                    {
+                      chainId: '1',
+                      networkId: '1',
+                      address: '0xedf6568618a00c6f0908bf7758a16f76b6e04af9'
+                    },
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0x46f48fbdedaa6f5500993bede9539ef85f4bee8e'
+                    }
+                  ]
+                }
+              }
+            ],
+            [
+              {
+                name: 'erc-20-balance-of',
+                params: {
+                  minBalance: '68000000000000000000',
+                  tokens: [
+                    {
+                      chainId: '1',
+                      networkId: '1',
+                      address: '0xc5202e3f5f60423d7106a68278c627fd091b5c7d'
+                    },
+                    {
+                      chainId: '137',
+                      networkId: '1',
+                      address: '0xd88810f3fe698862669448dce29808b242b9a1bc'
+                    }
+                  ]
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    };
+    console.log(JSON.stringify(getStrategyHelperFactory(strategyToTest)
+      .getRoomStrategies('lpprovider')));
+  });
   const walletAddressWithAria:string = '0x5b1135819aDf7F5a8753cA49a162e8853EE01775';
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 
