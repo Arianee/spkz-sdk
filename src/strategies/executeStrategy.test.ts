@@ -8,7 +8,7 @@ describe('Execute strategy', () => {
 
   describe('execute strategies of erc 20 balance of', () => {
     test('DEV erc 20 balance of without addresses should return enriched informations', async () => {
-      const strategyProvider = await executeStrategies([
+      const strategyProvider = await executeStrategiesWithCache([
         [{
           name: 'erc-20-balance-of',
           acquireURLs: [{
@@ -44,7 +44,7 @@ describe('Execute strategy', () => {
       expect(strategyProvider.isAuthorized).toBeFalsy();
     });
     test('wallet without aria should be not authorized', async () => {
-      const strategyProvider = await executeStrategies([
+      const strategyProvider = await executeStrategiesWithCache([
         [{
           name: 'erc-20-balance-of',
           addresses: [walletAddressWithoutAria],
@@ -80,7 +80,7 @@ describe('Execute strategy', () => {
       expect(strategyProvider.isAuthorized).toBeFalsy();
     });
     test('wallet with aria should be authorized', async () => {
-      const strategyProvider = await executeStrategies([
+      const strategyProvider = await executeStrategiesWithCache([
         [{
           name: 'erc-20-balance-of',
           addresses: [walletAddressWithAria],
@@ -110,7 +110,7 @@ describe('Execute strategy', () => {
     describe('clause', () => {
       describe('AND clause', () => {
         test('should return true if have aria on Mainnet AND POA', async () => {
-          const strategyProvider = await executeStrategies([[
+          const strategyProvider = await executeStrategiesWithCache([[
             {
               name: 'erc-20-balance-of',
               addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
@@ -166,7 +166,7 @@ describe('Execute strategy', () => {
         });
 
         test('should return false if does not have aria on Mainnet AND Sokol POA', async () => {
-          const strategyProvider = await executeStrategies([
+          const strategyProvider = await executeStrategiesWithCache([
             [{
               name: 'erc-20-balance-of',
               addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
@@ -205,7 +205,7 @@ describe('Execute strategy', () => {
       });
       describe('OR clause', () => {
         test('should return false if have not USDC on Mainnet OR POA', async () => {
-          const strategyProvider = await executeStrategies([[
+          const strategyProvider = await executeStrategiesWithCache([[
             {
               name: 'erc-20-balance-of',
               addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
@@ -246,7 +246,7 @@ describe('Execute strategy', () => {
         });
 
         test('should return false if does not have aria on Mainnet OR Sokol POA', async () => {
-          const strategyProvider = await executeStrategies([
+          const strategyProvider = await executeStrategiesWithCache([
             [{
               name: 'erc-20-balance-of',
               addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
@@ -290,7 +290,7 @@ describe('Execute strategy', () => {
 
 describe('execute strategies of is exact address of', () => {
   test('wallet address is not in list', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'is-exact-address',
         addresses: ['0xF0245F6251Bef9447A08766b9DA2B07b28aD80B0'],
@@ -308,7 +308,7 @@ describe('execute strategies of is exact address of', () => {
     expect(strategyProvider.isAuthorized).toBeFalsy();
   });
   test('wallet address is in list', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'is-exact-address',
         addresses: ['0xF0245F6251Bef9447A08766b9DA2B07b28aD80B0', '0xeFeA1123d4Ed5d342f429049Aa014bF628d10108'],
@@ -329,7 +329,7 @@ describe('execute strategies of is exact address of', () => {
 
 describe('execute strategies of erc 721 balance of', () => {
   test('wallet without erc 721 should be not authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-721-balance-of',
         addresses: ['0xF0245F6251Bef9447A08766b9DA2B07b28aD80B0'],
@@ -352,7 +352,7 @@ describe('execute strategies of erc 721 balance of', () => {
   });
 
   test('wallet with erc 721 should be authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-721-balance-of',
         addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108'],
@@ -374,7 +374,7 @@ describe('execute strategies of erc 721 balance of', () => {
   });
 
   test('wallet with balanceOf 2 different erc721 >= 2 should be authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-721-balance-of',
         addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108', '0x5BC8da7dE68c1af47D329B14ADdBf1d7547A1747'],
@@ -401,7 +401,7 @@ describe('execute strategies of erc 721 balance of', () => {
   });
 
   test('wallet with 2 different erc 721 should be authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         // Have 1 visitor and 1 PolyDoge X QuickSwap (PDQuick)
 
@@ -439,7 +439,7 @@ describe('execute strategies of erc 721 balance of', () => {
 
 describe('execute strategies of room-owner', () => {
   test('wallet not-owner of room XX should be not authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'room-owner',
         addresses: ['0xeFeA1123d4Ed5d342f429049Aa014bF628d10108'],
@@ -456,7 +456,7 @@ describe('execute strategies of room-owner', () => {
   });
 
   test('wallet without address', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'room-owner',
         params: {
@@ -470,7 +470,7 @@ describe('execute strategies of room-owner', () => {
   });
 
   test('wallet owner of room XX should be authorized', async () => {
-    const strategyProvider = await executeStrategies([
+    const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'room-owner',
         addresses: ['0x0d0F862890F5b7E9AaCC6c4310499fc1621d2E80'],
@@ -486,8 +486,9 @@ describe('execute strategies of room-owner', () => {
     expect(strategyProvider.isAuthorized).toBeTruthy();
   });
 });
+
 describe('execute strategies with cache', () => {
-  test('strategy if authorized false should not be cache', async () => {
+  test('strategy with cache should be faster than without', async () => {
     const strategies = [
       [
         {
@@ -504,22 +505,29 @@ describe('execute strategies with cache', () => {
             ]
           }
         }]];
+    // call first time
+    await executeStrategiesWithCache(strategies, '122');
     const now = Date.now();
-    const strategyProvider1 = await executeStrategiesWithCache(strategies, '0');
+    // Should get from cache
+    const strategyProvider1 = await executeStrategiesWithCache(strategies, '122');
     const time1 = Date.now() - now;
 
     const now2 = Date.now();
 
-    const strategyProvider2 = await executeStrategiesWithCache(strategies, '0');
+    const strategyProvider2 = await executeStrategies(strategies, '122');
     const time2 = Date.now() - now2;
 
+    expect(strategyProvider1.isAuthorized).toBeFalsy();
     expect(strategyProvider2.isAuthorized).toBeFalsy();
+    expect(time1 < time2).toBeTruthy();
+    expect(time1 < 10).toBeTruthy();
     expect(time2 > 10).toBeTruthy();
+
     expect(strategyProvider2).toEqual(strategyProvider1);
     expect(strategyProvider2.strategies[0][0].message).toBeDefined();
     expect(strategyProvider2.strategies[0][0].code).toBeDefined();
   });
-  test('strategy if authorized with cache should be very faster second times', async () => {
+  test('strategy if cached it should be should be very faster second times', async () => {
     const strategies = [
       [
         {
@@ -551,12 +559,12 @@ describe('execute strategies with cache', () => {
           }
         }]];
     const now = Date.now();
-    const strategyProvider1 = await executeStrategiesWithCache(strategies, '0');
+    const strategyProvider1 = await executeStrategiesWithCache(strategies, '1220');
     const time1 = Date.now() - now;
 
     const now2 = Date.now();
 
-    const strategyProvider2 = await executeStrategiesWithCache(strategies, '0');
+    const strategyProvider2 = await executeStrategiesWithCache(strategies, '1220');
     const time2 = Date.now() - now2;
 
     expect(time2 < 10).toBeTruthy();

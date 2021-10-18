@@ -1,51 +1,66 @@
 import cache from 'memory-cache';
-import crypto from 'crypto';
-import { StrategiesReturn } from '../../models/strategyReturn';
+import { StrategyReturn, StrategyReturnPromise } from '../../models/strategyReturn';
+import { Strategy } from '../../models/strategy';
+
 var hash = require('object-hash');
 
 export class CacheStrategyWrapper {
-    public cacheTimeout :number;
-    private memCache = new cache.Cache();
+  public cacheTimeout :{
+    authorized:number,
+    notAuthorized:number
+  }={
+    authorized: 1000 * 60,
+    notAuthorized: 1000 * 10
+  }
 
-    constructor (cacheTimeout?:number) {
-      this.cacheTimeout = 1000 * 60;
+  private memCache = new cache.Cache();
+
+  public keyMaker=(strategy:Strategy) => {
+    return hash(strategy);
+  }
+
+  public exist=(strategy:Strategy) :boolean => {
+    return this.getStrategyCache(strategy) !== null;
+  }
+
+  public getStrategyCache=(strategy:Strategy) => {
+    const key = this.keyMaker(strategy);
+    return this.memCache.get(key);
+  }
+
+  public addStrategyCache=(strategy:Strategy, value:any, timeout:number) => {
+    const key = this.keyMaker(strategy);
+    this.memCache.put(key, value, timeout);
+  }
+
+  public deleteStraetgyCache=(strategy:Strategy) => {
+    if (this.exist(strategy)) {
+      const key = this.keyMaker(strategy);
+      this.memCache.del(key);
     }
+  }
 
-    private keyMaker=(func, args:string[]) => {
-      return `${this.hash(func.toString())}${args.filter(d => d)
-          .map(d => hash(d))}`;
-    }
+  public execute=(strategy:Strategy<any>, func:()=>StrategyReturnPromise):StrategyReturnPromise => {
+    try {
+      if (!this.exist(strategy)) {
+        const executingStrat = func();
+        this.addStrategyCache(strategy, executingStrat, this.cacheTimeout.authorized);
 
-    public create = <T=any>(func) => (arg1?:any, arg2?:any, arg3?:any):Promise<StrategiesReturn> => {
-      const key = this.keyMaker(func, [arg1, arg2, arg3]);
-
-      if (this.memCache.get(key) === null) {
-        const cached = func(arg1, arg2, arg3);
-        if (cached.catch) {
-          cached.catch(e => {
-            this.memCache.del(key);
-          });
-        }
-        if (cached.then) {
-          cached.then((d:StrategiesReturn) => {
+        executingStrat
+          .catch(e => {
+            this.deleteStraetgyCache(strategy);
+            return e;
+          })
+          .then((d: StrategyReturn) => {
             if (d.isAuthorized === false) {
-              this.memCache.del(key);
+              this.addStrategyCache(strategy, executingStrat, this.cacheTimeout.notAuthorized);
             }
+            return d;
           });
-        }
-        this.memCache.put(key, cached, this.cacheTimeout);
       }
-
-      return this.memCache.get(key);
-    };
-
-    public exist = (func, arg1?, arg2?, arg3?) => {
-      const key = this.keyMaker(func, [arg1, arg2, arg3]);
-
-      return this.memCache.get(key) !== null;
-    };
-
-    private hash = (name: string) => {
-      return crypto.createHash('md5').update(name).digest('hex');
+    } catch (e) {
+      this.deleteStraetgyCache(strategy);
     }
+    return this.getStrategyCache(strategy);
+  }
 }
