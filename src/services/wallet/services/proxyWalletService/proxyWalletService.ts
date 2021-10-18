@@ -10,10 +10,11 @@ import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
 
 const localStorageAuthorizationKey = 'spkz_authorizations';
+
 @scoped(Lifecycle.ContainerScoped)
 export class ProxyWalletService {
   constructor (
-    private rightService:RightService,
+    private rightService: RightService,
     private metamaskService: MetamaskService
   ) {
   }
@@ -30,45 +31,48 @@ export class ProxyWalletService {
     this._authorizations = value;
   }
 
-  private _authorizedAddresses:string[]=[]
+  private _authorizedAddresses: string[] = [];
 
-    private _authorizations = [];
-    private web3Account: Account;
-    public signer:(data)=>any;
-    public decoder:(message, signature)=>any;
-    public jwtHelper:JWTGeneric;
-    private _privateKey: string;
+  private _authorizations = [];
+  private web3Account: Account;
+  public signer: (data) => any;
+  public decoder: (message, signature) => any;
+  public jwtHelper: JWTGeneric;
+  private _privateKey: string;
 
-    get privateKey (): string {
-      return this._privateKey;
-    }
+  get privateKey (): string {
+    return this._privateKey;
+  }
 
-    get address ():string {
-      return this.web3Account.address;
-    }
+  get address (): string {
+    return this.web3Account.address;
+  }
 
-    set privateKey (value: string) {
-      this._privateKey = value;
-      this.web3Account = new Web3().eth.accounts.privateKeyToAccount(this._privateKey);
-      const { signer, decoder } = signerDecoder(this._privateKey);
-      this.signer = signer;
-      this.decoder = decoder;
-      this.jwtHelper = new JWTGeneric(this.signer, this.decoder);
-      this.retrieveJWTAuthorizationsFromLocalStorage()
-        .map(jwt => this.addBlockchainWalletAuthorization(jwt));
-    }
+  set privateKey (value: string) {
+    this._privateKey = value;
+    this.web3Account = new Web3().eth.accounts.privateKeyToAccount(this._privateKey);
+    const {
+      signer,
+      decoder
+    } = signerDecoder(this._privateKey);
+    this.signer = signer;
+    this.decoder = decoder;
+    this.jwtHelper = new JWTGeneric(this.signer, this.decoder);
+    this.retrieveJWTAuthorizationsFromLocalStorage()
+      .map(jwt => this.addBlockchainWalletAuthorization(jwt));
+  }
 
   /**
    * Get blockchainWallets authorizations from localstorage
    * If proxyWallet not authorized, it removes entry from localstorage and return empty array
    * @returns {[]}
    */
-  private retrieveJWTAuthorizationsFromLocalStorage=():any[] => {
+  private retrieveJWTAuthorizationsFromLocalStorage = (): any[] => {
     if (typeof localStorage !== 'undefined') {
       const valueFromStorage = localStorage.getItem(localStorageAuthorizationKey);
       if (valueFromStorage) {
         try {
-          const parseValue:any[] = JSON.parse(valueFromStorage);
+          const parseValue: any[] = JSON.parse(valueFromStorage);
           const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
           if (isAuthorized) {
             return parseValue;
@@ -82,12 +86,13 @@ export class ProxyWalletService {
     }
 
     return [];
-  }
+  };
 
   public async addFromMetamask () {
     await this.metamaskService.initMetamask();
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
-    const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {});
+    const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {
+    });
     const zef = jwtSigner.setPayload(payloadToSign);
     const signedJWT = await zef.sign();
 
@@ -96,7 +101,11 @@ export class ProxyWalletService {
   }
 
   public async addWalletFromPrivateKey (privateKey: string) {
-    const { signer, decoder, address } = signerDecoder(privateKey);
+    const {
+      signer,
+      decoder,
+      address
+    } = signerDecoder(privateKey);
     const jwtSigner = new JWTGeneric(signer, decoder);
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(address);
     const zef = await jwtSigner.setPayload(payloadToSign);
@@ -116,9 +125,9 @@ export class ProxyWalletService {
    * It should be call on every app launch
    * @returns {Promise<AuthorizationsStatus>}
    */
-  public checkBlockchainWalletAuthorizations=async ():Promise<AuthorizationsStatus> => {
+  public checkBlockchainWalletAuthorizations = async (): Promise<AuthorizationsStatus> => {
     return this.rightService.proxyWalletAuthorisationStatus(this.authorizations, this.address);
-  }
+  };
 
   async addBlockchainWalletAuthorization (jwt): Promise<ProxyWalletService> {
     const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
@@ -136,19 +145,20 @@ export class ProxyWalletService {
   }
 
   /**
-     * Get payload to authorized messaging wallet to send message on behalf of another blockchain wallet
-     * @param {string} publicKey
-     * @returns {{sub: any; iss: string; exp: number}}
-     */
+   * Get payload to authorized messaging wallet to send message on behalf of another blockchain wallet
+   * @param {string} publicKey
+   * @returns {{sub: any; iss: string; exp: number}}
+   */
   public getPayloadToSignToAddABlockchainWallet (publicKey: string) {
     return {
       iss: publicKey.toLowerCase(),
       exp: addDate(7, 'days'),
-      sub: this.address.toLowerCase()
+      sub: this.address.toLowerCase(),
+      iat: Date.now()
     };
   }
 
-  public createAuthLink = (url: string):string => {
+  public createAuthLink = (url: string): string => {
     const urlObject = new URL(url);
     urlObject.searchParams.append('spkz_authorizations', JSON.stringify(this.authorizations));
     urlObject.searchParams.append('spkz_proxyWalletPK', this.privateKey);

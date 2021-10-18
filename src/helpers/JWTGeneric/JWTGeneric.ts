@@ -93,7 +93,12 @@ export class JWTGeneric {
           return false;
         }
       }
-
+      if (payload.iat) {
+        const isBefore = new Date(payload.iat).getTime() > Date.now();
+        if (isBefore) {
+          return false;
+        }
+      }
       return true;
     }
 
