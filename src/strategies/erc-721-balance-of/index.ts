@@ -19,13 +19,16 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
 
   const erc721SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, ERC71Address);
 
-  return await Promise.all(addresses.map(address =>
-    erc721SmartContracts.methods.balanceOf(address).call()
+  return await Promise.all(addresses.map(address => {
+    return erc721SmartContracts.methods.balanceOf(address).call()
       .then(balanceOf => ({
         address,
         balanceOf,
         chainId
-      }))
+      })).catch(e => {
+        return { address, balanceOf: 0, chainId };
+      });
+  }
   ));
 };
 
@@ -49,8 +52,8 @@ const getSymbol = async (param: ERC20BalanceOf) => {
   const erc20SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, ERC20Address);
 
   return Promise.all([
-    erc20SmartContracts.methods.symbol().call(),
-    erc20SmartContracts.methods.name().call()
+    erc20SmartContracts.methods.symbol().call().catch(() => null),
+    erc20SmartContracts.methods.name().call().catch(() => null)
   ]);
 };
 

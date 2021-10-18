@@ -28,7 +28,9 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
         address,
         balanceOf,
         chainId
-      }));
+      })).catch(e => {
+        return { address, balanceOf: 0, chainId };
+      });
   }
   ));
 };
@@ -61,9 +63,9 @@ const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
   const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, ERC20Address);
 
   return Promise.all([
-    erc20SmartContracts.methods.decimals().call(),
-    erc20SmartContracts.methods.symbol().call(),
-    erc20SmartContracts.methods.name().call()
+    erc20SmartContracts.methods.decimals().call().catch(() => 0),
+    erc20SmartContracts.methods.symbol().call().catch(() => null),
+    erc20SmartContracts.methods.name().call().catch(() => null)
   ]);
 };
 
