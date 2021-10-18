@@ -1,4 +1,5 @@
 import { JWTGeneric } from './JWTGeneric';
+import { addDate } from '../timestampHelper/timestampHelper';
 
 const Web3 = require('web3');
 
@@ -118,6 +119,7 @@ describe('JWTGeneric', function () {
 
         expect(isAuthentic).toBeFalsy();
       });
+
       test('it should be true if after nbf', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
         var nbf = new Date();
@@ -126,6 +128,47 @@ describe('JWTGeneric', function () {
           userId: '1101001',
           name: 'John Doe',
           nbf: nbf.getTime()
+        };
+
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
+
+        const isAuthentic = jwt
+          .setToken(token)
+          .verify(pubKey);
+
+        expect(isAuthentic).toBeTruthy();
+      });
+    });
+    describe('iat', () => {
+      test('it should be false if before iat', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        var iat = new Date();
+        iat.setMinutes(iat.getMinutes() + 5);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe',
+          iat: iat.getTime()
+        };
+
+        const jwtService = await jwt.setPayload(payload);
+        const token = await jwtService.sign();
+
+        const isAuthentic = jwt
+          .setToken(token)
+          .verify(pubKey);
+
+        expect(isAuthentic).toBeFalsy();
+      });
+
+      test('it should be true if after iat', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        var iat = new Date();
+        iat.setMinutes(iat.getMinutes() - 5);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe',
+          nbf: iat.getTime()
         };
 
         const jwtService = await jwt.setPayload(payload);
