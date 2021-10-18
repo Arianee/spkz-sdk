@@ -1,5 +1,13 @@
 #  Spkz SDK
 #  Release notes
+## v1.3.0 ( 2021-10-18 )
+
+### **feat (1):**
+ - feat(logo): erc20 custom logo
+
+### **release (1):**
+ - release(version): Increase next develop version of v1.2.0
+
 ## v1.2.1 ( 2021-10-18 )
 
 ### **fix (1):**
