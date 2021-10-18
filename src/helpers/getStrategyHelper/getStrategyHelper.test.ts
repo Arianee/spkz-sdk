@@ -201,6 +201,17 @@ describe('startegies finder helper', () => {
         }
         expect(inError).toBeTruthy();
       });
+      test('should be an array of array (not more)main (3) strategies', () => {
+        const wrongJSON:NFTROOM = { strategies: [[{}]] } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(4);
+        }
+        expect(inError).toBeTruthy();
+      });
     });
 
     describe(' sections', () => {
