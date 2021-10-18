@@ -80,19 +80,11 @@ describe('startegies finder helper', () => {
     ]
   };
 
-  describe('getRoomStrategy', () => {
-    test(' it should return main strategies if there is', () => {
-      const strategyHelper = getStrategyHelperFactory(mockNFTROOM);
-      expect(strategyHelper.getRoomStrategies()).toEqual(mockNFTROOM.strategies);
-    });
-    test(' it should return empty strategies if there is not', () => {
-      const strategyHelper = getStrategyHelperFactory({} as any);
-      expect(strategyHelper.getRoomStrategies()).toEqual([[]]);
-    });
-  });
-
   describe(' read write strategies', () => {
-    const strategyHelper = getStrategyHelperFactory(mockNFTROOM);
+    let strategyHelper;
+    beforeEach(() => {
+      strategyHelper = getStrategyHelperFactory(mockNFTROOM);
+    });
 
     test('it should return read strategies if there is', () => {
       const expectedReadStrategy = [[
@@ -130,7 +122,7 @@ describe('startegies finder helper', () => {
   });
 
   describe('replace address with address of caller', () => {
-    test('it should return write strategies if there is with addres', () => {
+    test('it should return write strategies if there is with address', () => {
       const strategyHelper = getStrategyHelperFactory(mockNFTROOM,
         ['0x3f6F937912AeCb1E966514AAeE0D26F09E163976']);
 
@@ -146,6 +138,112 @@ describe('startegies finder helper', () => {
         }
       ]];
       expect(strategyHelper.getSectionWriteStrategies('viproom')).toEqual(expectedWriteStrategy);
+    });
+  });
+
+  describe('validateJSON', () => {
+    test('should be defined', () => {
+      const wrongJSON = undefined as any;
+      let inError = false;
+      try {
+        getStrategyHelperFactory(wrongJSON);
+      } catch (e) {
+        inError = true;
+        expect(e.code).toBe(0);
+      }
+      expect(inError).toBeTruthy();
+    });
+
+    test('should be an object', () => {
+      const wrongJSON = '' as any;
+      let inError = false;
+      try {
+        getStrategyHelperFactory(wrongJSON);
+      } catch (e) {
+        inError = true;
+        expect(e.code).toBe(1);
+      }
+      expect(inError).toBeTruthy();
+    });
+
+    describe('main strategies', () => {
+      test('should have main strategies', () => {
+        const wrongJSON:NFTROOM = { strategies: undefined } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(2);
+        }
+        expect(inError).toBeTruthy();
+      });
+      test('should be an array of array main (1) strategies', () => {
+        const wrongJSON:NFTROOM = { strategies: [] } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(3);
+        }
+        expect(inError).toBeTruthy();
+      });
+
+      test('should be an array of array main (2) strategies', () => {
+        const wrongJSON:NFTROOM = { strategies: ['zefzef'] } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(3);
+        }
+        expect(inError).toBeTruthy();
+      });
+    });
+
+    describe(' sections', () => {
+      test('check writeStrategies', () => {
+        const wrongJSON:NFTROOM = {
+          strategies: [[]],
+          sections: [
+            {
+              title: 'Chat',
+              id: 'chat',
+              writeStrategies: []
+            }
+          ]
+        } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(3);
+        }
+        expect(inError).toBeTruthy();
+      });
+      test('check readStrategies', () => {
+        const wrongJSON:NFTROOM = {
+          strategies: [[]],
+          sections: [
+            {
+              title: 'Chat',
+              id: 'chat',
+              readStrategies: []
+            }
+          ]
+        } as any;
+        let inError = false;
+        try {
+          getStrategyHelperFactory(wrongJSON);
+        } catch (e) {
+          inError = true;
+          expect(e.code).toBe(3);
+        }
+        expect(inError).toBeTruthy();
+      });
     });
   });
 });

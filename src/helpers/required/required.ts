@@ -6,7 +6,7 @@
 export const required = (assertion, message) => {
   if (assertion !== true) {
     console.error('Error from required:', message);
-    throw new Error(message);
+    throw message;
   }
 };
 
