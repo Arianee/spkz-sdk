@@ -254,20 +254,4 @@ describe('rightService', () => {
       expect(r2.write.isAuthorized).toBeTruthy();
     });
   });
-  describe('fullRoomStrategies', () => {
-    ['2', '3', '4', '5', '6'].map(roomId => {
-      test(`it should work without address for room Id ${roomId}`, async (done) => {
-        await await utils.rightService.fullRoomStrategies({ roomId });
-        expect(true).toBeTruthy();
-        done();
-      });
-      test(`it should work with address for room Id ${roomId}`, async (done) => {
-        await await utils.rightService.fullRoomStrategies({
-          roomId,
-          address: '0x7ab5Dd29BEe82041C998Fc5091a6711a8eDAc0D6'
-        });
-        done();
-      });
-    });
-  });
 });

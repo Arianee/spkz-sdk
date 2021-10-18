@@ -1,11 +1,53 @@
-import { required, requiredDefined } from '../required/required';
+import { required, requiredDefined, requiredType } from '../required/required';
 import { Strategy } from '../../models/strategy';
 import { cloneDeep } from 'lodash';
 import { NFTROOM } from '../../models/NFTROOM';
 
 export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:string[]) => {
-  requiredDefined(nftRoom, 'nft room must be defined');
-  required(typeof nftRoom === 'object', 'nft room must be an object');
+  const verifyJSON = () => {
+    requiredDefined(nftRoom, {
+      code: 0,
+      content: nftRoom,
+      message: 'nft must be an object'
+    });
+    requiredType(nftRoom, 'object', {
+      code: 1,
+
+      message: 'nft room must be an object'
+    });
+    requiredDefined(nftRoom.strategies, {
+      code: 2,
+      content: nftRoom,
+      message: 'nft.strategies must be defined and must be an array of array [[]].'
+    });
+
+    const checkStrategies = (strats, stratlabel:string) => {
+      const error = (subCode = 0) => ({
+        code: 3,
+        subCode,
+        content: nftRoom,
+        message: `strategies of ${stratlabel} must be defined and must be an array of array [[]].`
+      });
+      requiredType(strats, 'array', error(1));
+      required(strats.length > 0, error(2));
+      requiredType(strats[0], 'array', error(3));
+      required(strats[0].length >= 0, error(4));
+    };
+
+    requiredDefined(nftRoom.strategies, 'main strategies should be defined');
+    checkStrategies(nftRoom.strategies, 'main');
+    if (nftRoom.sections) {
+      nftRoom.sections.forEach(section => {
+        if (section.readStrategies) {
+          checkStrategies(section.readStrategies, `${section.id}-readStrategies`);
+        }
+        if (section.writeStrategies) {
+          checkStrategies(section.writeStrategies, `${section.id}-readStrategies`);
+        }
+      });
+    }
+  };
+  verifyJSON();
 
   const replaceAddressInStrategies = (strategies) => {
     const clonedStrategies = cloneDeep(strategies);
