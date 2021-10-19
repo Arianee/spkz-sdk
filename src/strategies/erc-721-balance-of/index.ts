@@ -9,6 +9,7 @@ import { requiredDefined } from '../../helpers/required/required';
 import { web3Factory } from '../helpers/web3Factory';
 import { flattenDeep, sumBy } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
+import { abbreviateStringNumber, abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC71Address, chainId } = token;
@@ -29,7 +30,7 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
   ));
 };
 
-const getBalancesOfChains = async (strategy: Strategy): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
+const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { addresses, params } = strategy;
 
   const balances = await Promise.all(params.tokens
@@ -37,9 +38,13 @@ const getBalancesOfChains = async (strategy: Strategy): Promise<{ sum: string, b
 
   const flatBalances = flattenDeep(balances);
 
+  const minBalanceAbbreviated = abbreviateTokenBN(params.minBalance, 0);
+
   return {
     sum: sumBN(flatBalances.map(d => d.balanceOf)),
-    balances: flatBalances
+    balances: flatBalances,
+    minBalance: minBalanceAbbreviated.abbreviated,
+    minBalanceWithDecimals: minBalanceAbbreviated.abbreviated
   };
 };
 const getSymbol = async (param: ERC20BalanceOf) => {

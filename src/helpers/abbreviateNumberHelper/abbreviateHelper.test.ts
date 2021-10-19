@@ -63,5 +63,11 @@ describe('abbreviate helper', () => {
       expect(withoutDecimals).toBe('0.000000000000000001');
       expect(abbreviated).toBe('few');
     });
+    test('should return for 0 decimals number', () => {
+      const { withDecimals, withoutDecimals, abbreviated } = abbreviateTokenBN('1', '0');
+      expect(withDecimals).toBe('1');
+      expect(withoutDecimals).toBe('1');
+      expect(abbreviated).toBe('1');
+    });
   });
 });
