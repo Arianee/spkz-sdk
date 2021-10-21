@@ -1,4 +1,4 @@
-export interface Strategy<T=ERC20BalancesOf|isExactAddresses | RoomOwner> {
+export interface Strategy<T=ERC20BalancesOf|ERC721BalancesOf|isExactAddresses | RoomOwner> {
     name:string,
     addresses?:string[],
     params?: T,
@@ -11,6 +11,14 @@ export interface ERC20BalancesOf {
     minBalance:string,
     tokens?:Array<ERC20BalanceOf>,
     logo?:string
+}
+
+export interface ERC721BalancesOf {
+    minBalance:string,
+    tokens?:Array<ERC20BalanceOf>,
+    logo?:string,
+    name?:string,
+    symbol?:string
 }
 
 export interface isExactAddresses {
