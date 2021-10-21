@@ -1,5 +1,13 @@
 #  Spkz SDK
 #  Release notes
+## v1.4.0 ( 2021-10-21 )
+
+### **fix (1):**
+ - fix(erc721): details balance
+
+### **release (1):**
+ - release(version): Increase next develop version of v1.3.0
+
 ## v1.3.0 ( 2021-10-18 )
 
 ### **feat (1):**
