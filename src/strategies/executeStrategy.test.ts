@@ -373,6 +373,32 @@ describe('execute strategies of erc 721 balance of', () => {
     expect(strategyProvider.isAuthorized).toBeTruthy();
   });
 
+  test('wallet with erc 721 should be authorized (ENS)', async () => {
+    const strategyProvider = await executeStrategiesWithCache([
+      [{
+        name: 'erc-721-balance-of',
+        addresses: ['0x5BC8da7dE68c1af47D329B14ADdBf1d7547A1747'],
+        params: {
+          // Have 1 visitor
+          minBalance: '1',
+          name: 'Ethereum Name Service',
+          symbol: 'ENS',
+          tokens: [{
+            address: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+            chainId: '1',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].enrichedInformations.name).toBe('Ethereum Name Service');
+    expect(strategyProvider.strategies[0][0].enrichedInformations.symbol).toBe('ENS');
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+
   test('wallet with balanceOf 2 different erc721 >= 2 should be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
