@@ -462,6 +462,76 @@ describe('execute strategies of erc 721 balance of', () => {
     expect(strategyProvider.isAuthorized).toBeTruthy();
   });
 });
+describe('execute strategies of erc 721 balance of issued by', () => {
+  test('wallet without erc 721 of specific should be authorized', async () => {
+    const strategyProvider = await executeStrategiesWithCache([
+      [{
+        name: 'erc-721-balance-of-issued-by',
+        addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
+        params: {
+          minBalance: '1',
+          issuer: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          tokens: [{
+            address: '0x512C1FCF401133680f373a386F3f752b98070BC5',
+            chainId: '77',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(0);
+
+    expect(strategyProvider.isAuthorized).toBeTruthy();
+  });
+  test('wallet without erc 721 of specific issuer should be not authorized', async () => {
+    const strategyProvider = await executeStrategiesWithCache([
+      [{
+        name: 'erc-721-balance-of-issued-by',
+        addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
+        params: {
+          minBalance: '14',
+          issuer: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          tokens: [{
+            address: '0x512C1FCF401133680f373a386F3f752b98070BC5',
+            chainId: '77',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(1);
+    expect(strategyProvider.strategies[0][0].enrichedInformations.name.includes('Arianee')).toBeTruthy();
+    expect(strategyProvider.isAuthorized).toBeFalsy();
+  });
+  test('wallet force logo and name', async () => {
+    const strategyProvider = await executeStrategiesWithCache([
+      [{
+        name: 'erc-721-balance-of-issued-by',
+        addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
+        params: {
+          symbol: 'My Symbol',
+          name: 'My Name',
+          minBalance: '14',
+          issuer: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          tokens: [{
+            address: '0x512C1FCF401133680f373a386F3f752b98070BC5',
+            chainId: '77',
+            networkId: '1'
+          }]
+        }
+      }]
+    ]);
+
+    expect(strategyProvider.strategies[0][0].message).toBeDefined();
+    expect(strategyProvider.strategies[0][0].code).toBe(1);
+    expect(strategyProvider.strategies[0][0].enrichedInformations.name.includes('Name')).toBeTruthy();
+    expect(strategyProvider.isAuthorized).toBeFalsy();
+  });
+});
 
 describe('execute strategies of room-owner', () => {
   test('wallet not-owner of room XX should be not authorized', async () => {
@@ -647,7 +717,7 @@ describe('execute strategies with cache', () => {
       const strategyProvider = await executeStrategies([
         [{
           chainId: '77',
-          name: 'erc-721-issuer-of',
+          name: 'erc-721-balance-of-issued-by',
           address: '0x7B696108F5921F478A0C6F4E01280d272BaD318f',
           params: {
             tokenId: '4707187',
@@ -666,7 +736,7 @@ describe('execute strategies with cache', () => {
       const strategyProvider = await executeStrategies([
         [{
           chainId: '77',
-          name: 'erc-721-issuer-of',
+          name: 'erc-721-balance-of-issued-by',
           address: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
           params: {
             tokenId: '4707187',
