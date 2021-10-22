@@ -10,6 +10,7 @@ import { web3Factory } from '../helpers/web3Factory';
 import { flattenDeep, sumBy } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
 import { abbreviateStringNumber, abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
+import { getNameAndSymbolERC721 } from '../helpers/getSymbolAndName';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC71Address, chainId } = token;
@@ -30,7 +31,7 @@ const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[])
   ));
 };
 
-const getBalancesOfChains = async (strategy: Strategy<ERC721BalancesOf>): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
+const getBalances = async (strategy: Strategy<ERC721BalancesOf>): Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { addresses, params } = strategy;
 
   const balances = await Promise.all(params.tokens
@@ -47,22 +48,19 @@ const getBalancesOfChains = async (strategy: Strategy<ERC721BalancesOf>): Promis
     minBalanceWithDecimals: minBalanceAbbreviated.abbreviated
   };
 };
-const getSymbol = async (param: Strategy<ERC721BalancesOf>) => {
-  const { chainId, address: ERC20Address } = param.tokens[0];
 
-  const web3Provider = await web3Factory(chainId);
-  const erc20SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, ERC20Address);
-
-  return Promise.all([
-    erc20SmartContracts.methods.symbol().call().catch(() => param.symbol),
-    erc20SmartContracts.methods.name().call().catch(() => param.name)
-  ]);
-};
-
-export const strategy = async (strategy: Strategy): StrategyReturnPromise => {
+export const strategy = async (strategy: Strategy<ERC721BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
-  const balances = await getBalancesOfChains(strategy);
-  const [symbol, name] = await getSymbol(params);
+  const balances = await getBalances(strategy);
+  const firstToken = params.tokens[0];
+  const { symbol, name } = await getNameAndSymbolERC721({
+    address: firstToken.address,
+    chainId: firstToken.chainId,
+    default: {
+      name: params.name,
+      symbol: params.symbol
+    }
+  });
 
   const amount = web3.utils.toBN(balances.sum);
   const minAmount = web3.utils.toBN(params.minBalance);

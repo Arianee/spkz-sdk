@@ -8,8 +8,8 @@ import { web3Factory } from '../helpers/web3Factory';
 import { requiredDefined, requiredType } from '../../helpers/required/required';
 import { flattenDeep } from 'lodash';
 import { sumBN } from '../helpers/sumBN/sumBN';
-import BigNumber from 'bignumber.js';
-import { abbreviateStringNumber, abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
+import { abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbreviateHelper';
+import { getNameAdSymbolAndDecimalsERC20 } from '../helpers/getSymbolAndName';
 
 const getBalancesOfFromChain = async (token: ERC20BalanceOf, addresses:string[]): Promise<{ chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC20Address, chainId } = token;
@@ -54,18 +54,6 @@ const getBalancesOfChains = async (strategy: Strategy<ERC20BalancesOf>, decimals
     balances: flatBalances
   };
 };
-const getDecimalsAndSymbol = async (param: ERC20BalanceOf) => {
-  const { chainId, address: ERC20Address } = param;
-
-  const web3Provider = await web3Factory(chainId);
-  const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, ERC20Address);
-
-  return Promise.all([
-    erc20SmartContracts.methods.decimals().call(),
-    erc20SmartContracts.methods.symbol().call(),
-    erc20SmartContracts.methods.name().call()
-  ]);
-};
 
 const getImageUrl = (token: string, chainId: string) => {
   requiredType(chainId, 'string', 'chainId should be a string');
@@ -83,7 +71,11 @@ const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promi
 
   const logo = strategy.logo ? strategy.logo : isErc20Token && tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : 'https://raw.githubusercontent.com/Arianee/spkz-metadata/main/assets/default-icon.png';
 
-  const [decimals, symbol, name] = await getDecimalsAndSymbol(strategy.params.tokens[0]);
+  const firstToken = strategy.params.tokens[0];
+  const { decimals, symbol, name } = await getNameAdSymbolAndDecimalsERC20({
+    address: firstToken.address,
+    chainId: firstToken.chainId
+  });
   return {
     logo,
     symbol,
@@ -93,7 +85,7 @@ const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promi
 };
 export const strategy = async (strategy: Strategy<ERC20BalancesOf>): StrategyReturnPromise => {
   const { params } = strategy;
-  const [decimals, symbol] = await getDecimalsAndSymbol(params.tokens[0]);
+  const { decimals, symbol } = await getNameAdSymbolAndDecimalsERC20(params.tokens[0]);
   const balances = await getBalancesOfChains(strategy, decimals);
 
   const amount = web3.utils.toBN(balances.sumWithDecimals);
