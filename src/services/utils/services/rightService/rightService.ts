@@ -138,7 +138,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getRoomStrategies();
 
-    return executeStrategiesWithCache(strategies);
+    return executeStrategiesWithCache(strategies, roomId);
   };
 
   public canWriteSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -151,7 +151,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionWriteStrategies(sectionId);
 
-    return executeStrategiesWithCache(strategies);
+    return executeStrategiesWithCache(strategies, roomId);
   }
 
   public canReadSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -164,7 +164,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionReadStrategies(sectionId);
 
-    return executeStrategiesWithCache(strategies);
+    return executeStrategiesWithCache(strategies, roomId);
   }
 
   /**
