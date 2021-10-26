@@ -3,8 +3,7 @@ export interface Strategy<T=ERC20BalancesOf|ERC721BalancesOf|isExactAddresses | 
     addresses?:string[],
     params?: T,
     tokenId?:string;
-    acquireURLs?:{title:string, url:string}[],
-    logo?:string
+    acquireURLs?:{title:string, url:string, logo?:string}[]
 }
 
 export interface ERC20BalancesOf {

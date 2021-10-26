@@ -3,7 +3,19 @@ import { web3Factory } from './web3Factory';
 import { erc20ABI } from '../../abi/erc20.abi';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { requiredDefined } from '../../helpers/required/required';
+import web3 from 'web3';
 
+const tryNumberToHexToUtf8 = (e:{value:any}, defaultValue:string) => {
+  if (e.value) {
+    try {
+      return web3.utils.hexToUtf8(web3.utils.numberToHex(e.value));
+    } catch (e) {
+      return defaultValue;
+    }
+  } else {
+    return defaultValue;
+  }
+};
 export const getNameAdSymbolAndDecimalsERC20 = async (parameters: {
   chainId: string,
   address: string,
@@ -32,9 +44,9 @@ export const getNameAdSymbolAndDecimalsERC20 = async (parameters: {
   const erc20SmartContracts = new web3Provider.eth.Contract(erc20ABI as any, address);
 
   const [symbol, decimals, name] = await Promise.all([
-    erc20SmartContracts.methods.symbol().call().catch(e => defaultSymbol),
-    erc20SmartContracts.methods.decimals().call().catch(e => defaultDecimals),
-    erc20SmartContracts.methods.name().call().catch(e => defaultName)
+    erc20SmartContracts.methods.symbol().call().catch(e => tryNumberToHexToUtf8(e, defaultSymbol)),
+    erc20SmartContracts.methods.decimals().call().catch(e => tryNumberToHexToUtf8(e, defaultDecimals)),
+    erc20SmartContracts.methods.name().call().catch(e => tryNumberToHexToUtf8(e, defaultName))
   ]);
 
   return {
@@ -68,8 +80,8 @@ export const getNameAndSymbolERC721 = async (parameters: { chainId: string, addr
   const erc20SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, address);
 
   const [symbol, name] = await Promise.all([
-    erc20SmartContracts.methods.symbol().call().catch(e => defaultSymbol),
-    erc20SmartContracts.methods.name().call().catch(e => defaultName)
+    erc20SmartContracts.methods.symbol().call().catch(e => tryNumberToHexToUtf8(e, defaultSymbol)),
+    erc20SmartContracts.methods.name().call().catch(e => tryNumberToHexToUtf8(e, defaultName))
   ]);
   return {
     symbol,
