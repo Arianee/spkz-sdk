@@ -69,7 +69,7 @@ const getEnrichedInformation = async (strategy: Strategy<ERC20BalancesOf>):Promi
 
   const isErc20Token = strategy.name.includes('erc-20');
 
-  const logo = strategy.logo ? strategy.logo : isErc20Token && tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : 'https://raw.githubusercontent.com/Arianee/spkz-metadata/main/assets/default-icon.png';
+  const logo = strategy.params.logo ? strategy.params.logo : isErc20Token && tokenOnChain ? getImageUrl(tokenOnChain.address, tokenOnChain.chainId) : 'https://raw.githubusercontent.com/Arianee/spkz-metadata/main/assets/default-icon.png';
 
   const firstToken = strategy.params.tokens[0];
   const { decimals, symbol, name } = await getNameAdSymbolAndDecimalsERC20({
