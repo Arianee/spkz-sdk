@@ -7,7 +7,7 @@ describe('Execute strategy', () => {
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 
   describe('execute strategies of erc 20 balance of', () => {
-    test('DEV erc 20 balance of without addresses should return enriched informations', async () => {
+    test('erc 20 balance of without addresses should return enriched informations', async () => {
       const strategyProvider = await executeStrategiesWithCache([
         [{
           name: 'erc-20-balance-of',
@@ -383,6 +383,7 @@ describe('execute strategies of erc 721 balance of', () => {
           minBalance: '1',
           name: 'Ethereum Name Service',
           symbol: 'ENS',
+          logo: 'MYLOGO',
           tokens: [{
             address: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
             chainId: '1',
@@ -394,6 +395,8 @@ describe('execute strategies of erc 721 balance of', () => {
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].enrichedInformations.name).toBe('Ethereum Name Service');
     expect(strategyProvider.strategies[0][0].enrichedInformations.symbol).toBe('ENS');
+    expect(strategyProvider.strategies[0][0].enrichedInformations.logo).toBe('MYLOGO');
+
     expect(strategyProvider.strategies[0][0].code).toBe(0);
 
     expect(strategyProvider.isAuthorized).toBeTruthy();
@@ -471,6 +474,9 @@ describe('execute strategies of erc 721 balance of issued by', () => {
         params: {
           minBalance: '1',
           issuer: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          name: 'Ethereum Name Service',
+          symbol: 'ENS',
+          logo: 'MYLOGO',
           tokens: [{
             address: '0x512C1FCF401133680f373a386F3f752b98070BC5',
             chainId: '77',
@@ -482,7 +488,9 @@ describe('execute strategies of erc 721 balance of issued by', () => {
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);
-
+    expect(strategyProvider.strategies[0][0].enrichedInformations.name).toBe('Ethereum Name Service');
+    expect(strategyProvider.strategies[0][0].enrichedInformations.symbol).toBe('ENS');
+    expect(strategyProvider.strategies[0][0].enrichedInformations.logo).toBe('MYLOGO');
     expect(strategyProvider.isAuthorized).toBeTruthy();
   });
   test('wallet without erc 721 of specific issuer should be not authorized', async () => {

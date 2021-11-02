@@ -80,7 +80,7 @@ export const strategy = async (strategy: Strategy<ERC721BalancesOf>): StrategyRe
   const enrichedInformations: EnrichedInformations = {
     symbol: symbol,
     name: name,
-    logo: strategy.logo,
+    logo: strategy.params.logo,
     acquireURLs: strategy.acquireURLs
   };
   return {
