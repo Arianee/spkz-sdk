@@ -20,7 +20,7 @@ export const getNameAdSymbolAndDecimalsERC20 = async (parameters: {
   chainId: string,
   address: string,
   default?: {
-    name: string,
+    name?: string,
     decimals?: string,
     symbol?: string
   }
@@ -57,8 +57,6 @@ export const getNameAdSymbolAndDecimalsERC20 = async (parameters: {
 };
 
 export const getNameAndSymbolERC721 = async (parameters: { chainId: string, address: string,
-  name: string,
-  symbol?: string,
   default?: {
     name: string,
     symbol?: string
