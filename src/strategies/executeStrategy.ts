@@ -1,6 +1,6 @@
 import { Strategy } from '../models/strategy';
 import * as implementedStrategies from './strategies';
-import { StrategiesReturn, StrategyReturn } from '../models/strategyReturn';
+import { StrategiesReturn } from '../models/strategyReturn';
 import { requiredDefined } from '../helpers/required/required';
 import { CacheStrategyWrapper } from '../helpers/cacheWrapper/cacheStrategyWrapper';
 
