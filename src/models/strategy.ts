@@ -1,9 +1,11 @@
+
 export interface Strategy<T = ERC20BalancesOf
   | ERC721BalancesOf
   | isExactAddresses
   | RoomOwner
   | ERC721BalancesOfIssuedBy
-  | ERC1155BalancesOf> {
+  | ERC1155BalancesOf
+  | OpenseaCollectionBalanceOf> {
   name: string,
   addresses?: string[],
   params?: T,
@@ -45,13 +47,22 @@ export interface RoomOwner {
 }
 
 export interface ERC1155BalanceOf extends ERC20BalanceOf {
-  id: string
+    id: string
 }
 
 export interface ERC1155BalancesOf {
-  minBalance: string,
-  tokens?: Array<ERC1155BalanceOf>,
-  logo?: string,
-  name?: string,
-  symbol?: string
+    minBalance: string,
+    tokens?: Array<ERC1155BalanceOf>,
+    logo?: string,
+    name?: string,
+    symbol?: string
+}
+
+export interface OpenseaCollectionBalanceOf{
+    minBalance: string,
+    logo: string,
+    name: string,
+    symbol: string,
+    collection: string
+
 }
