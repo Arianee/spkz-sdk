@@ -5,3 +5,4 @@ export { strategy as erc721BalanceOfIssuedBy } from './erc-721-balance-of-issued
 export { strategy as isExactAddress } from './is-exact-address';
 export { strategy as roomOwner } from './room-owner';
 export { strategy as erc1155BalanceOf } from './erc-1155-balance-of';
+export { strategy as openseaCollectionBalanceOf } from './opensea-collection-balance-of';
