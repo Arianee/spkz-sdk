@@ -107,6 +107,28 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
+  public async updateLastViewed (parameters: { roomId: string, sectionId: string, dry?:boolean }) {
+    const { roomId, sectionId, dry } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const { endpoint } = tokenContent;
+    const params = {
+      sectionId,
+      roomId,
+      dry
+    };
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.updateLastViewed, params);
+  }
+
+  /**
+   * Join section on this room. It will perform a profile update
+   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
   public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?:boolean }) {
     const { roomId, sectionId, profile, dry } = parameters;
     requiredDefined(roomId, 'roomId is required');

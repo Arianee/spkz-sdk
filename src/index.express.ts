@@ -8,6 +8,7 @@ import {
 } from './models/jsonrpc/writeMessageParameters';
 import { BouncerUser, BouncerUserQuery } from './models/jsonrpc/bouncer';
 import cors from 'cors';
+
 const express = require('express');
 const app = express();
 const port = 3000;
@@ -25,19 +26,29 @@ let dbbouncerUserProfile = {};
 let dbProfile = {};
 let dbBouncerRoom = {};
 
-const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
-// @ts-ignore
+const spkzJSONRPC = new SPKZJSONRPC({
+  chainId: '1',
+  network: '1'
+})
+  // @ts-ignore
   .setMessagesMethod({
-    read: (parameters:ReadMessageParameters) => {
-      const { roomId, sectionId } = parameters;
+    read: (parameters: ReadMessageParameters) => {
+      const {
+        roomId,
+        sectionId
+      } = parameters;
 
       if (!dbMessage[roomId + sectionId]) {
         return Promise.resolve([]);
-      };
+      }
+      ;
       return Promise.resolve(dbMessage[roomId + sectionId]);
     },
-    write: (parameters:WriteMessageParameters) => {
-      const { roomId, sectionId } = parameters;
+    write: (parameters: WriteMessageParameters) => {
+      const {
+        roomId,
+        sectionId
+      } = parameters;
       if (!dbMessage[roomId + sectionId]) {
         dbMessage[roomId + sectionId] = [];
       }
@@ -47,7 +58,10 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
   })
   .setUsersMethod({
     getUsers: (sectionUser: SectionUser) => {
-      const { sectionId, roomId } = sectionUser;
+      const {
+        sectionId,
+        roomId
+      } = sectionUser;
       if (dbSectionUsers && dbSectionUsers[roomId + sectionId]) {
         const sectionUsers: SectionUser[] = Object.values(dbSectionUsers[roomId + sectionId]);
         return Promise.resolve(sectionUsers);
@@ -56,7 +70,11 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
       }
     },
     createOrUpdateProfile: (param: SectionUser) => {
-      const { sectionId, roomId, blockchainWallet } = param;
+      const {
+        sectionId,
+        roomId,
+        blockchainWallet
+      } = param;
       if (!dbRoomUsers[roomId + sectionId]) {
         dbRoomUsers[roomId + sectionId] = {};
       }
@@ -64,23 +82,43 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
       return Promise.resolve(param);
     },
     joinSection: (param: SectionUser) => {
-      const { sectionId, roomId, blockchainWallet } = param;
+      const {
+        sectionId,
+        roomId,
+        blockchainWallet
+      } = param;
       if (!dbSectionUsers[roomId + sectionId]) {
         dbSectionUsers[roomId + sectionId] = {};
       }
       dbSectionUsers[roomId + sectionId][blockchainWallet] = param;
       return Promise.resolve(param);
+    },
+    updateLatViewed: (param: SectionUser) => {
+      const {
+        sectionId,
+        roomId,
+        blockchainWallet
+      } = param;
+      if (!dbSectionUsers[roomId + sectionId]) {
+        dbSectionUsers[roomId + sectionId] = {};
+      }
+      dbSectionUsers[roomId + sectionId][blockchainWallet] = {
+        ...param,
+        lastViewed: Date.now()
+      };
+
+      return Promise.resolve(param);
     }
   })
   .setBouncerMethod({
-    updateProfile: (bouncerUser:BouncerUser):Promise<BouncerUser> => {
+    updateProfile: (bouncerUser: BouncerUser): Promise<BouncerUser> => {
       dbbouncerUserProfile[bouncerUser.blockchainWallet] = bouncerUser;
       return Promise.resolve(dbbouncerUserProfile[bouncerUser.blockchainWallet]);
     },
-    getMyProfile: (bouncerUser:BouncerUserQuery):Promise<BouncerUser> => {
+    getMyProfile: (bouncerUser: BouncerUserQuery): Promise<BouncerUser> => {
       return Promise.resolve(dbbouncerUserProfile[bouncerUser.blockchainWallet]);
     },
-    getUserRooms: (bouncerUserQuery:BouncerUserQuery):Promise<RoomUser[]> => {
+    getUserRooms: (bouncerUserQuery: BouncerUserQuery): Promise<RoomUser[]> => {
       if (dbBouncerRoom[bouncerUserQuery.blockchainWallet]) {
         const bouncerUserRoom: SectionUser[] = Object.values(dbBouncerRoom[bouncerUserQuery.blockchainWallet]);
         return Promise.resolve(bouncerUserRoom);
@@ -88,7 +126,7 @@ const spkzJSONRPC = new SPKZJSONRPC({ chainId: '1', network: '1' })
         return Promise.resolve([]);
       }
     },
-    joinRoom: (bouncerRoomUser:RoomUser):Promise<any> => {
+    joinRoom: (bouncerRoomUser: RoomUser): Promise<any> => {
       if (!dbBouncerRoom[bouncerRoomUser.blockchainWallet]) {
         dbBouncerRoom[bouncerRoomUser.blockchainWallet] = {};
       }

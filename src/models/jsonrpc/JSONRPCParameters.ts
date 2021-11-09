@@ -11,7 +11,8 @@ import { BouncerUser, BouncerUserQuery } from './bouncer';
 export interface SectionUserParameters{
     joinSection: AsyncFunc<SectionUser, any>,
     createOrUpdateProfile:AsyncFunc<SectionUser, any>,
-    getUsers:AsyncFunc<SectionUserGet, SectionUser[]>
+    getUsers:AsyncFunc<SectionUserGet, SectionUser[]>,
+    updateLatViewed:AsyncFunc<SectionUser, any>
 }
 
 export interface MessageParameters{

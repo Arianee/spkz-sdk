@@ -19,7 +19,8 @@ export const JSONRPCMethods = {
     section: {
       updateProfile: 'room.section.updateProfile',
       users: 'room.section.getUsers',
-      join: 'room.section.join'
+      join: 'room.section.join',
+      updateLastViewed: 'room.section.lastViewed'
     }
   }
 };
