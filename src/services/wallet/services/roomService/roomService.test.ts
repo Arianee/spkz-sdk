@@ -170,6 +170,18 @@ describe('room', () => {
       expect(payload2.profile).toEqual(expectedPayload2.profile);
       done();
     });
+
+  test('user can update last viewed', async (done) => {
+    const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+
+    await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+    const payload = {
+      roomId: '0',
+      sectionId: 'chat'
+    };
+    await proxyWallet.room.updateLastViewed(payload);
+    done();
+  });
   describe('send message', () => {
     test('send message', async () => {
       const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
