@@ -10,7 +10,7 @@ const roomId = '0';
   setAddressInFront(spkz.metamaskService.defaultAccount);
 
   window.getMessage = async () => {
-    const message = await spkz.room.getMessages({ roomId: roomId, sectionId: 'chat' });
+    const message = await spkz.room.fetchMessages({ roomId: roomId, sectionId: 'chat' });
     console.log(message);
   };
 
@@ -42,7 +42,7 @@ const roomId = '0';
   };
 
   const verifiedId = await spkz.bouncer.getVerifiedRoomsId();
-  console.log(verifiedId);  
+  console.log(verifiedId);
 
   function setAddressInFront (address:string) {
     document.getElementById('walletAddress').innerText = address;
