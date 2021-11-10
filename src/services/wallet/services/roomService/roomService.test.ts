@@ -199,8 +199,8 @@ describe('room', () => {
         sectionId: 'chat'
       });
 
-      expect(messages).toHaveLength(1);
-      expect(messages[0].payload.content).toBe(expectedMessage);
+      expect(messages.messages).toHaveLength(1);
+      expect(messages.messages[0].payload.content).toBe(expectedMessage);
     });
   });
 

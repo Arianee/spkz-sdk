@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { SPKZJSONRPC } from './services/JSONRPCServer';
 import {
-  ReadMessageParameters,
+  ReadMessageParameters, ReadMessageReturn,
   RoomUser,
   SectionUser,
   WriteMessageParameters
@@ -32,17 +32,27 @@ const spkzJSONRPC = new SPKZJSONRPC({
 })
   // @ts-ignore
   .setMessagesMethod({
-    read: (parameters: ReadMessageParameters) => {
+    read: (parameters: ReadMessageParameters):Promise<ReadMessageReturn> => {
       const {
         roomId,
         sectionId
       } = parameters;
 
       if (!dbMessage[roomId + sectionId]) {
-        return Promise.resolve([]);
+        return Promise.resolve({
+          messages: [],
+          messageCount: 0,
+          isMoreMessages: false
+        });
       }
-      ;
-      return Promise.resolve(dbMessage[roomId + sectionId]);
+      const messages = dbMessage[roomId + sectionId];
+      return Promise.resolve(
+        {
+          messages: messages,
+          messageCount: messages.length,
+          isMoreMessages: false
+        }
+      );
     },
     write: (parameters: WriteMessageParameters) => {
       const {
