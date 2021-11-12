@@ -209,7 +209,7 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
       const firstBlockchainWallet = blockchainWallets[0];
 
       if (params.dry !== true) {
-        await configuration.updateLatViewed({
+        await configuration.updateLastViewed({
           roomId,
           sectionId,
           blockchainWallet: firstBlockchainWallet,

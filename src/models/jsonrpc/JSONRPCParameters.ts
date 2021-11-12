@@ -13,7 +13,7 @@ export interface SectionUserParameters {
   joinSection: AsyncFunc<SectionUser, any>,
   createOrUpdateProfile: AsyncFunc<SectionUser, any>,
   getUsers: AsyncFunc<SectionUserGet, SectionUser[]>,
-  updateLatViewed: AsyncFunc<SectionUser, any>
+  updateLastViewed: AsyncFunc<SectionUser, any>
 }
 
 export interface MessageParameters {

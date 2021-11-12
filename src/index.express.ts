@@ -116,7 +116,7 @@ const spkzJSONRPC = new SPKZJSONRPC({
       dbSectionUsers[roomId + sectionId][blockchainWallet] = param;
       return Promise.resolve(param);
     },
-    updateLatViewed: (param: SectionUser) => {
+    updateLastViewed: (param: SectionUser) => {
       const {
         sectionId,
         roomId,
