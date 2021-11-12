@@ -70,11 +70,11 @@ const spkzJSONRPC = new SPKZJSONRPC({
     newMessage: (parameters: NewMessageCountParameters) => {
       const result:NewMessageCount[] = [{
         roomId: parameters.roomId,
-        sectionId: parameters.sectionId,
         chainId: parameters.chainId,
         network: parameters.network,
         newMessagesCount: 11,
-        lastViewed: Date.now()
+        lastViewed: Date.now(),
+        sectionId: '11'
       }];
       return Promise.resolve([]);
     }

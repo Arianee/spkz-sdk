@@ -30,8 +30,7 @@ export interface NewMessageCountParameters{
  chainId:string,
  blockchainWallet: string,
  network: string,
- roomId:string,
- sectionId:string
+ roomId:string
 }
 export interface NewMessageCount {
  roomId: string;
