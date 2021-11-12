@@ -10,7 +10,7 @@ import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { MessageService } from '../messageService/messageService';
-import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
+import { NewMessageCount, ReadMessageParameters } from '../../../../models/jsonrpc/writeMessageParameters';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -32,20 +32,33 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  async getMessages (parameters: { roomId: string, sectionId: string }) {
+  async getMessages (parameters: { roomId: string,
+    sectionId: string,
+    limit?:number,
+    fromTimestamp?: number,
+    toTimestamp?: number
+  }) {
     const {
       roomId,
       sectionId
+
     } = parameters;
+
+    const defaultParameters = {
+      limit: 100
+    };
+
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
     const { endpoint } = tokenContent;
+
     const params = {
-      sectionId,
-      roomId
+      ...parameters,
+      ...defaultParameters
     };
+
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.read, params);
   }
 
