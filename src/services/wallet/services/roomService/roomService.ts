@@ -10,21 +10,22 @@ import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { MessageService } from '../messageService/messageService';
+import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
   constructor (
-               private messagingService:ProxyWalletService,
-               private fetchRoomService:FetchRoomService,
-               private rightService:RightService,
-               private httpService:RPCJSONService,
-               private websocketService: WebsocketService,
-              private messageService: MessageService
+    private messagingService: ProxyWalletService,
+    private fetchRoomService: FetchRoomService,
+    private rightService: RightService,
+    private httpService: RPCJSONService,
+    private websocketService: WebsocketService,
+    private messageService: MessageService
   ) {
 
   }
 
-  public getNFTRoom:(roomId:string)=>Promise<NFTROOM> = this.fetchRoomService.fetchRoom;
+  public getNFTRoom: (roomId: string) => Promise<NFTROOM> = this.fetchRoomService.fetchRoom;
 
   /**
    * Get all messages from roomId and section
@@ -32,7 +33,10 @@ export class RoomService {
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
   async getMessages (parameters: { roomId: string, sectionId: string }) {
-    const { roomId, sectionId } = parameters;
+    const {
+      roomId,
+      sectionId
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
@@ -55,7 +59,11 @@ export class RoomService {
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
   async sendMessage (parameters: { roomId: string, sectionId: string, messageContent: any }) {
-    const { roomId, sectionId, messageContent } = parameters;
+    const {
+      roomId,
+      sectionId,
+      messageContent
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     requiredDefined(messageContent, 'messageContent is required');
@@ -90,7 +98,10 @@ export class RoomService {
    * @param parameters
    */
   async canWriteSection (parameters: { roomId: string, sectionId: string }): Promise<StrategiesReturn> {
-    return this.rightService.canWriteSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
+    return this.rightService.canWriteSection({
+      ...parameters,
+      address: this.messagingService.authorizedAddresses[0]
+    });
   }
 
   /**
@@ -99,7 +110,10 @@ export class RoomService {
    * @param parameters
    */
   async canReadSection (parameters: { roomId: string, sectionId: string }): Promise<StrategiesReturn> {
-    return this.rightService.canReadSection({ ...parameters, address: this.messagingService.authorizedAddresses[0] });
+    return this.rightService.canReadSection({
+      ...parameters,
+      address: this.messagingService.authorizedAddresses[0]
+    });
   }
 
   /**
@@ -107,8 +121,12 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async updateLastViewed (parameters: { roomId: string, sectionId: string, dry?:boolean }) {
-    const { roomId, sectionId, dry } = parameters;
+  public async updateLastViewed (parameters: { roomId: string, sectionId: string, dry?: boolean }) {
+    const {
+      roomId,
+      sectionId,
+      dry
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
 
@@ -129,8 +147,13 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?:boolean }) {
-    const { roomId, sectionId, profile, dry } = parameters;
+  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?: boolean }) {
+    const {
+      roomId,
+      sectionId,
+      profile,
+      dry
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     requiredDefined(profile, 'profile is required');
@@ -155,8 +178,13 @@ export class RoomService {
    * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?:boolean }) {
-    const { roomId, sectionId, profile, dry } = parameters;
+  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?: boolean }) {
+    const {
+      roomId,
+      sectionId,
+      profile,
+      dry
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     requiredDefined(profile, 'profile is required');
@@ -180,7 +208,10 @@ export class RoomService {
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
   public async getSectionUsers (parameters: { roomId: string, sectionId: string }): Promise<any> {
-    const { roomId, sectionId } = parameters;
+    const {
+      roomId,
+      sectionId
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
 
@@ -196,16 +227,42 @@ export class RoomService {
   }
 
   public async joinNotificationserver (parameters: { roomId: string, sectionId: string }) {
-    const { roomId, sectionId } = parameters;
+    const {
+      roomId,
+      sectionId
+    } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     this.websocketService.joinSection(parameters);
   }
 
-  public fullRoomStrategies (parameters:{roomId:string}) {
+  public fullRoomStrategies (parameters: { roomId: string }) {
     const { roomId } = parameters;
     const address = this.messagingService.authorizedAddresses[0];
 
-    this.rightService.fullRoomStrategies({ roomId, address });
+    this.rightService.fullRoomStrategies({
+      roomId,
+      address
+    });
   }
+
+  /**
+   * Return new messages count of each section of a room according to last view
+   * @param parameters
+   */
+  public getNewMessageCount = async (parameters: { roomId: string }):Promise<NewMessageCount[]> => {
+    const {
+      roomId
+    } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+
+    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+
+    const { endpoint } = tokenContent;
+    const params = {
+      roomId
+    };
+
+    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.newMessage, params);
+  };
 }
