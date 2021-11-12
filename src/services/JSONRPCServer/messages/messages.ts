@@ -123,8 +123,7 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
         chainId: chainId.toString(),
         blockchainWallet: firstBlockchainWallet.toString(),
         network: network.toString(),
-        roomId: roomId.toString(),
-        sectionId: sectionId.toString()
+        roomId: roomId.toString()
       });
 
       requiredType(newMessageCount, 'array', 'newMessageCount should be an array');
