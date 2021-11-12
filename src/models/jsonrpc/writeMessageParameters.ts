@@ -16,6 +16,15 @@ export interface ReadMessageParameters {
  chainId: string;
  network: string;
  limit: number;
+ fromTimestamp?: number;
+ toTimestamp?: number;
+}
+
+export interface ReadMessageReturn {
+ messageCount: number;
+ messages: any[];
+ isMoreMessages: boolean;
+ nextTimestamp?: number;
 }
 
 export interface SectionUserGet{
