@@ -53,6 +53,7 @@ describe('room', () => {
       roomId: '0',
       sectionId: 'chat'
     });
+
     expect(users1).toHaveLength(1);
     await proxyWallet.room.joinSection(
       {
