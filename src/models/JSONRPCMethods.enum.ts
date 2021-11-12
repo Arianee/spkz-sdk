@@ -14,7 +14,8 @@ export const JSONRPCMethods = {
   room: {
     message: {
       write: 'room.message.write',
-      read: 'room.message.read'
+      read: 'room.message.read',
+      newMessage: 'room.message.newMessageCount'
     },
     section: {
       updateProfile: 'room.section.updateProfile',

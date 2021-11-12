@@ -1,6 +1,8 @@
 import 'reflect-metadata';
 import { SPKZJSONRPC } from './services/JSONRPCServer';
 import {
+  NewMessageCount,
+  NewMessageCountParameters,
   ReadMessageParameters, ReadMessageReturn,
   RoomUser,
   SectionUser,
@@ -64,6 +66,17 @@ const spkzJSONRPC = new SPKZJSONRPC({
       }
       dbMessage[roomId + sectionId].push(parameters);
       return Promise.resolve(parameters);
+    },
+    newMessage: (parameters: NewMessageCountParameters) => {
+      const result:NewMessageCount[] = [{
+        roomId: parameters.roomId,
+        sectionId: parameters.sectionId,
+        chainId: parameters.chainId,
+        network: parameters.network,
+        newMessagesCount: 11,
+        lastViewed: Date.now()
+      }];
+      return Promise.resolve([]);
     }
   })
   .setUsersMethod({

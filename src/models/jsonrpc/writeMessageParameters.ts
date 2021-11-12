@@ -26,6 +26,21 @@ export interface ReadMessageReturn {
  isMoreMessages: boolean;
  nextTimestamp?: number;
 }
+export interface NewMessageCountParameters{
+ chainId:string,
+ blockchainWallet: string,
+ network: string,
+ roomId:string,
+ sectionId:string
+}
+export interface NewMessageCount {
+ roomId: string;
+ sectionId: string;
+ chainId: string;
+ network: string;
+ newMessagesCount:number;
+ lastViewed:number
+}
 
 export interface SectionUserGet{
  roomId: string,
