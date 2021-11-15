@@ -14,6 +14,7 @@
   },
   "homepage": "https://github.com/Arianee/spkz-sdk#readme",
   "dependencies": {
+    "@arianee/required": "0.9.0",
     "@pqt/abbreviate": "^1.0.2",
     "axios": "^0.21.4",
     "body-parser": "^1.19.0",
@@ -25,6 +26,8 @@
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "object-hash": "^2.2.0",
+    "redux": "^4.1.2",
+    "redux-logger": "^3.0.6",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.2.0",
     "socket.io-client": "^4.2.0",
