@@ -11,13 +11,13 @@ export const getPropertyMap = (property: string | string[]) => () => {
 };
 
 export function subscribeToProperty (property: string | string[] = ''):Observable<any> {
-  let lastProperty;
-
   // Skip first one to avoid to get 'initial state'
   let internalUnsubscribe;
   return {
     unsubscribe: internalUnsubscribe,
     subscribe: (next) => {
+      let lastProperty;
+
       const internalUnsubscribe = getStore().subscribe(() => {
         if (lastProperty !== getProperty(property)) {
           lastProperty = getProperty(property);
@@ -28,13 +28,14 @@ export function subscribeToProperty (property: string | string[] = ''):Observabl
     },
     '@@observable': () => ({
       subscribe: (observer) => {
+        let lastProperty;
+
         const unsubscribe = getStore().subscribe(() => {
           if (lastProperty !== getProperty(property)) {
             lastProperty = getProperty(property);
             return observer.next(lastProperty);
           }
         });
-        observer.next(lastProperty);
         return {
           unsubscribe
         };
