@@ -10,7 +10,18 @@ import { UserProfile } from '../../../../models/userProfile';
 import { WebsocketService } from '../websocketService/websocketService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { MessageService } from '../messageService/messageService';
-import { NewMessageCount, ReadMessageParameters } from '../../../../models/jsonrpc/writeMessageParameters';
+import {
+  isWSInitilized,
+  nextTimestamp,
+  $messagesFromSection,
+  hasFetchInitialData, getMessages
+} from '../../../../stateManagement/src/selectors/messages.selector';
+import {
+  addMessagesToSection, toggleInitialFetch,
+  updateMessagesPagination
+} from '../../../../stateManagement/src/reducers/messages/actions';
+import { NewMessageCount, ReadMessageReturn } from '../../../../models/jsonrpc/writeMessageParameters';
+import { FetchParameters } from '../../../../models/FetchParameters';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -28,16 +39,11 @@ export class RoomService {
   public getNFTRoom: (roomId: string) => Promise<NFTROOM> = this.fetchRoomService.fetchRoom;
 
   /**
-   * Get all messages from roomId and section
+   * Get messages from roomId and section via http call
    * @param {{roomId: string; sectionId: string}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  async getMessages (parameters: { roomId: string,
-    sectionId: string,
-    limit?:number,
-    fromTimestamp?: number,
-    toTimestamp?: number
-  }) {
+  async fetchMessages (parameters: FetchParameters) {
     const {
       roomId,
       sectionId
@@ -50,6 +56,7 @@ export class RoomService {
 
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
+
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
     const { endpoint } = tokenContent;
@@ -59,11 +66,31 @@ export class RoomService {
       ...defaultParameters
     };
 
-    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.read, params);
-  }
+    if (hasFetchInitialData({ roomId, sectionId })) {
+      return getMessages({ roomId, sectionId });
+    }
 
-  newMessageListener (cb) {
-    this.messageService.messageEvent(cb);
+    toggleInitialFetch({
+      ...parameters,
+      initialFetch: true
+    });
+
+    const result:ReadMessageReturn = await this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.read, params);
+
+    addMessagesToSection({
+      ...parameters,
+      messages: result.messages
+    });
+
+    if (result.nextTimestamp) {
+      updateMessagesPagination({
+        roomId,
+        sectionId,
+        nextTimestamp: result.nextTimestamp
+      });
+    }
+
+    return result;
   }
 
   /**
@@ -239,15 +266,61 @@ export class RoomService {
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.section.users, params);
   }
 
-  public async joinNotificationserver (parameters: { roomId: string, sectionId: string }) {
+  private subscribeToNodeNotificationWSEndpoint (parameters: { roomId: string, sectionId: string }) {
     const {
       roomId,
       sectionId
     } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
-    this.websocketService.joinSection(parameters);
+
+    if (!!isWSInitilized(parameters) === false) {
+      this.websocketService.joinSection(parameters);
+
+      this.messageService.messageEvent((data:string) => {
+        const message = JSON.parse(data);
+        addMessagesToSection({
+          ...parameters,
+          messages: [message]
+        });
+        return message;
+      });
+    }
   }
+
+  /**
+   * Fetch next messages and update store. It will emit new event to "subscribeToMessages"
+   * @param parameters
+   */
+  public fetchNextMessages=(parameters: { roomId: string, sectionId: string, limit?:number }):void => {
+    const { roomId, sectionId, limit } = parameters;
+    requiredDefined(roomId, 'roomId is required');
+    requiredDefined(sectionId, 'sectionId is required');
+
+    const nextTimeStamp = nextTimestamp(parameters);
+
+    if (nextTimeStamp) {
+      const fetchParameters:FetchParameters = {
+        roomId,
+        sectionId,
+        limit,
+        fromTimestamp: nextTimeStamp
+      };
+      this.fetchMessages(fetchParameters);
+    }
+  }
+
+  /**
+   * Subscribe to messages. It will automatically fetch older messages (limit) and subscribe to web socket.
+   * Call "fetchNextMessages" if needed next messages
+   * @param parameters
+   */
+  public subscribeToMessages = (parameters: { roomId: string, sectionId: string }) => {
+    this.fetchMessages(parameters);
+    this.subscribeToNodeNotificationWSEndpoint(parameters);
+
+    return $messagesFromSection(parameters);
+  };
 
   public fullRoomStrategies (parameters: { roomId: string }) {
     const { roomId } = parameters;

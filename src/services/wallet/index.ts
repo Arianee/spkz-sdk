@@ -12,7 +12,7 @@ import { FetchRoomService } from '../utils/services/fetchRoomService/fetchRoomSe
 import { RightService } from '../utils/services/rightService/rightService';
 
 export class SPKZ {
-    private container = container.createChildContainer();
+    public container = container.createChildContainer();
     public wallets: ProxyWalletService = this.container.resolve(ProxyWalletService);
     public room: RoomService = this.container.resolve(RoomService);
     public bouncer: BouncerService = this.container.resolve(BouncerService);

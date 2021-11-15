@@ -1,7 +1,7 @@
 import { AsyncFunc } from '../AsyncFunc';
 import {
   NewMessageCount, NewMessageCountParameters,
-  ReadMessageParameters,
+  ReadMessageParameters, ReadMessageReturn,
   RoomUser,
   SectionUser,
   SectionUserGet,
@@ -17,7 +17,7 @@ export interface SectionUserParameters {
 }
 
 export interface MessageParameters {
-  read: AsyncFunc<ReadMessageParameters, any>,
+  read: AsyncFunc<ReadMessageParameters, ReadMessageReturn>,
   write: AsyncFunc<WriteMessageParameters, any>,
   newMessage?: AsyncFunc<NewMessageCountParameters, NewMessageCount[]>,
 }

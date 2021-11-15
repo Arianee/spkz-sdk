@@ -1,4 +1,8 @@
-import { createOrRetrieveWallet, SPKZ } from '../../../..';
+import { createOrRetrieveWallet, NFTROOM, SPKZ } from '../../../..';
+import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
+import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
+import { RPCJSONService } from '../httpService/RPCJSONService';
+import { MessageService } from '../messageService/messageService';
 import axios from 'axios';
 
 jest.setTimeout(60000);
@@ -195,7 +199,7 @@ describe('room', () => {
         sectionId: 'chat'
       });
 
-      const messages = await proxyWallet.room.getMessages({
+      const messages = await proxyWallet.room.fetchMessages({
         roomId: '0',
         sectionId: 'chat'
       });
@@ -255,7 +259,7 @@ describe('room', () => {
       try {
         const messages = await proxyWallet
           .room
-          .getMessages({
+          .fetchMessages({
             roomId: '2',
             sectionId: 'chat'
           });
@@ -266,6 +270,72 @@ describe('room', () => {
       ;
 
       expect(inError).toBeTruthy();
+    });
+  });
+
+  describe('DEV message with redux store', () => {
+    const fetchRoom = async ():Promise<NFTROOM> => {
+      return {
+        strategies: [[]],
+        endpoint: 'http://monendpoint.com',
+        notificationEndpoint: 'http://monendpoint.com',
+        sections: [
+          {
+            title: 'Chat',
+            id: 'chat'
+          }
+        ]
+      };
+    };
+
+    const signedRPCCall = (endpoint, methodName):any => {
+      if (methodName === JSONRPCMethods.room.message.read) {
+        return {
+          messages: [{
+            id: 1,
+            content: 'my content'
+          },
+          {
+            id: 2,
+            content: 'my content'
+          }]
+        };
+      } else {
+        return {};
+      }
+    };
+
+    test('fetch messages and subscribe', async (done) => {
+      const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+
+      jest.spyOn(proxyWallet.container.resolve(FetchRoomService), 'fetchRoom')
+        .mockImplementation(fetchRoom);
+      jest.spyOn(proxyWallet.container.resolve(RPCJSONService), 'signedRPCCall')
+        .mockImplementation(signedRPCCall);
+
+      let number = 0;
+
+      proxyWallet.room.subscribeToMessages({ roomId: '1', sectionId: 'chat' })
+        .subscribe(messages => {
+          number++;
+          if (number === 1) {
+            expect(messages).toHaveLength(0);
+          }
+          if (number === 2) {
+            expect(messages).toHaveLength(2);
+          }
+          if (number === 3) {
+            expect(messages).toHaveLength(3);
+            done();
+          }
+        });
+
+      setTimeout(() => {
+        proxyWallet.container.resolve(MessageService).emitMessage(JSON.stringify({
+          content: 'my second content'
+        }));
+      });
     });
   });
 });
