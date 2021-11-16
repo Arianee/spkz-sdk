@@ -15,7 +15,7 @@ export const toggleWS = (parameters:{
   ws:boolean
 }) => {
   getStore().dispatch({
-    type: ActionTypes.Messages.toggleWS,
+    type: ActionTypes.MESSAGE.toggleWS,
     payload: {
       id: hashFromRoomIdSectionId(parameters),
       ws: parameters.ws
@@ -32,7 +32,7 @@ export const toggleInitialFetch = (parameters:{
   initialFetch:boolean
 }) => {
   getStore().dispatch({
-    type: ActionTypes.Messages.toggleInitialFetch,
+    type: ActionTypes.MESSAGE.toggleInitialFetch,
     payload: {
       id: hashFromRoomIdSectionId(parameters),
       initialFetch: parameters.initialFetch
@@ -56,7 +56,7 @@ export function addMessagesToSection (parameters:{
   requiredType(messages, 'array', 'message should be an array');
 
   return getStore().dispatch({
-    type: ActionTypes.Messages.addMessage,
+    type: ActionTypes.MESSAGE.addMessage,
     payload: {
       id: hashFromRoomIdSectionId(parameters),
       messages: parameters.messages
@@ -77,7 +77,7 @@ export function updateMessagesPagination (parameters:{
 
   if (previousTimestamp) {
     getStore().dispatch({
-      type: ActionTypes.Messages.paginationStatus,
+      type: ActionTypes.MESSAGE.paginationStatus,
       payload: {
         id: hashFromRoomIdSectionId(parameters),
         timestamp: previousTimestamp,
@@ -88,7 +88,7 @@ export function updateMessagesPagination (parameters:{
 
   if (nextTimestamp) {
     getStore().dispatch({
-      type: ActionTypes.Messages.paginationStatus,
+      type: ActionTypes.MESSAGE.paginationStatus,
       payload: {
         id: hashFromRoomIdSectionId(parameters),
         timestamp: nextTimestamp,

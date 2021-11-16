@@ -5,11 +5,14 @@ export const ActionTypes = {
   ROOM: {
     addOrUpdateRoom: 'ROOM.addOrUpdateRoom'
   },
-  Messages: {
+  MESSAGE: {
     paginationStatus: 'ROOM.paginationStatus',
     addMessage: 'ROOM.addMessage',
     toggleWS: 'ROOM.WS',
     toggleInitialFetch: 'ROOM.initialFetch'
+  },
+  NOTIFICATION: {
+    newMessageCounts: 'NOTIFICATION.newMessageCount'
   },
   HELLOWORLD: {
     ADDNAME: 'helloWorldReducer.addName'

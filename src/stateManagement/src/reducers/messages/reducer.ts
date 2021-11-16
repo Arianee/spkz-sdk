@@ -25,7 +25,7 @@ const getDefaultSubState = ():subState => ({
 const scope = Scope({ scopes: ['messagesReducer'] });
 
 const reducerMethods = {
-  [ActionTypes.Messages.paginationStatus]: (state:State, action: {
+  [ActionTypes.MESSAGE.paginationStatus]: (state:State, action: {
     type: string,
     payload: {
       timestamp: number,
@@ -34,7 +34,7 @@ const reducerMethods = {
       id: string,
     }
   }) => {
-    const { requiredDefined } = scope.subScope(ActionTypes.Messages.paginationStatus);
+    const { requiredDefined } = scope.subScope(ActionTypes.MESSAGE.paginationStatus);
     const { timestamp, next, previous, id } = action.payload;
 
     requiredDefined(next || previous, 'next or previous should be defined');
@@ -55,14 +55,14 @@ const reducerMethods = {
       }
     };
   },
-  [ActionTypes.Messages.toggleInitialFetch]: (state: State,
+  [ActionTypes.MESSAGE.toggleInitialFetch]: (state: State,
     action: {
       type: string,
       payload: {
         id: string, initialFetch: boolean
       }
     }) => {
-    const { requiredDefined } = scope.subScope(ActionTypes.Messages.toggleInitialFetch);
+    const { requiredDefined } = scope.subScope(ActionTypes.MESSAGE.toggleInitialFetch);
     const { initialFetch, id } = action.payload;
     requiredDefined(initialFetch, 'initialFetch should be defined');
     requiredDefined(id, 'id should be defined');
@@ -80,13 +80,13 @@ const reducerMethods = {
       }
     };
   },
-  [ActionTypes.Messages.toggleWS]: (state: State, action: {
+  [ActionTypes.MESSAGE.toggleWS]: (state: State, action: {
     type: string, payload: {
       id: string,
       ws: boolean
     }
   }) => {
-    const { requiredDefined } = scope.subScope(ActionTypes.Messages.toggleInitialFetch);
+    const { requiredDefined } = scope.subScope(ActionTypes.MESSAGE.toggleInitialFetch);
     const { ws, id } = action.payload;
     requiredDefined(ws, 'initialFetch should be defined');
     requiredDefined(id, 'id should be defined');
@@ -104,12 +104,12 @@ const reducerMethods = {
       }
     };
   },
-  [ActionTypes.Messages.addMessage]: (state: State, action: {
+  [ActionTypes.MESSAGE.addMessage]: (state: State, action: {
     type: string, payload: {
       id: string, messages: any[]
     }
   }) => {
-    const { requiredDefined } = scope.subScope(ActionTypes.Messages.toggleInitialFetch);
+    const { requiredDefined } = scope.subScope(ActionTypes.MESSAGE.toggleInitialFetch);
     const { messages, id } = action.payload;
     requiredDefined(messages, 'messages should be defined');
     requiredDefined(id, 'id should be defined');

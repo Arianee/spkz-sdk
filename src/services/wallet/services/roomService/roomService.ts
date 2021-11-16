@@ -22,6 +22,13 @@ import {
 } from '../../../../stateManagement/src/reducers/messages/actions';
 import { NewMessageCount, ReadMessageReturn } from '../../../../models/jsonrpc/writeMessageParameters';
 import { FetchParameters } from '../../../../models/FetchParameters';
+import { Observable } from 'redux';
+import {
+  $newMessagesFromRoom,
+  $newMessagesFromSection
+} from '../../../../stateManagement/src/selectors/notifications.selector';
+import { updateNewMessageCountForARoom } from '../../../../stateManagement/src/reducers/notifications/actions';
+import { RoomRPCClient } from './roomRPCClient';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -31,7 +38,8 @@ export class RoomService {
     private rightService: RightService,
     private httpService: RPCJSONService,
     private websocketService: WebsocketService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private roomRPCClient:RoomRPCClient
   ) {
 
   }
@@ -93,32 +101,7 @@ export class RoomService {
     return result;
   }
 
-  /**
-   * Send message to roomId + sectionId
-   * @param {{roomId: string; sectionId: string; messageContent: any}} parameters
-   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
-   */
-  async sendMessage (parameters: { roomId: string, sectionId: string, messageContent: any }) {
-    const {
-      roomId,
-      sectionId,
-      messageContent
-    } = parameters;
-    requiredDefined(roomId, 'roomId is required');
-    requiredDefined(sectionId, 'sectionId is required');
-    requiredDefined(messageContent, 'messageContent is required');
-
-    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
-
-    const { endpoint } = tokenContent;
-    const params = {
-      content: messageContent,
-      sectionId,
-      roomId
-    };
-
-    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.write, params);
-  }
+  public sendMessage =this.roomRPCClient.sendMessage;
 
   /**
    * Check if user can join room depending on main room strategies
@@ -336,19 +319,28 @@ export class RoomService {
    * Return new messages count of each section of a room according to last view
    * @param parameters
    */
-  public getNewMessageCount = async (parameters: { roomId: string }):Promise<NewMessageCount[]> => {
+  public getNewMessageCount = (parameters: { roomId: string, sectionId?:string }) => {
     const {
-      roomId
+      roomId,
+      sectionId
     } = parameters;
     requiredDefined(roomId, 'roomId is required');
 
-    const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
+    this.roomRPCClient.getNewMessageCount(parameters)
+      .then(d => {
+        updateNewMessageCountForARoom({
+          roomId,
+          newMessagesCounts: d
+        });
+      });
 
-    const { endpoint } = tokenContent;
-    const params = {
-      roomId
-    };
-
-    return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.newMessage, params);
+    if (sectionId) {
+      return $newMessagesFromSection({
+        roomId,
+        sectionId
+      });
+    } else {
+      return $newMessagesFromRoom(parameters);
+    }
   };
 }
