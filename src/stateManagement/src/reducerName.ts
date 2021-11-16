@@ -2,5 +2,6 @@ import { HelloWorld } from './reducers/helloWorld/reducer';
 
 export const REDUCERNAME = {
   HelloWorld: 'HelloWorld',
-  MESSAGES: 'MESSAGES'
+  MESSAGES: 'MESSAGES',
+  NOTIFICATIONS: 'NOTIFICATIONS'
 };
