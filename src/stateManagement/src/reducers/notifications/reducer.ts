@@ -49,13 +49,15 @@ const reducerMethods = {
     let newState = state;
     newMessagesCounts
       .forEach(({ roomId, sectionId, newMessagesCount }) => {
-        const subState = state[roomId][sectionId] || getDefaultSubState({ roomId, sectionId });
+        const room = roomId || action.payload.roomId;
+        const subState = state[room][sectionId] || getDefaultSubState({ roomId: room, sectionId });
         const newNotificationStatus:subState = cloneDeep(subState);
         newNotificationStatus.newMessagesCount = newMessagesCount;
         newState = {
           ...newState
         };
-        state[roomId][sectionId] = newNotificationStatus;
+
+        state[room][sectionId] = newNotificationStatus;
       });
 
     return newState;

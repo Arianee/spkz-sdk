@@ -263,7 +263,8 @@ export class RoomService {
       this.messageService.messageEvent((data:string) => {
         const message = JSON.parse(data);
         addMessagesToSection({
-          ...parameters,
+          roomId: message.roomId,
+          sectionId: message.sectionId,
           messages: [message]
         });
         return message;

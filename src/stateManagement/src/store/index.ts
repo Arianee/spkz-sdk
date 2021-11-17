@@ -15,7 +15,9 @@ const rootReducer = combineReducers(
 let store;
 export const getStore = (reset = false) => {
   if (!store || reset === true) {
-    store = createStore(rootReducer
+    store = createStore(rootReducer,
+      // @ts-ignore
+      window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
       // applyMiddleware(logger)
     );
   }
