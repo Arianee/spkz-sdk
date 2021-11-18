@@ -18,16 +18,6 @@ describe('ObservableFactory', () => {
         }]
       });
 
-      $messagesFromSection({ roomId: '22', sectionId: '33' })
-        .subscribe(d => {
-          numberOfCall++;
-
-          if (numberOfCall === 2) {
-            expect(d).toHaveLength(3);
-            done();
-          }
-        });
-
       addMessagesToSection({
         roomId: '22',
         sectionId: '33',
@@ -36,6 +26,15 @@ describe('ObservableFactory', () => {
           fr: 'my first message'
         }]
       });
+
+      $messagesFromSection({ roomId: '22', sectionId: '33' })
+        .subscribe(d => {
+          numberOfCall++;
+          if (numberOfCall === 2) {
+            expect(d).toHaveLength(3);
+            done();
+          }
+        });
 
       addMessagesToSection({
         roomId: '22',

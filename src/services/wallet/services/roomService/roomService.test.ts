@@ -293,10 +293,14 @@ describe('room', () => {
         return {
           messages: [{
             id: 1,
+            roomId: '1',
+            sectionId: 'chat',
             content: 'my content'
           },
           {
             id: 2,
+            roomId: '1',
+            sectionId: 'chat',
             content: 'my content'
           }]
         };
@@ -333,6 +337,8 @@ describe('room', () => {
 
       setTimeout(() => {
         proxyWallet.container.resolve(MessageService).emitMessage(JSON.stringify({
+          roomId: '1',
+          sectionId: 'chat',
           content: 'my second content'
         }));
       });

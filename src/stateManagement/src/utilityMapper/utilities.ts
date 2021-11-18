@@ -11,37 +11,20 @@ export const getPropertyMap = (property: string | string[]) => () => {
 };
 
 export function subscribeToProperty (property: string | string[] = ''):Observable<any> {
-  // Skip first one to avoid to get 'initial state'
-  let internalUnsubscribe;
-  return {
-    unsubscribe: internalUnsubscribe,
-    subscribe: (next) => {
-      let lastProperty;
+  return Observable.create(observer => {
+    let lastProperty;
+    if (getProperty(property)) {
+      observer.next(getProperty(property));
+    }
 
-      const internalUnsubscribe = getStore().subscribe(() => {
-        if (lastProperty !== getProperty(property)) {
-          lastProperty = getProperty(property);
-          next(lastProperty);
-        }
-      });
-      return { unsubscribe: internalUnsubscribe };
-    },
-    '@@observable': () => ({
-      subscribe: (observer) => {
-        let lastProperty;
-
-        const unsubscribe = getStore().subscribe(() => {
-          if (lastProperty !== getProperty(property)) {
-            lastProperty = getProperty(property);
-            return observer.next(lastProperty);
-          }
-        });
-        return {
-          unsubscribe
-        };
+    return getStore().subscribe(() => {
+      const isStateNewOrEmpty = lastProperty !== getProperty(property) || (lastProperty?.length === 0 && getProperty(property)?.length === 0);
+      if (isStateNewOrEmpty) {
+        lastProperty = getProperty(property);
+        observer.next(lastProperty);
       }
-    })
-  };
+    });
+  });
 }
 
 export const filterOnChange = (property: string | string[]) => {
