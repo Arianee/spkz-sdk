@@ -14,7 +14,9 @@ export class RoomsService {
   }
 
   canJoin (rooms:string[]):Promise<StrategiesReturn[]> {
-    return Promise.all(rooms.map(roomId => this.roomService.canJoin({ roomId })));
+    return Promise.all(rooms.map(roomId => this.roomService
+      .rightUtils
+      .canJoin({ roomId })));
   }
 
   createRoom () {

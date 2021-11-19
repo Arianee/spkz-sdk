@@ -10,30 +10,39 @@ import { BouncerService } from './services/bouncerService/bouncerService';
 import { EnvironmentService } from '../utils/services/environmentService/environementService';
 import { FetchRoomService } from '../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../utils/services/rightService/rightService';
+import { UserAndProfileService } from './services/userAndProfileService/userAndProfileService';
+import { RightUtilsService } from './services/rightUtilsService/rightUtilsService';
+import { MessageService } from './services/messageService/messageService';
+import { UsersService } from './services/usersService/usersService';
 
 export class SPKZ {
-    public container = container.createChildContainer();
-    public wallets: ProxyWalletService = this.container.resolve(ProxyWalletService);
-    public room: RoomService = this.container.resolve(RoomService);
-    public bouncer: BouncerService = this.container.resolve(BouncerService);
-    public environmentService=this.container.resolve(EnvironmentService);
-    public rooms: RoomsService = this.container.resolve(RoomsService);
-    public payloadService:PayloadService=this.container.resolve(PayloadService);
-    public metamaskService:MetamaskService =this.container.resolve(MetamaskService);
-    public fetchRoomService:FetchRoomService=this.container.resolve(FetchRoomService);
-    public rightService:RightService=this.container.resolve(RightService);
+  public container = container.createChildContainer();
+  public wallets: ProxyWalletService = this.container.resolve(ProxyWalletService);
+  public bouncer: BouncerService = this.container.resolve(BouncerService);
+  public environmentService = this.container.resolve(EnvironmentService);
+  public rooms: RoomsService = this.container.resolve(RoomsService);
+  public room: RoomService = this.container.resolve(RoomService);
 
-    public get privateKey () {
-      return this.wallets.privateKey;
-    }
+  public payloadService: PayloadService = this.container.resolve(PayloadService);
+  public metamaskService: MetamaskService = this.container.resolve(MetamaskService);
+  public fetchRoomService: FetchRoomService = this.container.resolve(FetchRoomService);
+  public rightService: RightService = this.container.resolve(RightService);
+  public userAndProfileService: UserAndProfileService = this.container.resolve(UserAndProfileService);
+  public rightUtilsService: RightUtilsService = this.container.resolve(RightUtilsService);
+  public messageService: MessageService = this.container.resolve(MessageService);
+  public usersService: UsersService = this.container.resolve(UsersService);
 
-    public static fromPrivateKey = (privateKey): SPKZ => {
-      const spkzInstance = new SPKZ();
-      spkzInstance.wallets.privateKey = privateKey;
-      return spkzInstance;
-    }
+  public get privateKey () {
+    return this.wallets.privateKey;
+  }
 
- public checkAuthorizations=this.wallets.checkBlockchainWalletAuthorizations;
+  public static fromPrivateKey = (privateKey): SPKZ => {
+    const spkzInstance = new SPKZ();
+    spkzInstance.wallets.privateKey = privateKey;
+    return spkzInstance;
+  };
+
+  public checkAuthorizations = this.wallets.checkBlockchainWalletAuthorizations;
 }
 
 export { network };

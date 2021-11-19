@@ -3,7 +3,7 @@ import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetch
 import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client/build/socket';
 import { PayloadService } from '../payloadService/payloadService';
-import { MessageService } from '../messageService/messageService';
+import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
 import { createHash } from 'crypto';
 
 @scoped(Lifecycle.ContainerScoped)
@@ -11,7 +11,7 @@ export class WebsocketService {
   constructor (
     private fetchRoomService: FetchRoomService,
     private payloadSerivce: PayloadService,
-    private messageService: MessageService
+    private messageService: InternalMessageEventEmitterService
   ) {
   }
 
