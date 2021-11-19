@@ -1,6 +1,7 @@
 
 export interface Strategy<T = ERC20BalancesOf
   | ERC721BalancesOf
+  | NativeBalancesOf
   | isExactAddresses
   | RoomOwner
   | ERC721BalancesOfIssuedBy
@@ -17,6 +18,15 @@ export interface ERC20BalancesOf {
   minBalance: string,
   tokens?: Array<ERC20BalanceOf>,
   logo?: string
+}
+
+export interface NativeBalancesOf {
+  minBalance: string,
+  logo?: string,
+  name?: string,
+  symbol?: string,
+  chainId: string,
+  networkId: string,
 }
 
 export interface ERC721BalancesOf {

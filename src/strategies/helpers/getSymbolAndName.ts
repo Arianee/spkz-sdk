@@ -86,3 +86,44 @@ export const getNameAndSymbolERC721 = async (parameters: { chainId: string, addr
     name
   };
 };
+
+export const getNameAndSymbolNative = async (parameters: { chainId: string,
+  default?: {
+    name: string,
+    symbol?: string
+  }
+}) => {
+  const {
+    chainId
+  } = parameters;
+  requiredDefined(chainId, 'chainId must be defined');
+  let defaultSymbol; let defaultName;
+  if (parameters.default) {
+    defaultName = parameters.default.name;
+    defaultSymbol = parameters.default.symbol;
+  }
+
+  if (chainId === '1') {
+    return {
+      symbol: 'ETH',
+      name: 'Ethereum',
+      decimals: '18'
+    };
+  }
+
+  if (chainId === '99') {
+    return {
+      symbol: 'POA',
+      name: 'POA',
+      decimals: '18'
+    };
+  }
+
+  if (chainId === '137') {
+    return {
+      symbol: 'Matic',
+      name: 'Matic',
+      decimals: '18'
+    };
+  }
+};
