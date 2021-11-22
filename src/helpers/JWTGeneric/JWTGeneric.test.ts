@@ -14,7 +14,7 @@ describe('JWTGeneric', function () {
     userId: '1101001',
     name: 'John Doe'
   };
-  const expectedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0xaa8b8f783731be8460927145d9f0f53bd83715dead3a39c9e68d8e3c4c7644d0045a6b75ec80ad39de664542210e2d97fe485a7aa0647dfdf93ba91443c8c03d1b';
+  const expectedToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0x9c81fd170109b7135a2bb45d85ee048fd4f0cbaf20da6cbbfd901e4145632f5a55df346edb3b6b7aa630dccd652f07deb4065eccd1f9aa8347ca970d96bfe9581c';
 
   describe('basic methods', () => {
     test('it should create a token', async () => {
@@ -187,6 +187,104 @@ describe('JWTGeneric', function () {
 
       const isAuthentic = jwt
         .setToken(expectedToken)
+        .verify(pubKey);
+
+      expect(isAuthentic).toBeTruthy();
+    });
+
+    describe('Signature with message', () => {
+      test('test', async () => {
+        const signerCustom = (data) => {
+          // console.log(data);
+          return signer(data);
+        };
+
+        const jwt = new JWTGeneric(signerCustom, decoder as any);
+
+        const jwtSigner = jwt.setMessage('the message:').setPayload(payload);
+
+        const signedJWT = await jwtSigner.sign();
+        const isAuthentic = jwt.setToken(signedJWT).verify(pubKey);
+        // expect(isAuthentic).toBeTruthy();
+      });
+
+      test('A payload with message should be valid', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+
+        const jwtSigner = jwt.setMessage('the message:').setPayload(payload);
+
+        const signedJWT = await jwtSigner.sign();
+        const isAuthentic = jwt.setToken(signedJWT).verify(pubKey);
+        expect(isAuthentic).toBeTruthy();
+      });
+
+      test('it should be true if after iat with message', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        var iat = new Date();
+        iat.setMinutes(iat.getMinutes() - 5);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe',
+          nbf: iat.getTime()
+        };
+
+        const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
+        const token = await jwtService.sign();
+        const isAuthentic = jwt
+          .setToken(token)
+          .verify(pubKey);
+
+        expect(isAuthentic).toBeTruthy();
+      });
+
+      test('it should be false if before iat with message', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        var iat = new Date();
+        iat.setMinutes(iat.getMinutes() + 5);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe',
+          nbf: iat.getTime()
+        };
+
+        const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
+        const token = await jwtService.sign();
+        const isAuthentic = jwt
+          .setToken(token)
+          .verify(pubKey);
+
+        expect(isAuthentic).toBeFalsy();
+      });
+
+      test('expected token should be good', async () => {
+        const jwt = new JWTGeneric(signer, decoder as any);
+        const payload = {
+          userId: '1101001',
+          name: 'John Doe'
+        };
+
+        const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
+        const token = await jwtService.sign();
+
+        expect(token).toBe('dGhlIG9yaWdpbmFsIG5ldyBtZXNzYWdlIDogOiA6CnsidHlwIjoiSldUIiwiYWxnIjoiRVRIIn0=.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0x3866bab482e1a129b2facb854775188ac53584a185b744f62884916c8835f13f34054d8f881d158b2066670351282d17598e1686352137124bb11dfdecf3505c1c');
+      });
+    });
+  });
+
+  describe('decomposeToken', () => {
+    test('decompose newer token', async () => {
+      const token1 = ' the message:\n {"typ":"JWT","alg":"ETH"}.{"userId":"1101001","name":"John Doe"}.0x02060f9f541bf209da120ced3f6f3737ee4c41f840a493fe24ff317f46487a940e9707b7441e1f5cfe797ca9de330d7da8ba09f727f529e1fabb9121900640d81c';
+
+      const jwt = new JWTGeneric(signer, decoder as any);
+      const payload = {
+        userId: '1101001',
+        name: 'John Doe'
+      };
+
+      const jwToken = await jwt.setPayload(payload).setMessage('the original new message : : :').sign();
+
+      const isAuthentic = jwt
+        .setToken(jwToken)
         .verify(pubKey);
 
       expect(isAuthentic).toBeTruthy();

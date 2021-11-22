@@ -10,8 +10,7 @@ const roomId = '0';
   setAddressInFront(spkz.metamaskService.defaultAccount);
 
   window.getMessage = async () => {
-    const message = await spkz.room.fetchMessages({ roomId: roomId, sectionId: 'chat' });
-    console.log(message);
+    //const message = await spkz.room.fetchMessages({ roomId: roomId, sectionId: 'chat' });
   };
 
   window.connectMetamask = async () => {
@@ -31,14 +30,11 @@ const roomId = '0';
     clearWallet();
   };
   window.joinRoom = () => {
-    spkz.room.joinNotificationserver({ roomId: roomId, sectionId: 'chat' });
-    spkz.room.newMessageListener((data) => {
-      console.log('messagelisten', data);
-    });
+
   };
   window.sendMessage = () => {
     const content = (<HTMLInputElement>document.getElementById('messageContent')).value;
-    spkz.room.sendMessage({ roomId: roomId, sectionId: 'chat', messageContent: { content } });
+    //spkz.room.sendMessage({ roomId: roomId, sectionId: 'chat', messageContent: { content } });
   };
 
   const verifiedId = await spkz.bouncer.getVerifiedRoomsId();

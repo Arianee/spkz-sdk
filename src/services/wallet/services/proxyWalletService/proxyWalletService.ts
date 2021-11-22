@@ -91,9 +91,11 @@ export class ProxyWalletService {
   public async addFromMetamask () {
     await this.metamaskService.initMetamask();
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+
     const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {
     });
-    const zef = jwtSigner.setPayload(payloadToSign);
+    const zef = jwtSigner.setPayload(payloadToSign)
+      .setMessage('You need to sign an authorization for a burner wallet. This authorization allows you to send messages without having to sign each message. It\'s an offchain signature, it\'s gas free !');
     const signedJWT = await zef.sign();
 
     this.addBlockchainWalletAuthorization(signedJWT);

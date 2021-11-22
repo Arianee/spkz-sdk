@@ -261,14 +261,13 @@ describe('room', () => {
           .room
           .message
           .fetchMessages({
-            roomId: '2',
-            sectionId: 'chat'
+            roomId: '0',
+            sectionId: 'viproom'
           });
       } catch (e) {
         inError = true;
         expect(e.code).toBe(2);
       }
-      ;
 
       expect(inError).toBeTruthy();
     });
