@@ -1,7 +1,6 @@
 import { ActionTypes } from '../../actionTypes/actionTypes';
-import { cloneDeep } from 'lodash';
 import { Scope } from '@arianee/required';
-import * as _ from 'lodash';
+import { uniqWith, cloneDeep, isEqual } from 'lodash';
 
 interface subState {
   messages: any[],
@@ -115,7 +114,7 @@ const reducerMethods = {
     requiredDefined(id, 'id should be defined');
     const subState = state[action.payload.id] || getDefaultSubState();
 
-    const newMessages = _.uniqWith([...subState.messages, ...messages], _.isEqual);
+    const newMessages = uniqWith([...subState.messages, ...messages], isEqual);
 
     if (newMessages.length === state[action.payload.id]?.messages?.length) {
       return state;

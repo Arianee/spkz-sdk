@@ -12,7 +12,9 @@ export const ActionTypes = {
     toggleInitialFetch: 'ROOM.initialFetch'
   },
   NOTIFICATION: {
-    newMessageCounts: 'NOTIFICATION.newMessageCount'
+    newMessageCounts: 'NOTIFICATION.newMessageCount',
+    updateFetchStatus: 'NOTIFICATION.updateFetchStatus',
+    updateNewMessageCountForASection: 'NOTIFICATION.updateMessageCountForOneSection'
   },
   HELLOWORLD: {
     ADDNAME: 'helloWorldReducer.addName'

@@ -1,66 +1,177 @@
 import { ActionTypes } from '../../actionTypes/actionTypes';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 import { Scope } from '@arianee/required';
-import * as _ from 'lodash';
 import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
 
-interface subState {
-  newMessagesCount:number,
-  sectionId:string,
-  roomId:string
+interface SectionState {
+  newMessagesCount: number,
+  sectionId: string,
+  roomId: string
 };
 
+interface RoomState{
+  sections: {
+    [sectionId: string]: SectionState
+  },
+  status: {
+    isFetched: boolean
+  }
+}
 interface State {
-  [roomId:string]: {
-    [sectionId:string]:subState
-};
+  [roomId: string]: RoomState;
 
 }
-const getDefaultSubState = (parameters:{roomId:string, sectionId:string}):subState => {
-  const { sectionId, roomId } = parameters;
-  return ({
-    newMessagesCount: 0,
-    sectionId,
-    roomId
-  });
+
+const getDefaultState = (state:State) => {
+  const getRoomOrDefaultState = (parameters: { roomId: string}): RoomState => {
+    const {
+      roomId
+    } = parameters;
+    if (!state[roomId]) {
+      return ({
+        sections: {},
+        status: {
+          isFetched: false
+        }
+      });
+    } else {
+      return cloneDeep(state[roomId]);
+    }
+  };
+
+  const getSectionOrDefaultSectionState = (parameters: { roomId: string, sectionId: string }): SectionState => {
+    const {
+      sectionId,
+      roomId
+    } = parameters;
+    if (!state[roomId] || !state[roomId].sections[sectionId]) {
+      return ({
+        newMessagesCount: 0,
+        sectionId,
+        roomId
+      });
+    } else {
+      return cloneDeep(state[roomId].sections[sectionId]);
+    }
+  };
+
+  return {
+    getRoomOrDefaultState,
+    getSectionOrDefaultSectionState
+  };
 };
+
 const scope = Scope({ scopes: ['notificationsReducer'] });
 
 const reducerMethods = {
-  [ActionTypes.NOTIFICATION.newMessageCounts]: (state:State, action: {
+  [ActionTypes.NOTIFICATION.updateFetchStatus]: (state: State, action: {
     type: string,
     payload: {
-      newMessagesCounts:NewMessageCount[],
+      roomId: string,
+    }
+  }) => {
+    const { requiredDefined } = scope.subScope(ActionTypes.NOTIFICATION.updateFetchStatus);
+    const {
+      roomId
+    } = action.payload;
+
+    requiredDefined(roomId, 'roomId should be defined');
+
+    const roomState = getDefaultState(state).getRoomOrDefaultState({ roomId });
+
+    roomState.status.isFetched = true;
+
+    return {
+      ...state,
+      [roomId]: roomState
+    };
+  },
+  [ActionTypes.NOTIFICATION.updateNewMessageCountForASection]: (state: State, action: {
+    type: string,
+    payload: {
+      roomId: string,
+      sectionId: string
+    }
+  }) => {
+    const { requiredDefined } = scope.subScope(ActionTypes.NOTIFICATION.updateNewMessageCountForASection);
+    const {
+      sectionId,
+      roomId
+    } = action.payload;
+
+    requiredDefined(sectionId, 'sectionId should be defined');
+    requiredDefined(roomId, 'roomId should be defined');
+
+    const sectionState = getDefaultState(state).getSectionOrDefaultSectionState({
+      roomId,
+      sectionId
+    });
+
+    sectionState.newMessagesCount = 0;
+    const newSubState = cloneDeep(merge(
+      {
+        [roomId]:
+          state[roomId]
+      },
+      {
+        [roomId]: {
+          sections: {
+            [sectionId]: sectionState
+          }
+        }
+      }));
+
+    return {
+      ...state,
+      ...newSubState
+    };
+  },
+  [ActionTypes.NOTIFICATION.newMessageCounts]: (state: State, action: {
+    type: string,
+    payload: {
+      newMessagesCounts: NewMessageCount[],
       id: string,
-      roomId:string,
-      sectionId:string
+      roomId: string,
+      sectionId: string
     }
   }) => {
     const { requiredDefined } = scope.subScope(ActionTypes.NOTIFICATION.newMessageCounts);
-    const { newMessagesCounts, roomId } = action.payload;
+    const {
+      newMessagesCounts,
+      roomId
+    } = action.payload;
 
     requiredDefined(newMessagesCounts, 'newMessagesCount should be defined');
     requiredDefined(roomId, 'roomId should be defined');
 
-    if (!state[roomId]) {
-      state[roomId] = {};
-    }
+    let newRoomState = getDefaultState(state).getRoomOrDefaultState({ roomId });
 
-    let newState = state;
     newMessagesCounts
-      .forEach(({ roomId, sectionId, newMessagesCount }) => {
-        const room = roomId || action.payload.roomId;
-        const subState = state[room][sectionId] || getDefaultSubState({ roomId: room, sectionId });
-        const newNotificationStatus:subState = cloneDeep(subState);
-        newNotificationStatus.newMessagesCount = newMessagesCount;
-        newState = {
-          ...newState
-        };
+      .forEach(({
+        sectionId,
+        newMessagesCount
+      }) => {
+        const roomId = action.payload.roomId;
+        const newNotificationStatus = getDefaultState(state).getSectionOrDefaultSectionState({
+          roomId: roomId,
+          sectionId
+        });
 
-        state[room][sectionId] = newNotificationStatus;
+        newNotificationStatus.newMessagesCount = newMessagesCount;
+
+        newRoomState = merge(
+          newRoomState,
+          {
+            sections: {
+              [sectionId]: newNotificationStatus
+            }
+          });
       });
 
-    return newState;
+    return {
+      ...state,
+      [roomId]: newRoomState
+    };
   }
 
 };

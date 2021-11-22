@@ -1,7 +1,6 @@
 import { getStore } from '../../store';
 import { ActionTypes } from '../../actionTypes/actionTypes';
 import { Scope } from '@arianee/required';
-import { hashFromRoomIdSectionId } from '../../helpers/hasFromRoomIdAndSectionId';
 import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
 
 const scope = Scope({ scopes: ['notifications', 'actions'] });
@@ -24,6 +23,47 @@ export const updateNewMessageCountForARoom = (parameters:{
     payload: {
       roomId,
       newMessagesCounts: newMessagesCounts
+    }
+  });
+};
+
+/**
+ * Toggle if ws has been connected
+ * @param parameters
+ */
+export const updateFetchStatus = (parameters:{
+  roomId: string
+}) => {
+  const { requiredDefined } = scope.subScope('updateNewMessageCount');
+  const { roomId } = parameters;
+  requiredDefined(roomId, 'roomId is not defined');
+
+  getStore().dispatch({
+    type: ActionTypes.NOTIFICATION.updateFetchStatus,
+    payload: {
+      roomId
+    }
+  });
+};
+
+/**
+ * Toggle if ws has been connected
+ * @param parameters
+ */
+export const resetNewMessageCountForASection = (parameters:{
+  roomId: string,
+  sectionId:string
+}) => {
+  const { requiredDefined } = scope.subScope('resetNewMessageCountForASection');
+  const { roomId, sectionId } = parameters;
+  requiredDefined(roomId, 'roomId is not defined');
+  requiredDefined(sectionId, 'sectionId is not defined');
+
+  getStore().dispatch({
+    type: ActionTypes.NOTIFICATION.updateNewMessageCountForASection,
+    payload: {
+      roomId,
+      sectionId
     }
   });
 };
