@@ -2,6 +2,7 @@ import { getStore } from '../../store';
 import { ActionTypes } from '../../actionTypes/actionTypes';
 import { Scope } from '@arianee/required';
 import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
+import { getSectionNewMessagesCount } from '../../selectors/notifications.selector';
 
 const scope = Scope({ scopes: ['notifications', 'actions'] });
 
@@ -52,7 +53,7 @@ export const updateFetchStatus = (parameters:{
  */
 export const resetNewMessageCountForASection = (parameters:{
   roomId: string,
-  sectionId:string
+  sectionId:string,
 }) => {
   const { requiredDefined } = scope.subScope('resetNewMessageCountForASection');
   const { roomId, sectionId } = parameters;
@@ -63,7 +64,33 @@ export const resetNewMessageCountForASection = (parameters:{
     type: ActionTypes.NOTIFICATION.updateNewMessageCountForASection,
     payload: {
       roomId,
-      sectionId
+      sectionId,
+      newMessageCount: 0
+    }
+  });
+};
+
+/**
+ * Toggle if ws has been connected
+ * @param parameters
+ */
+export const updateNewMessageCountForASection = (parameters:{
+  roomId: string,
+  sectionId:string,
+  increment?:number
+}) => {
+  const { requiredDefined } = scope.subScope('resetNewMessageCountForASection');
+  const { roomId, sectionId } = parameters;
+  requiredDefined(roomId, 'roomId is not defined');
+  requiredDefined(sectionId, 'sectionId is not defined');
+
+  const countNow = getSectionNewMessagesCount(parameters);
+  getStore().dispatch({
+    type: ActionTypes.NOTIFICATION.updateNewMessageCountForASection,
+    payload: {
+      roomId,
+      sectionId,
+      newMessageCount: (parameters.increment || 1) + countNow
     }
   });
 };

@@ -6,7 +6,7 @@ import {
 } from '../reducers/notifications/actions';
 import {
   $newMessagesFromRoom,
-  $newMessagesFromSection,
+  $newMessagesFromSection, getSectionNewMessagesCount,
   hasSectionNewMessages, isFetched
 } from '../selectors/notifications.selector';
 
@@ -24,6 +24,8 @@ describe('Notifications', () => {
         chainId: '1',
         lastViewed: Date.now()
       };
+
+      expect(getSectionNewMessagesCount(roomObject)).toBe(0);
       expect(hasSectionNewMessages(roomObject)).toBeFalsy();
 
       updateNewMessageCountForARoom({
@@ -33,6 +35,8 @@ describe('Notifications', () => {
           ...roomObject
         }]
       });
+
+      expect(getSectionNewMessagesCount(roomObject)).toBe(22);
 
       expect(hasSectionNewMessages(roomObject)).toBeTruthy();
     });

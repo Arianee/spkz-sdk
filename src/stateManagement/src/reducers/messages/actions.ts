@@ -2,6 +2,7 @@ import { getStore } from '../../store';
 import { ActionTypes } from '../../actionTypes/actionTypes';
 import { Scope } from '@arianee/required';
 import { hashFromRoomIdSectionId } from '../../helpers/hasFromRoomIdAndSectionId';
+import { updateNewMessageCountForASection } from '../notifications/actions';
 
 const scope = Scope({ scopes: ['messages', 'actions'] });
 
@@ -55,12 +56,16 @@ export function addMessagesToSection (parameters:{
   requiredDefined(messages, 'message should be defined');
   requiredType(messages, 'array', 'message should be an array');
 
-  return getStore().dispatch({
+  getStore().dispatch({
     type: ActionTypes.MESSAGE.addMessage,
     payload: {
       id: hashFromRoomIdSectionId(parameters),
       messages: parameters.messages
     }
+  });
+  updateNewMessageCountForASection({
+    ...parameters,
+    increment: parameters.messages.length
   });
 }
 
