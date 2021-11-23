@@ -2,14 +2,17 @@ import { getProperty, subscribeToProperty } from '../utilityMapper/utilities';
 import { REDUCERNAME } from '../reducerName';
 import { map } from 'rxjs/operators';
 
-export const hasSectionNewMessages = (parameters: { roomId: string, sectionId: string }): boolean => {
+export const getSectionNewMessagesCount = (parameters: { roomId: string, sectionId: string }): number => {
   const {
     roomId,
     sectionId
   } = parameters;
   const propertiesKey = `${REDUCERNAME.NOTIFICATIONS}.${roomId}.sections.${sectionId}.newMessagesCount`;
   const property = getProperty(propertiesKey);
-  return property > 0;
+  return property || 0;
+};
+export const hasSectionNewMessages = (parameters: { roomId: string, sectionId: string }): boolean => {
+  return getSectionNewMessagesCount(parameters) > 0;
 };
 
 export const isFetched = (parameters: { roomId: string}): boolean => {

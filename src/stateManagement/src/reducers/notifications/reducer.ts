@@ -94,24 +94,27 @@ const reducerMethods = {
     type: string,
     payload: {
       roomId: string,
-      sectionId: string
+      sectionId: string,
+      newMessageCount:number
     }
   }) => {
     const { requiredDefined } = scope.subScope(ActionTypes.NOTIFICATION.updateNewMessageCountForASection);
     const {
       sectionId,
-      roomId
+      roomId,
+      newMessageCount
     } = action.payload;
 
     requiredDefined(sectionId, 'sectionId should be defined');
     requiredDefined(roomId, 'roomId should be defined');
+    requiredDefined(newMessageCount, 'newMessageCount should be defined');
 
     const sectionState = getDefaultState(state).getSectionOrDefaultSectionState({
       roomId,
       sectionId
     });
 
-    sectionState.newMessagesCount = 0;
+    sectionState.newMessagesCount = newMessageCount;
     const newSubState = cloneDeep(merge(
       {
         [roomId]:
@@ -151,23 +154,19 @@ const reducerMethods = {
     let newRoomState = getDefaultState(state).getRoomOrDefaultState({ roomId });
 
     newMessagesCounts
-      .forEach(({
-        sectionId,
-        newMessagesCount
-      }) => {
+      .forEach((notifStatus) => {
         const roomId = action.payload.roomId;
+        const { sectionId } = notifStatus;
         const newNotificationStatus = getDefaultState(state).getSectionOrDefaultSectionState({
           roomId: roomId,
           sectionId
         });
 
-        newNotificationStatus.newMessagesCount = newMessagesCount;
-
         newRoomState = merge(
           newRoomState,
           {
             sections: {
-              [sectionId]: newNotificationStatus
+              [sectionId]: { ...newNotificationStatus, ...notifStatus }
             }
           });
       });

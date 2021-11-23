@@ -14,7 +14,8 @@ export const ActionTypes = {
   NOTIFICATION: {
     newMessageCounts: 'NOTIFICATION.newMessageCount',
     updateFetchStatus: 'NOTIFICATION.updateFetchStatus',
-    updateNewMessageCountForASection: 'NOTIFICATION.updateMessageCountForOneSection'
+    updateNewMessageCountForASection: 'NOTIFICATION.updateMessageCountForOneSection',
+    incrementNewMessageCountForASection: 'NOTIFICATION.incrementMessageCountForOneSection'
   },
   HELLOWORLD: {
     ADDNAME: 'helloWorldReducer.addName'
