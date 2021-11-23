@@ -9,7 +9,7 @@ describe('clause', () => {
           name: 'native-balance-of',
           addresses: ['0x776BB566dC299C9e722773d2A04B401e831a6DC8'],
           params: {
-            minBalance: '100000000000000000000',
+            minBalance: '1000000000000000000',
             chainId: '1',
             networkId: '1'
           }

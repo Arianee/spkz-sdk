@@ -9,7 +9,10 @@ describe('abbreviate helper', () => {
 
   test('should return k for 1000', () => {
     expect(abbreviateStringNumber('1000')).toBe('1K');
-    expect(abbreviateStringNumber('9999')).toBe('9.999K');
+    expect(abbreviateStringNumber('1234')).toBe('1.2K');
+    expect(abbreviateStringNumber('9910')).toBe('9.9K');
+    expect(abbreviateStringNumber('9900')).toBe('9.9K');
+    expect(abbreviateStringNumber('9999')).toBe('10K');
 
     expect(abbreviateStringNumber('10000')).toBe('10K');
     expect(abbreviateStringNumber('100000')).toBe('100K');
