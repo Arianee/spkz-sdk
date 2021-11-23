@@ -21,10 +21,14 @@ import { ReadMessageReturn } from '../../../../models/jsonrpc/writeMessageParame
 import { FetchParameters } from '../../../../models/FetchParameters';
 import {
   $newMessagesFromRoom,
-  $newMessagesFromSection
+  $newMessagesFromSection, isFetched
 } from '../../../../stateManagement/src/selectors/notifications.selector';
-import { updateNewMessageCountForARoom } from '../../../../stateManagement/src/reducers/notifications/actions';
+import {
+  updateFetchStatus,
+  updateNewMessageCountForARoom
+} from '../../../../stateManagement/src/reducers/notifications/actions';
 import { MessageClientService } from './messageClientService';
+import { Observable } from 'rxjs';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MessageService {
@@ -101,6 +105,11 @@ export class MessageService {
     return result;
   };
 
+  /**
+   * subscribeToNodeNotificationWSEndpoint
+   * @param parameters
+   * @private
+   */
   private subscribeToNodeNotificationWSEndpoint (parameters: { roomId: string, sectionId: string }) {
     const {
       roomId,
@@ -146,25 +155,30 @@ export class MessageService {
     });
   }
 
+  public wasFetched=false;
+
   public sendMessage=this.messageClientService.sendMessage;
   /**
    * Return new messages count of each section of a room according to last view
    * @param parameters
    */
-  public getNewMessageCount = (parameters: { roomId: string, sectionId?:string }) => {
+  public getNewMessageCount = (parameters: { roomId: string, sectionId?:string, forceRefresh?:boolean }):Observable<any> => {
     const {
       roomId,
-      sectionId
+      sectionId,
+      forceRefresh
     } = parameters;
-    requiredDefined(roomId, 'roomId is required');
 
-    this.messageClientService.getNewMessageCount(parameters)
-      .then(d => {
-        updateNewMessageCountForARoom({
-          roomId,
-          newMessagesCounts: d
+    if (isFetched({ roomId }) === false || forceRefresh) {
+      updateFetchStatus({ roomId });
+      this.messageClientService.getNewMessageCount(parameters)
+        .then(d => {
+          updateNewMessageCountForARoom({
+            roomId,
+            newMessagesCounts: d
+          });
         });
-      });
+    }
 
     if (sectionId) {
       return $newMessagesFromSection({

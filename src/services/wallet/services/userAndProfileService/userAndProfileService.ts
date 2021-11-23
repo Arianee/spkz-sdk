@@ -24,7 +24,10 @@ import { NewMessageCount, ReadMessageReturn } from '../../../../models/jsonrpc/w
 import { FetchParameters } from '../../../../models/FetchParameters';
 import { Observable } from 'redux';
 import { $newMessagesFromSection } from '../../../../stateManagement/src/selectors/notifications.selector';
-import { updateNewMessageCountForARoom } from '../../../../stateManagement/src/reducers/notifications/actions';
+import {
+  resetNewMessageCountForASection,
+  updateNewMessageCountForARoom
+} from '../../../../stateManagement/src/reducers/notifications/actions';
 
 @scoped(Lifecycle.ContainerScoped)
 export class UserAndProfileService {
@@ -82,6 +85,8 @@ export class UserAndProfileService {
       roomId,
       dry
     };
+
+    resetNewMessageCountForASection(parameters);
 
     return this.rpcJSONService.signedRPCCall(endpoint, JSONRPCMethods.room.section.updateLastViewed, params);
   }
