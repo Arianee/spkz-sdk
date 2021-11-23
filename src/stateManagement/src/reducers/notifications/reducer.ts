@@ -14,7 +14,7 @@ interface RoomState{
     [sectionId: string]: SectionState
   },
   status: {
-    isFetched: boolean
+    isFetched?: boolean
   }
 }
 interface State {
@@ -78,6 +78,10 @@ const reducerMethods = {
     requiredDefined(roomId, 'roomId should be defined');
 
     const roomState = getDefaultState(state).getRoomOrDefaultState({ roomId });
+
+    if (!roomState.status) {
+      roomState.status = {};
+    }
 
     roomState.status.isFetched = true;
 
