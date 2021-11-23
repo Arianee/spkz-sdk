@@ -18,6 +18,16 @@ import { requiredDefined } from '../../helpers/required/required';
  * @param web3Provider
  */
 
+const getEnrichedInformation = async (strategy: Strategy<RoomOwner>):Promise<EnrichedInformations> => {
+  const logo = 'https://raw.githubusercontent.com/Arianee/spkz-metadata/main/assets/spkz-logo.jpeg';
+
+  return {
+    logo,
+    symbol: 'Lounge Owner',
+    name: 'Lounge Owner'
+  };
+};
+
 export const strategy = async (strategy: Strategy<RoomOwner>): StrategyReturnPromise => {
   const web3Provider = await web3Factory(strategy.params.chainId);
   const { tokenId } = strategy;
@@ -38,10 +48,13 @@ export const strategy = async (strategy: Strategy<RoomOwner>): StrategyReturnPro
       : `You are not the owner of Room #${tokenId}`;
   }
 
+  const enrichedInformations = await getEnrichedInformation(strategy);
+
   return {
     isAuthorized,
     strategy: strategy,
     message: message,
-    code
+    code,
+    enrichedInformations
   };
 };
