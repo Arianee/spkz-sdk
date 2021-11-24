@@ -11,6 +11,16 @@ export const getSectionNewMessagesCount = (parameters: { roomId: string, section
   const property = getProperty(propertiesKey);
   return property || 0;
 };
+export const getSectionLastView = (parameters: { roomId: string, sectionId: string }): number => {
+  const {
+    roomId,
+    sectionId
+  } = parameters;
+  const propertiesKey = `${REDUCERNAME.NOTIFICATIONS}.${roomId}.sections.${sectionId}.newMessagesCount`;
+  const property = getProperty(propertiesKey);
+  return property;
+};
+
 export const hasSectionNewMessages = (parameters: { roomId: string, sectionId: string }): boolean => {
   return getSectionNewMessagesCount(parameters) > 0;
 };

@@ -24,6 +24,10 @@ export const updateNewMessageCountForARoom = (parameters:{
     payload: {
       roomId,
       newMessagesCounts: newMessagesCounts
+        .map(d => {
+          d.newMessagesCount = +d.newMessagesCount;
+          return d;
+        })
     }
   });
 };
@@ -77,7 +81,7 @@ export const resetNewMessageCountForASection = (parameters:{
 export const updateNewMessageCountForASection = (parameters:{
   roomId: string,
   sectionId:string,
-  increment?:number
+  increment:number
 }) => {
   const { requiredDefined } = scope.subScope('resetNewMessageCountForASection');
   const { roomId, sectionId } = parameters;
@@ -90,7 +94,7 @@ export const updateNewMessageCountForASection = (parameters:{
     payload: {
       roomId,
       sectionId,
-      newMessageCount: (parameters.increment || 1) + countNow
+      newMessageCount: (parameters.increment) + countNow
     }
   });
 };
