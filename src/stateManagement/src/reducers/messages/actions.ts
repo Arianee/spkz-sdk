@@ -63,10 +63,6 @@ export function addMessagesToSection (parameters:{
       messages: parameters.messages
     }
   });
-  updateNewMessageCountForASection({
-    ...parameters,
-    increment: parameters.messages.length
-  });
 }
 
 export function updateMessagesPagination (parameters:{

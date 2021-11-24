@@ -21,11 +21,14 @@ import { ReadMessageReturn } from '../../../../models/jsonrpc/writeMessageParame
 import { FetchParameters } from '../../../../models/FetchParameters';
 import {
   $newMessagesFromRoom,
-  $newMessagesFromSection, isFetched
+  $newMessagesFromSection,
+  getSectionLastView,
+  isFetched
 } from '../../../../stateManagement/src/selectors/notifications.selector';
 import {
   updateFetchStatus,
-  updateNewMessageCountForARoom
+  updateNewMessageCountForARoom,
+  updateNewMessageCountForASection
 } from '../../../../stateManagement/src/reducers/notifications/actions';
 import { MessageClientService } from './messageClientService';
 import { Observable } from 'rxjs';
@@ -128,6 +131,16 @@ export class MessageService {
           sectionId: message.sectionId,
           messages: [message]
         });
+        const { blockchainWallet } = message;
+
+        const isMessageSentByUser = this.messagingService.authorizedAddresses.includes(blockchainWallet);
+        if (!isMessageSentByUser) {
+          updateNewMessageCountForASection({
+            roomId: message.roomId,
+            sectionId: message.sectionId,
+            increment: 1
+          });
+        }
         return message;
       });
     }
