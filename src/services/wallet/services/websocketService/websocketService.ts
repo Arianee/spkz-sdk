@@ -15,7 +15,11 @@ export class WebsocketService {
   ) {
   }
 
-  private websockets:{[key:string]:Socket} = {};
+  private websockets:{[key:string]:{
+      socket:Socket,
+      connected:boolean,
+      joinedRooms:{roomId:string, sectionId:string, joined:boolean}[]
+  }} = {};
 
   public joinSection = async (parameters:{ roomId: string, sectionId: string }) => {
     const { roomId, sectionId } = parameters;
@@ -25,15 +29,26 @@ export class WebsocketService {
   }
 
   private subscribeToRoom = async (roomId:string, sectionId:string) => {
-    const params = {
-      sectionId,
-      roomId
-    };
-    const payload = await this.payloadSerivce.hydratePayloadParameters(params);
-
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
     const notificationEndpointHash = this.hashString(tokenContent.notificationEndpoint);
-    this.websockets[notificationEndpointHash].emit('joinRoom', payload);
+    const joinRoomsLength = this.websockets[notificationEndpointHash].joinedRooms.push({ roomId, sectionId, joined: false });
+    this.joinRoom(notificationEndpointHash, joinRoomsLength - 1);
+  }
+
+  private joinRoom = async (notificationEndpointHash, joinedRoomIndex) => {
+    const room = this.websockets[notificationEndpointHash].joinedRooms[joinedRoomIndex];
+    const { sectionId, roomId } = room;
+    const payload = await this.payloadSerivce.hydratePayloadParameters({ sectionId, roomId });
+    this.websockets[notificationEndpointHash].socket.emit('joinRoom', payload);
+    room.joined = true;
+  }
+
+  private rejoinRooms = (notificationEndpointHash) => {
+    const rooms = this.websockets[notificationEndpointHash].joinedRooms;
+
+    rooms.forEach((value, index) => {
+      this.joinRoom(notificationEndpointHash, index);
+    });
   }
 
   private connectToWebSocket = async (roomId:string) => {
@@ -45,18 +60,31 @@ export class WebsocketService {
     }
     const notificationEndpointHash = this.hashString(notificationEndpoint);
     if (!this.websockets[notificationEndpointHash]) {
-      this.websockets[notificationEndpointHash] = io(notificationEndpoint);
+      this.websockets[notificationEndpointHash] = {
+        socket: io(notificationEndpoint),
+        connected: false,
+        joinedRooms: []
+      };
       this.setWsListeners(notificationEndpointHash);
     }
   }
 
   private setWsListeners = (notificationEndpointHash:string) => {
-    this.websockets[notificationEndpointHash].on('connect', () => {
+    this.websockets[notificationEndpointHash].socket.on('connect', () => {
+      this.websockets[notificationEndpointHash].connected = true;
+      this.rejoinRooms(notificationEndpointHash);
       console.info('ws is connected');
     });
 
-    this.websockets[notificationEndpointHash].on('message', (data) => {
+    this.websockets[notificationEndpointHash].socket.on('message', (data) => {
       this.messageService.emitMessage(data);
+    });
+    this.websockets[notificationEndpointHash].socket.on('disconnect', () => {
+      this.websockets[notificationEndpointHash].connected = false;
+      this.websockets[notificationEndpointHash].joinedRooms
+        .forEach(room => {
+          room.joined = false;
+        });
     });
   }
 
