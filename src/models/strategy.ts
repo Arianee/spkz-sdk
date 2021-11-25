@@ -6,7 +6,9 @@ export interface Strategy<T = ERC20BalancesOf
   | RoomOwner
   | ERC721BalancesOfIssuedBy
   | ERC1155BalancesOf
-  | OpenseaCollectionBalanceOf> {
+  | OpenseaCollectionBalanceOf
+  | PoapHolderOf
+  > {
   name: string,
   addresses?: string[],
   params?: T,
@@ -74,5 +76,11 @@ export interface OpenseaCollectionBalanceOf{
     name: string,
     symbol: string,
     collection: string
+}
 
+export interface PoapHolderOf{
+  eventId: string,
+  logo?: string,
+  name?: string,
+  symbol?: string
 }
