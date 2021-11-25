@@ -4,6 +4,8 @@ version: 2.1
 orbs:
   node: circleci/node@4.5.1
   jq: circleci/jq@2.2
+  slack: circleci/slack@4.5.0
+
 
 jobs:
   test:
@@ -15,6 +17,16 @@ jobs:
       - run:
           name: test
           command: npm run test
+      - slack/notify:
+          branch_pattern: develop
+          mentions: '@techteam'
+          event: fail
+          template: basic_fail_1
+      - slack/notify:
+          branch_pattern: master
+          mentions: '@techteam'
+          event: fail
+          template: basic_fail_1
       - store_artifacts:
           path: coverage
   build:
@@ -158,5 +170,16 @@ workflows:
           filters:
             branches:
               only: master
+  every-two-hour-workflow:
+    triggers:
+      - schedule:
+          cron: "0 * * * *"
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+    jobs:
+      - test
 
 
