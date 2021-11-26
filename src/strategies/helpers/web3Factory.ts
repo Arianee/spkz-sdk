@@ -9,7 +9,12 @@ const config = {
   99: 'https://poa.arianee.net',
   1: 'https://mainnet.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
   3: 'https://ropsten.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
-  42: 'https://kovan.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6'
+  42: 'https://kovan.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
+  56: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/bsc/mainnet',
+  42161: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/arbitrum/mainnet',
+  43114: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/avalanche/mainnet',
+  250: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/fantom/mainnet',
+  100: 'https://rpc.xdaichain.com'
 };
 
 export const web3Factory = async (chainIdOrUrl: string):Promise<Web3> => {
