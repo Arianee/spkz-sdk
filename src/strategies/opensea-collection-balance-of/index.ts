@@ -8,12 +8,18 @@ import axios from 'axios';
 import { sumBN } from '../helpers/sumBN/sumBN';
 import { requiredDefined } from '../../helpers/required/required';
 
+const openSeaApiKey = '46bdef1fbc5e4b40b8295214c409355c';
+
 const getOpenseaCollectionBalanceOf = async (address:string, collection:string, minBalance:string) => {
   const url = new URL('https://api.opensea.io/api/v1/assets');
   url.searchParams.set('owner', address);
   url.searchParams.set('limit', minBalance);
   url.searchParams.set('collection', collection);
-  const result = await axios.get(url.toString());
+  const result = await axios.get(url.toString(), {
+    headers: {
+      'X-API-KEY': openSeaApiKey
+    }
+  });
   return result.data.assets;
 };
 
@@ -39,7 +45,13 @@ export const strategy = async (strategy: Strategy<OpenseaCollectionBalanceOf>): 
   requiredDefined(params.collection, 'collection should be defined');
   requiredDefined(params.minBalance, 'min balance should be defined');
 
-  const { collection } = (await axios.get(`https://api.opensea.io/api/v1/collection/${params.collection}`)).data;
+  const { collection } = (await axios.get(`https://api.opensea.io/api/v1/collection/${params.collection}`,
+    {
+      headers: {
+        'X-API-KEY': openSeaApiKey
+      }
+    }
+  )).data;
   const logo = collection.featured_image_url || collection.image_url;
   const name = collection.name;
   const symbol = collection.name;
