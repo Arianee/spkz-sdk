@@ -102,6 +102,30 @@ export class ProxyWalletService {
     return this;
   }
 
+  public addFromMetamaskWc = async ():Promise<{url:string, signature:Promise<any>}> => {
+    const url = await this.metamaskService.initMMWC();
+    let signature;
+    const sign = async () => {
+      const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {
+      });
+      const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+
+      const jwt = jwtSigner.setPayload(payloadToSign);
+      const signedJWT = await jwt.sign();
+      return this.addBlockchainWalletAuthorization(signedJWT);
+    };
+
+    if (!this.metamaskService.connector.connected) {
+      this.metamaskService.connector.on('connect', async (error, payload) => {
+        this.metamaskService.defaultAccount = payload.params[0].accounts[0];
+        signature = sign();
+      });
+    } else {
+      signature = sign();
+    }
+    return { url, signature };
+  }
+
   public async addWalletFromPrivateKey (privateKey: string) {
     const {
       signer,
