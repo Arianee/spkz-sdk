@@ -69,7 +69,8 @@ export const resetNewMessageCountForASection = (parameters:{
     payload: {
       roomId,
       sectionId,
-      newMessageCount: 0
+      newMessageCount: 0,
+      lastViewed: new Date().toISOString()
     }
   });
 };

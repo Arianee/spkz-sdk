@@ -3,10 +3,11 @@ import { cloneDeep, merge } from 'lodash';
 import { Scope } from '@arianee/required';
 import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
 
-interface SectionState {
+export interface SectionState {
   newMessagesCount: number,
   sectionId: string,
-  roomId: string
+  roomId: string,
+  lastViewed?:string
 };
 
 interface RoomState{
@@ -95,14 +96,16 @@ const reducerMethods = {
     payload: {
       roomId: string,
       sectionId: string,
-      newMessageCount:number
+      newMessageCount:number,
+      lastViewed?:string
     }
   }) => {
     const { requiredDefined } = scope.subScope(ActionTypes.NOTIFICATION.updateNewMessageCountForASection);
     const {
       sectionId,
       roomId,
-      newMessageCount
+      newMessageCount,
+      lastViewed
     } = action.payload;
 
     requiredDefined(sectionId, 'sectionId should be defined');
@@ -115,6 +118,10 @@ const reducerMethods = {
     });
 
     sectionState.newMessagesCount = newMessageCount;
+    if (lastViewed) {
+      sectionState.lastViewed = lastViewed;
+    }
+
     const newSubState = cloneDeep(merge(
       {
         [roomId]:

@@ -1,4 +1,4 @@
-import { get } from 'lodash';
+import { cloneDeep, get } from 'lodash';
 import { getStore } from '../store';
 import { Observable } from 'rxjs';
 
@@ -12,16 +12,19 @@ export const getPropertyMap = (property: string | string[]) => () => {
 
 export function subscribeToProperty (property: string | string[] = ''):Observable<any> {
   return Observable.create(observer => {
+    const next = (value) => {
+      observer.next(cloneDeep(value));
+    };
     let lastProperty;
     if (getProperty(property)) {
-      observer.next(getProperty(property));
+      next(getProperty(property));
     }
 
     return getStore().subscribe(() => {
       const isStateNewOrEmpty = lastProperty !== getProperty(property) || (lastProperty?.length === 0 && getProperty(property)?.length === 0);
       if (isStateNewOrEmpty) {
         lastProperty = getProperty(property);
-        observer.next(lastProperty);
+        next(lastProperty);
       }
     });
   });
