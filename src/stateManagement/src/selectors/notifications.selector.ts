@@ -1,6 +1,8 @@
 import { getProperty, subscribeToProperty } from '../utilityMapper/utilities';
 import { REDUCERNAME } from '../reducerName';
 import { map } from 'rxjs/operators';
+import { SectionState } from '../reducers/notifications/reducer';
+import { cloneDeep } from 'lodash';
 
 export const getSectionNewMessagesCount = (parameters: { roomId: string, sectionId: string }): number => {
   const {
@@ -11,14 +13,13 @@ export const getSectionNewMessagesCount = (parameters: { roomId: string, section
   const property = getProperty(propertiesKey);
   return property || 0;
 };
-export const getSectionLastView = (parameters: { roomId: string, sectionId: string }): number => {
+export const getSectionLastViewInfos = (parameters: { roomId: string, sectionId: string }): SectionState => {
   const {
     roomId,
     sectionId
   } = parameters;
-  const propertiesKey = `${REDUCERNAME.NOTIFICATIONS}.${roomId}.sections.${sectionId}.newMessagesCount`;
-  const property = getProperty(propertiesKey);
-  return property;
+  const propertiesKey = `${REDUCERNAME.NOTIFICATIONS}.${roomId}.sections.${sectionId}`;
+  return cloneDeep(getProperty(propertiesKey));
 };
 
 export const hasSectionNewMessages = (parameters: { roomId: string, sectionId: string }): boolean => {

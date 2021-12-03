@@ -6,8 +6,10 @@ import {
 } from '../reducers/notifications/actions';
 import {
   $newMessagesFromRoom,
-  $newMessagesFromSection, getSectionNewMessagesCount,
-  hasSectionNewMessages, isFetched
+  $newMessagesFromSection,
+  getSectionNewMessagesCount,
+  hasSectionNewMessages,
+  isFetched
 } from '../selectors/notifications.selector';
 
 describe('Notifications', () => {
@@ -77,7 +79,7 @@ describe('Notifications', () => {
           newMessagesCount: 22,
           roomId: '22',
           sectionId: '33'
-        }]as any
+        }] as any
       });
       expect(isFetched({ roomId: '22' })).toBeFalsy();
 
@@ -198,6 +200,7 @@ describe('Notifications', () => {
               if (numberOfCall === 1) {
                 expect(d).toEqual({
                   chat: {
+                    lastViewed: d.chat.lastViewed,
                     newMessagesCount: 0,
                     roomId: '22',
                     sectionId: 'chat'
@@ -207,6 +210,7 @@ describe('Notifications', () => {
               if (numberOfCall === 2) {
                 expect(d).toEqual({
                   chat: {
+                    lastViewed: d.chat.lastViewed,
                     newMessagesCount: 33,
                     roomId: '22',
                     sectionId: 'chat'
@@ -221,6 +225,7 @@ describe('Notifications', () => {
               if (numberOfCall === 3) {
                 expect(d).toEqual({
                   chat: {
+                    lastViewed: d.chat.lastViewed,
                     newMessagesCount: 0,
                     roomId: '22',
                     sectionId: 'chat'
@@ -263,6 +268,7 @@ describe('Notifications', () => {
               if (numberOfCall === 1) {
                 expect(d).toEqual({
                   chat: {
+                    lastViewed: d.chat.lastViewed,
                     newMessagesCount: 33,
                     roomId: '22',
                     sectionId: 'chat'
@@ -277,6 +283,7 @@ describe('Notifications', () => {
               if (numberOfCall === 2) {
                 expect(d).toEqual({
                   chat: {
+                    lastViewed: d.chat.lastViewed,
                     newMessagesCount: 0,
                     roomId: '22',
                     sectionId: 'chat'
@@ -299,6 +306,7 @@ describe('Notifications', () => {
               sectionId: 'general'
             },
             {
+              lastViewed: new Date().toISOString(),
               newMessagesCount: 33,
               roomId: '22',
               sectionId: 'chat'

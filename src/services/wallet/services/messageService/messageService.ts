@@ -22,7 +22,6 @@ import { FetchParameters } from '../../../../models/FetchParameters';
 import {
   $newMessagesFromRoom,
   $newMessagesFromSection,
-  getSectionLastView,
   isFetched
 } from '../../../../stateManagement/src/selectors/notifications.selector';
 import {
