@@ -8,6 +8,7 @@ import { required } from '../../../../helpers/required/required';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
+import { Wallet as etherWallet } from '@ethersproject/wallet';
 
 const localStorageAuthorizationKey = 'spkz_authorizations';
 
@@ -60,6 +61,11 @@ export class ProxyWalletService {
     this.jwtHelper = new JWTGeneric(this.signer, this.decoder);
     this.retrieveJWTAuthorizationsFromLocalStorage()
       .map(jwt => this.addBlockchainWalletAuthorization(jwt));
+  }
+
+  public generateRandomPrivateKeyForProxyWallet=():ProxyWalletService => {
+    this.privateKey = etherWallet.createRandom().privateKey;
+    return this;
   }
 
   /**
@@ -133,7 +139,9 @@ export class ProxyWalletService {
       address
     } = signerDecoder(privateKey);
     const jwtSigner = new JWTGeneric(signer, decoder);
+
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(address);
+
     const zef = await jwtSigner.setPayload(payloadToSign);
 
     const signedJWT = await zef.sign();
@@ -158,7 +166,6 @@ export class ProxyWalletService {
   async addBlockchainWalletAuthorization (jwt): Promise<ProxyWalletService> {
     const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
     required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
-
     if (!this._authorizedAddresses.includes(issuer)) {
       this._authorizedAddresses.push(issuer);
       this._authorizations.push(jwt);

@@ -2,6 +2,9 @@ export const ActionTypes = {
   USERS: {
     addOrUpdateUser: 'USERS.addUser'
   },
+  SECTION: {
+    addMembers: 'SECTION.addMembers'
+  },
   ROOM: {
     addOrUpdateRoom: 'ROOM.addOrUpdateRoom'
   },
@@ -16,6 +19,9 @@ export const ActionTypes = {
     updateFetchStatus: 'NOTIFICATION.updateFetchStatus',
     updateNewMessageCountForASection: 'NOTIFICATION.updateMessageCountForOneSection',
     incrementNewMessageCountForASection: 'NOTIFICATION.incrementMessageCountForOneSection'
+  },
+  FetchStatus: {
+    updateFetchStatus: 'FetchStatus.updateFetchStatus'
   },
   HELLOWORLD: {
     ADDNAME: 'helloWorldReducer.addName'

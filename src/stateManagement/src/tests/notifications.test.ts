@@ -187,7 +187,7 @@ describe('Notifications', () => {
         });
       });
       describe('$newMessagesFromRoom', () => {
-        test('it should work for observable with reset before', (done) => {
+        test('DEV it should work for observable with reset before', (done) => {
           let numberOfCall = 0;
 
           resetNewMessageCountForASection({

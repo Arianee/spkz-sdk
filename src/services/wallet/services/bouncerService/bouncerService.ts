@@ -5,7 +5,7 @@ import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
-import { UserProfile } from '../../../../models/userProfile';
+import { UserProfileToSend } from '../../../../models/userProfile/userProfile';
 import { MetamaskService } from '../metamask/metamaskService';
 import { HttpService } from '../../../utils/services/httpService/httpService';
 import { RecommendedOrFeaturedRoom } from '../../../..';
@@ -29,7 +29,7 @@ export class BouncerService {
 
   }
 
-  public async getMyProfile (): Promise<UserProfile> {
+  public async getMyProfile (): Promise<UserProfileToSend> {
     if (!this._cache.get('bouncerUserProfile')) {
       this._cache.put('bouncerUserProfile', this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
         JSONRPCMethods.bouncer.users.getMyProfile,
@@ -39,7 +39,7 @@ export class BouncerService {
     return this._cache.get('bouncerUserProfile');
   }
 
-  public updateMyProfile (profile:UserProfile) {
+  public updateMyProfile (profile:UserProfileToSend) {
     this._cache.del('bouncerUserProfile');
 
     return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,

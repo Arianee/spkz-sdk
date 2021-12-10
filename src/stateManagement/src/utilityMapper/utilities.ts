@@ -1,4 +1,4 @@
-import { cloneDeep, get } from 'lodash';
+import { cloneDeep, get, isEqual } from 'lodash';
 import { getStore } from '../store';
 import { Observable } from 'rxjs';
 
@@ -21,9 +21,12 @@ export function subscribeToProperty (property: string | string[] = ''):Observabl
     }
 
     return getStore().subscribe(() => {
-      const isStateNewOrEmpty = lastProperty !== getProperty(property) || (lastProperty?.length === 0 && getProperty(property)?.length === 0);
-      if (isStateNewOrEmpty) {
-        lastProperty = getProperty(property);
+      const value = getProperty(property);
+      const isState = value !== undefined && value !== null;
+      const isNotEqual = !isEqual(lastProperty, value);
+
+      if (isState && isNotEqual) {
+        lastProperty = cloneDeep(value);
         next(lastProperty);
       }
     });

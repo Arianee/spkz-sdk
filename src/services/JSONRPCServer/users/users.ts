@@ -148,7 +148,6 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
         const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
         return callback(errorPayload);
       }
-
       const firstBlockchainWallet = blockchainWallets[0];
 
       const hasRights = await utils.rightService.canJoinSection({

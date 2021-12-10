@@ -3,7 +3,8 @@ import { SPKZJSONRPC } from './services/JSONRPCServer';
 import {
   NewMessageCount,
   NewMessageCountParameters,
-  ReadMessageParameters, ReadMessageReturn,
+  ReadMessageParameters,
+  ReadMessageReturn,
   RoomUser,
   SectionUser,
   WriteMessageParameters
@@ -87,7 +88,12 @@ const spkzJSONRPC = new SPKZJSONRPC({
       } = sectionUser;
       if (dbSectionUsers && dbSectionUsers[roomId + sectionId]) {
         const sectionUsers: SectionUser[] = Object.values(dbSectionUsers[roomId + sectionId]);
-        return Promise.resolve(sectionUsers);
+        const userWithProfiles = sectionUsers
+          .map(user => ({
+            ...user,
+            ...dbRoomUsers[roomId + sectionId][user.blockchainWallet]
+          }));
+        return Promise.resolve(userWithProfiles);
       } else {
         return Promise.resolve([]);
       }
@@ -113,7 +119,11 @@ const spkzJSONRPC = new SPKZJSONRPC({
       if (!dbSectionUsers[roomId + sectionId]) {
         dbSectionUsers[roomId + sectionId] = {};
       }
-      dbSectionUsers[roomId + sectionId][blockchainWallet] = param;
+      dbSectionUsers[roomId + sectionId][blockchainWallet] = {
+        ...param,
+        blockchainWallet
+      };
+
       return Promise.resolve(param);
     },
     updateLastViewed: (param: SectionUser) => {
@@ -129,7 +139,6 @@ const spkzJSONRPC = new SPKZJSONRPC({
         ...param,
         lastViewed: Date.now()
       };
-
       return Promise.resolve(param);
     }
   })
