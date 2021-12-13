@@ -1,5 +1,58 @@
 #  Spkz SDK
 #  Release notes
+## v1.5.0 ( 2021-12-13 )
+
+### **feat (28):**
+ - feat(cicd): Delete publish-package.json from spkz-sdk
+ - feat(moon): add moon blockchain rpc
+ - feat(walletConnect): add wallet connect for metamask
+ - feat(network): add networks
+ - feat(opensea): opensea api key
+ - feat(poap): strategy poap
+ - feat(cicd): Make spkz test run every 1H
+ - feat(websocket): improve websocket stability
+ - feat(signature): change signature to be readable on metamask
+ - feat(strategy): is-exact-address improvement
+ - feat(messages): on new message, increment count
+ - feat(loungeowner): enriched Information
+ - feat(message): reset message count of a section
+ - feat(strategy): Improve amounts
+ - feat(strategy): native crypto balance of
+ - feat(messages): message count
+ - feat(publish): update package publish
+ - feat(redux): add redux
+ - feat(messages): remove sectionId
+ - feat(messages): limit in sdk to 50
+ - feat(messages): get message from sdk
+ - feat(messages): get not read messages
+ - feat(messages): add fromTimestamp&#x2F;toTimestamp at message read
+ - feat(lastViewed): rpc last viewed method
+ - feat(strategy): add strategy opensea collection balanceOf
+ - feat(erc1155): implement erc155 balance of
+ - feat(erc721): balance of issued by strategy
+ - feat(ens): manage symbol name fallback
+
+### **fix (10):**
+ - fix(lastViewed): return last viewed and previous
+ - fix(walletConnect): add dependencies walletconnect
+ - fix(messages): new message count
+ - fix(updateStatus): fetch status is not undefined
+ - fix(message): fix observable return nothing if no message in section
+ - fix(redux): fix subscribe interop
+ - fix(messages): remove typo
+ - fix(logo): logo
+ - fix(erc20): if erc20 symbol is bytes instead of string
+ - fix(ownerOf): pass token id to check strategies
+
+### **refactor (1):**
+ - refactor(services): refacto services
+
+### **test (1):**
+ - test(refacto): refacto test
+
+### **release (1):**
+ - release(version): Increase next develop version of v1.4.0
+
 ## v1.4.0 ( 2021-10-21 )
 
 ### **fix (1):**
