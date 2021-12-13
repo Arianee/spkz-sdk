@@ -92,5 +92,6 @@
     "start-server-and-test": "^1.14.0",
     "tsyringe": "^4.6.0",
     "web3": "^1.5.2"
-  }
+  },
+  "private": false
 }
