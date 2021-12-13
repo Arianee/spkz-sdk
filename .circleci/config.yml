@@ -65,7 +65,7 @@ jobs:
           command: export OLD_SNAPSHOT=`npm view @arianee/$CIRCLE_PROJECT_REPONAME@$VERSION_TAG version` && echo "export OLD_SNAPSHOT=$OLD_SNAPSHOT" >> $BASH_ENV
       - run:
           name: set version in package.json
-          command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION_SNAPSHOT/g" ./dist/package.json
+          command: cp ./package.json ./dist/package.json && jq --arg version "$VERSION_SNAPSHOT" '.version = $version' ./dist/package.json > tmp.json && mv tmp.json ./dist/package.json
 #      - run:
 #          name: rm version tag from npm
 #          command: |
@@ -138,7 +138,7 @@ jobs:
           command: export VERSION=`cat ./package.json | jq -r .version` && echo "export VERSION=$VERSION" >> $BASH_ENV
       - run:
           name: set version in package.json
-          command: cp ./publish-package.json ./dist/package.json && sed -i -e "s/VERSION-CI/$VERSION/g" ./dist/package.json
+          command: cp ./package.json ./dist/package.json && jq --arg version "$VERSION" '.version = $version' ./dist/package.json > tmp.json && mv tmp.json ./dist/package.json
       - run:
           working_directory: dist
           name: publish
