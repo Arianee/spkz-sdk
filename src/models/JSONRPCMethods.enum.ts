@@ -14,12 +14,14 @@ export const JSONRPCMethods = {
   room: {
     message: {
       write: 'room.message.write',
-      read: 'room.message.read'
+      read: 'room.message.read',
+      newMessage: 'room.message.newMessageCount'
     },
     section: {
       updateProfile: 'room.section.updateProfile',
       users: 'room.section.getUsers',
-      join: 'room.section.join'
+      join: 'room.section.join',
+      updateLastViewed: 'room.section.lastViewed'
     }
   }
 };

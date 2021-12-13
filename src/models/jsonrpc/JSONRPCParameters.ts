@@ -1,6 +1,7 @@
 import { AsyncFunc } from '../AsyncFunc';
 import {
-  ReadMessageParameters,
+  NewMessageCount, NewMessageCountParameters,
+  ReadMessageParameters, ReadMessageReturn,
   RoomUser,
   SectionUser,
   SectionUserGet,
@@ -8,21 +9,22 @@ import {
 } from './writeMessageParameters';
 import { BouncerUser, BouncerUserQuery } from './bouncer';
 
-export interface SectionUserParameters{
-    joinSection: AsyncFunc<SectionUser, any>,
-    createOrUpdateProfile:AsyncFunc<SectionUser, any>,
-    getUsers:AsyncFunc<SectionUserGet, SectionUser[]>
+export interface SectionUserParameters {
+  joinSection: AsyncFunc<SectionUser, any>,
+  createOrUpdateProfile: AsyncFunc<SectionUser, any>,
+  getUsers: AsyncFunc<SectionUserGet, SectionUser[]>,
+  updateLastViewed: AsyncFunc<SectionUser, any>
 }
 
-export interface MessageParameters{
-    read: AsyncFunc<ReadMessageParameters, any>,
-    write: AsyncFunc<WriteMessageParameters, any>,
+export interface MessageParameters {
+  read: AsyncFunc<ReadMessageParameters, ReadMessageReturn>,
+  write: AsyncFunc<WriteMessageParameters, any>,
+  newMessage?: AsyncFunc<NewMessageCountParameters, NewMessageCount[]>,
 }
 
-export interface BouncerParameters
-{
-    getMyProfile: AsyncFunc<BouncerUserQuery, BouncerUser>,
-    getUserRooms: AsyncFunc<BouncerUserQuery, RoomUser[]>,
-    joinRoom: AsyncFunc<RoomUser>,
-    updateProfile: AsyncFunc<BouncerUser, BouncerUser>
+export interface BouncerParameters {
+  getMyProfile: AsyncFunc<BouncerUserQuery, BouncerUser>,
+  getUserRooms: AsyncFunc<BouncerUserQuery, RoomUser[]>,
+  joinRoom: AsyncFunc<RoomUser>,
+  updateProfile: AsyncFunc<BouncerUser, BouncerUser>
 }

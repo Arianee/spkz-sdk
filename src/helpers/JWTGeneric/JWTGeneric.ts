@@ -1,117 +1,167 @@
 import { Base64 } from 'js-base64';
 
 export class JWTGeneric {
-    private header = { typ: 'JWT', alg: 'ETH' };
-    private payload;
-    private encodedToken: string;
+  private header = {
+    typ: 'JWT',
+    alg: 'ETH'
+  };
 
-    constructor (private signer: (data) => {}, private decoder: any) {
+  private payload;
+  private encodedToken: string;
+  private message: string;
 
-    }
+  constructor (private signer: (data) => {}, private decoder: any) {
 
-    /**
-     * Set payload to be signed
-     * @param payload
-     */
-    public setPayload =(payload) => {
-      this.payload = payload;
+  }
 
-      return {
-        sign: this.sign.bind(this),
-        setHeader: this.setHeader.bind(this)
-      };
+  /**
+   * Set payload to be signed
+   * @param payload
+   */
+  public setMessage = (payload) => {
+    this.message = payload + '\n';
+
+    return {
+      sign: this.sign.bind(this),
+      setHeader: this.setHeader.bind(this),
+      setPayload: this.setPayload.bind(this)
     };
+  };
 
-    /**
-     * Set payload to be signed
-     * @param payload
-     */
-    private setHeader = async (payload) => {
-      this.header = payload;
-      return {
-        sign: await this.sign.bind(this),
-        setPayload: this.setPayload.bind(this)
-      };
+  /**
+   * Set payload to be signed
+   * @param payload
+   */
+  public setPayload = (payload) => {
+    this.payload = payload;
+
+    return {
+      sign: this.sign.bind(this),
+      setHeader: this.setHeader.bind(this),
+      setMessage: this.setMessage.bind(this)
     };
+  };
 
-    /**
-     * Set token to be verified or decoded
-     * @param encodedToken
-     */
-    public setToken (encodedToken) {
-      this.encodedToken = encodedToken;
-      return {
-        decode: this.decode.bind(this),
-        verify: this.verify.bind(this)
-      };
+  /**
+   * Set payload to be signed
+   * @param payload
+   */
+  private setHeader = async (payload) => {
+    this.header = payload;
+    return {
+      sign: await this.sign.bind(this),
+      setPayload: this.setPayload.bind(this),
+      setMessage: this.setMessage.bind(this)
+    };
+  };
+
+  /**
+   * Set token to be verified or decoded
+   * @param encodedToken
+   */
+  public setToken (encodedToken) {
+    this.encodedToken = encodedToken;
+    return {
+      decode: this.decode.bind(this),
+      verify: this.verify.bind(this)
+    };
+  }
+
+  private static encodeBase64 (data: string): string {
+    return Base64.encode(data);
+  }
+
+  private static fromBase64JSONParse (data: string) {
+    return JSON.parse(Base64.fromBase64(data));
+  }
+
+  private async sign () {
+    const stringifyHeader = JSON.stringify(this.header);
+    const stringifyPayload = JSON.stringify(this.payload);
+    let contentToSign;
+    let contentToSignBASE64;
+    if (this.message) {
+      contentToSign = `${this.message}${stringifyHeader}.${stringifyPayload}`;
+      contentToSignBASE64 = `${JWTGeneric.encodeBase64(this.message + stringifyHeader)}.${JWTGeneric.encodeBase64(stringifyPayload)}`;
+    } else {
+      contentToSign = `${stringifyHeader}.${stringifyPayload}`;
+      contentToSignBASE64 = `${JWTGeneric.encodeBase64(stringifyHeader)}.${JWTGeneric.encodeBase64(stringifyPayload)}`;
     }
 
-    private static base64Stringified (data): string {
-      return Base64.encode(JSON.stringify(data));
+    const signature = await this.signature(contentToSign);
+
+    const res = `${contentToSignBASE64}.${signature}`;
+    return res;
+  }
+
+  /**
+   * Verify if signature was signed by pubKey and return true/false
+   * @param pubKey
+   */
+  private verify (pubKey: string): boolean {
+    const {
+      signature,
+      payload,
+      headerAndMessage,
+      userMessage,
+      header,
+      signedData,
+      signedDataBase64
+    } = this.decode();
+    const decode = this.decoder(signedData, signature);
+    const decodeBase64 = this.decoder(signedDataBase64, signature); // used for legacy sign
+
+    const arePropertyValid = this.arePropertiesValid(payload);
+
+    if (!arePropertyValid) {
+      return false;
     }
+    return (pubKey.toLowerCase() === decode.toLowerCase() || pubKey.toLowerCase() === decodeBase64.toLowerCase());
+  }
 
-    private static fromBase64JSONParse (data: string) {
-      return JSON.parse(Base64.fromBase64(data));
-    }
-
-    private async sign () {
-      const header = JWTGeneric.base64Stringified(this.header);
-      const payload = JWTGeneric.base64Stringified(this.payload);
-      const signature = await this.signature();
-
-      return `${header}.${payload}.${signature}`;
-    }
-
-    /**
-     * Verify if signature was signed by pubKey and return true/false
-     * @param pubKey
-     */
-    private verify (pubKey: string): boolean {
-      const { header, signature, payload } = this.decode();
-      const joinedHeaderPayload = JWTGeneric.base64Stringified(header) + '.' + JWTGeneric.base64Stringified(payload);
-      const decode = this.decoder(joinedHeaderPayload, signature);
-
-      const arePropertyValid = this.arePropertiesValid(payload);
-
-      if (!arePropertyValid) {
+  private arePropertiesValid = (payload) => {
+    if (payload.exp) {
+      const isExpired = new Date(payload.exp).getTime() < Date.now();
+      if (isExpired) {
         return false;
       }
-
-      return pubKey.toLowerCase() === decode.toLowerCase();
     }
-
-    private arePropertiesValid=(payload) => {
-      if (payload.exp) {
-        const isExpired = new Date(payload.exp).getTime() < Date.now();
-        if (isExpired) {
-          return false;
-        }
+    if (payload.nbf) {
+      const isBefore = new Date(payload.nbf).getTime() > Date.now();
+      if (isBefore) {
+        return false;
       }
-      if (payload.nbf) {
-        const isBefore = new Date(payload.nbf).getTime() > Date.now();
-        if (isBefore) {
-          return false;
-        }
+    }
+    if (payload.iat) {
+      const isBefore = new Date(payload.iat).getTime() > Date.now();
+      if (isBefore) {
+        return false;
       }
-      if (payload.iat) {
-        const isBefore = new Date(payload.iat).getTime() > Date.now();
-        if (isBefore) {
-          return false;
-        }
-      }
-      return true;
     }
+    return true;
+  };
 
-    private decode () {
-      const [header, payload, signature] = this.encodedToken.split('.');
-      return {
-        header: JWTGeneric.fromBase64JSONParse(header),
-        payload: JWTGeneric.fromBase64JSONParse(payload),
-        signature: signature
-      };
-    }
+  private decode () {
+    let [headerAndMessage, payload, signature] = this.encodedToken.split('.');
+    const signedDataBase64 = `${headerAndMessage}.${payload}`; // used for legacy sign
+    headerAndMessage = Base64.fromBase64(headerAndMessage);
+    payload = Base64.fromBase64(payload);
+    const signedData = `${headerAndMessage}.${payload}`;
+    payload = JSON.parse(payload);
+    const [userMessage, header] = headerAndMessage.split('\n');
 
-    private signature () {
-      return this.signer(JWTGeneric.base64Stringified(this.header) + '.' + JWTGeneric.base64Stringified(this.payload));
-    }
+    return {
+      headerAndMessage,
+      payload,
+      signature,
+      userMessage,
+      header,
+      signedData,
+      signedDataBase64
+    };
+  }
+
+  private signature (payload) {
+    return this.signer(payload);
+  }
 }

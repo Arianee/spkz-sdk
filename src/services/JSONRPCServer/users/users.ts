@@ -6,7 +6,8 @@ import { NetworkParameters } from '../../../models/jsonrpc/networkParameters';
 import { SectionUserParameters } from '../../../models/jsonrpc/JSONRPCParameters';
 import { ErrorPayload } from '../../../models/jsonrpc/errorPayload';
 
-export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (configuration: SectionUserParameters) => {
+export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
+  configuration: SectionUserParameters) => {
   const {
     chainId,
     network
@@ -181,10 +182,56 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (con
     }
   };
 
+  const updateLastViewed = async (params, callback) => {
+    try {
+      requiredDefined(params, 'params should be defined');
+      const {
+        authorizations,
+        roomId,
+        sectionId,
+        userProfile
+      } = params;
+
+      requiredDefined(roomId, 'roomId should be defined');
+      requiredDefined(sectionId, 'sectionId should be defined');
+      requiredDefined(authorizations, 'authorizations should be defined');
+
+      const {
+        isAuthorized,
+        blockchainWallets
+      } = await utils.rightService.verifyPayloadSignatures(params);
+
+      if (isAuthorized === false) {
+        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        return callback(errorPayload);
+      }
+
+      const firstBlockchainWallet = blockchainWallets[0];
+
+      if (params.dry !== true) {
+        await configuration.updateLastViewed({
+          roomId,
+          sectionId,
+          blockchainWallet: firstBlockchainWallet,
+          chainId,
+          network,
+          payload: params
+        });
+      }
+
+      return callback(null, { details: {} });
+    } catch (e) {
+      const errorPayload = JSONRPCErrors.unknownError;
+      errorPayload.details = JSON.stringify(e);
+      return callback(errorPayload);
+    }
+  };
+
   return {
     [JSONRPCMethods.room.section.updateProfile]: userUpdate,
     [JSONRPCMethods.room.section.users]: getUsers,
-    [JSONRPCMethods.room.section.join]: joinSection
+    [JSONRPCMethods.room.section.join]: joinSection,
+    [JSONRPCMethods.room.section.updateLastViewed]: updateLastViewed
 
   };
 };

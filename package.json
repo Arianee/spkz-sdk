@@ -1,6 +1,6 @@
 {
   "name": "@arianee/spkz-sdk",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Spkz-sdk for Arianee",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -60,6 +60,7 @@
     "os-browserify": "^0.3.0",
     "parcel": "^2.0.0-rc.0",
     "process": "^0.11.10",
+    "rxjs": "^7.4.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "ts-jest": "^24.0.2",
@@ -70,7 +71,9 @@
     "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
+    "@arianee/required": "0.9.0",
     "@pqt/abbreviate": "^1.0.2",
+    "@walletconnect/client": "^1.5.1",
     "axios": "^0.21.4",
     "body-parser": "^1.19.0",
     "ethers": "^5.4.7",
@@ -81,11 +84,14 @@
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "object-hash": "^2.2.0",
+    "redux": "^4.1.2",
+    "redux-logger": "^3.0.6",
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.2.0",
     "socket.io-client": "^4.2.0",
     "start-server-and-test": "^1.14.0",
     "tsyringe": "^4.6.0",
     "web3": "^1.5.2"
-  }
+  },
+  "private": false
 }

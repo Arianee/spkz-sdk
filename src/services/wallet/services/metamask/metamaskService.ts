@@ -3,6 +3,8 @@ import { network } from '../../../../models/network.enum';
 import { getNetworkInfo } from '../../../../helpers/networkInfos/networkInfos.helper';
 import { required, requiredDefined } from '../../../../helpers/required/required';
 import { Signaturev4 } from '../../../../models/signaturev4';
+import WalletConnect from '@walletconnect/client';
+import Web3 from 'web3';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -13,6 +15,7 @@ export class MetamaskService {
   public currentChainId=137;
 
   private _window: any;
+  public connector;
 
   constructor () {
     if (typeof window !== 'undefined') {
@@ -73,6 +76,34 @@ export class MetamaskService {
         blockExplorerUrls: networkInfo.explorers.map(explorer => explorer.url)
       }]
     });
+  }
+
+  public initMMWC = async (): Promise<string> => {
+    this.connector = new WalletConnect({
+      bridge: 'https://bridge.walletconnect.org'
+    });
+
+    if (!this.connector.connected) {
+      await this.connector.createSession();
+    } else {
+      this.defaultAccount = this.connector.accounts[0];
+    }
+
+    const url = new URL('https://metamask.app.link/wc');
+    url.searchParams.set('uri', this.connector.uri);
+    return url.toString();
+  }
+
+  public signWithWc = async (data) => {
+    const web3 = new Web3();
+
+    const msgParams = [
+      web3.utils.utf8ToHex(data), // Required
+      this.defaultAccount
+    ];
+
+    return this.connector
+      .signPersonalMessage(msgParams);
   }
 
   public signData = (data: string): Promise<string> => {

@@ -12,7 +12,7 @@ export const abbreviateStringNumber = (num:string):string => {
     return isTooSmall ? 'few' : roundedNumber;
   } else {
     const roundedNumber = Math.round(+num * 1000) / 1000;
-    return abbreviate(roundedNumber, 4);
+    return abbreviate(roundedNumber, 1);
   }
 };
 
