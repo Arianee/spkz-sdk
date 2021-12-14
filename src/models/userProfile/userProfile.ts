@@ -1,8 +1,13 @@
-export interface UserProfile {
+import { ResultUserProfileRPC } from './userProfileRPC';
+
+export interface UserProfileToSend {
   avatar?: ProfileAvatar;
   ens?: ProfileEns;
   biography?: string;
   address?: string;
+}
+
+export interface UserProfileFromStore extends ResultUserProfileRPC{
 }
 
 export interface ProfileEns{

@@ -3,7 +3,7 @@ import { RPCJSONService } from '../httpService/RPCJSONService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
-import { UserProfile } from '../../../../models/userProfile';
+import { UserProfileToSend } from '../../../../models/userProfile/userProfile';
 import { getSectionLastViewInfos } from '../../../../stateManagement/src/selectors/notifications.selector';
 import { resetNewMessageCountForASection } from '../../../../stateManagement/src/reducers/notifications/actions';
 import { SectionState } from '../../../../stateManagement/src/reducers/notifications/reducer';
@@ -15,10 +15,10 @@ export class UserAndProfileService {
 
   /**
    * Update profile of current user on this room
-   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @param {{roomId: string; sectionId: string; profile: UserProfileToSend}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?: boolean }) {
+  public async updateProfile (parameters: { roomId: string, sectionId: string, profile: UserProfileToSend, dry?: boolean }) {
     const {
       roomId,
       sectionId,
@@ -44,7 +44,7 @@ export class UserAndProfileService {
 
   /**
    * Join section on this room. It will perform a profile update
-   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @param {{roomId: string; sectionId: string; profile: UserProfileToSend}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
   public async updateLastViewed (parameters: { roomId: string, sectionId: string, dry?: boolean }):Promise<{
@@ -84,10 +84,10 @@ export class UserAndProfileService {
 
   /**
    * Join section on this room. It will perform a profile update
-   * @param {{roomId: string; sectionId: string; profile: UserProfile}} parameters
+   * @param {{roomId: string; sectionId: string; profile: UserProfileToSend}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfile, dry?: boolean }) {
+  public async joinSection (parameters: { roomId: string, sectionId: string, profile: UserProfileToSend, dry?: boolean }) {
     const {
       roomId,
       sectionId,

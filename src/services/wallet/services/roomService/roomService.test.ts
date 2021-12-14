@@ -1,32 +1,51 @@
-import { createOrRetrieveWallet, NFTROOM, SPKZ } from '../../../..';
+import { NFTROOM, SPKZ } from '../../../..';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RPCJSONService } from '../httpService/RPCJSONService';
-import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
+import {
+  InternalMessageEventEmitterService
+} from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
 import axios from 'axios';
+import { skip, take } from 'rxjs/operators';
+import { getStore } from '../../../../stateManagement/src/store';
 
 jest.setTimeout(60000);
 
 describe('room', () => {
   let proxyWallet: SPKZ;
+  let proxiesWallet:SPKZ[];
 
+  const addressBlockchainWallet1 = ['0xa226D0C579CD0ffb3Dc85cfA9A07D534d9301fD8',
+    '0xbA00450C103d06Ee2dF8F4F0617a933e32CCF23C'];
+  const pk = [
+    '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161',
+    'f4421be872eda2c42ba5106c7087c1231e009a94c6d286edfd97ba97ded6d2a3'
+  ];
   beforeEach(async () => {
     await axios.get('http://localhost:3000/reset');
-    proxyWallet = createOrRetrieveWallet();
+
+    // reset store
+    getStore(true);
+    proxiesWallet = await Promise.all(pk.map(async d => {
+      const newSpkz = new SPKZ();
+      await newSpkz.wallets
+        .generateRandomPrivateKeyForProxyWallet()
+        .addWalletFromPrivateKey(d);
+      return newSpkz;
+    }));
+    proxyWallet = proxiesWallet[0];
   });
 
   test('user should get users if user has right', async (done) => {
-    const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+    const [proxyWallet1, proxyWallet2] = proxiesWallet;
 
-    await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-
-    const users0 = await proxyWallet.room.users.getSectionUsers({
+    const users0 = await proxyWallet1.room.users.subscribeToSectionUsers({
       roomId: '0',
       sectionId: 'chat'
-    });
+    }).pipe(take(1)).toPromise();
 
     expect(users0).toHaveLength(0);
-    await proxyWallet.room.userAndProfile.joinSection({
+    await proxyWallet1.room.userAndProfile.joinSection({
       roomId: '0',
       sectionId: 'chat',
       profile: {
@@ -53,13 +72,17 @@ describe('room', () => {
       }
     });
 
-    const users1 = await proxyWallet.room.users.getSectionUsers({
+    const users1 = await proxyWallet1.room.users.subscribeToSectionUsers({
       roomId: '0',
-      sectionId: 'chat'
-    });
+      sectionId: 'chat',
+      forceRefresh: true
+    }).pipe(
+      skip(1), // to avoid previously fetch data
+      take(1)
+    ).toPromise();
 
     expect(users1).toHaveLength(1);
-    await proxyWallet.room.userAndProfile.joinSection(
+    await proxyWallet2.room.userAndProfile.joinSection(
       {
         roomId: '0',
         sectionId: 'chat',
@@ -86,20 +109,23 @@ describe('room', () => {
           }
         }
       });
-    const users2 = await proxyWallet.room.users.getSectionUsers({
+    const users2 = await proxyWallet1.room.users.subscribeToSectionUsers({
       roomId: '0',
-      sectionId: 'chat'
-    });
-    expect(users2).toHaveLength(1);
+      sectionId: 'chat',
+      forceRefresh: true
+
+    }).pipe(
+      skip(1), // to avoid previously fetch data
+      take(1)).toPromise();
+    expect(users2).toHaveLength(2);
     done();
   });
 
   test('user can join section and it performs a profile update and user can update ',
     async (done) => {
-      const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-
-      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-
+      setTimeout(() => {
+        done();
+      }, 10000);
       const expectedPayload = {
         roomId: '0',
         sectionId: 'chat',
@@ -128,14 +154,14 @@ describe('room', () => {
       };
       await proxyWallet.room.userAndProfile.joinSection(expectedPayload);
 
-      const users = await proxyWallet.room.users.getSectionUsers({
+      const users = await proxyWallet.room.users.subscribeToSectionUsers({
         roomId: '0',
         sectionId: 'chat'
-      });
-      const { payload } = users[0];
+      }).pipe(take(1)).toPromise();
+
+      const payload = users[0];
       expect(payload.roomId).toBe(expectedPayload.roomId);
-      expect(payload.sectionId).toBe(expectedPayload.sectionId);
-      expect(payload.profile).toEqual(expectedPayload.profile);
+      expect(payload.payload.profile.ens.name).toBe('lename');
 
       const expectedPayload2 = {
         roomId: '0',
@@ -143,7 +169,7 @@ describe('room', () => {
         profile: {
           biography: 'labiography',
           ens: {
-            name: 'lename',
+            name: 'NOM DIFFERENT',
             tokenId: '3'
           },
           avatar: {
@@ -163,23 +189,25 @@ describe('room', () => {
           }
         }
       };
-      await proxyWallet.room.userAndProfile.updateProfile(expectedPayload2);
-      const users2 = await proxyWallet.room.users.getSectionUsers({
-        roomId: '0',
-        sectionId: 'chat'
-      });
-      const { payload: payload2 } = users2[0];
 
-      expect(payload2.roomId).toBe(expectedPayload2.roomId);
-      expect(payload2.sectionId).toBe(expectedPayload2.sectionId);
-      expect(payload2.profile).toEqual(expectedPayload2.profile);
+      await proxyWallet.room.userAndProfile.updateProfile(expectedPayload2);
+
+      const users2 = await proxyWallet.room.users.subscribeToSectionUsers({
+        roomId: '0',
+        sectionId: 'chat',
+        forceRefresh: true
+      }).pipe(
+        skip(1),
+        take(1)).toPromise();
+
+      const payload2 = users2[0];
+
+      expect(payload2.payload.profile.ens.name).toBe('NOM DIFFERENT');
+
       done();
     });
 
   test('user can update last viewed', async (done) => {
-    const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-
-    await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
     const payload = {
       roomId: '0',
       sectionId: 'chat'
@@ -187,12 +215,10 @@ describe('room', () => {
     await proxyWallet.room.userAndProfile.updateLastViewed(payload);
     done();
   });
+
   describe('send message', () => {
     test('send message', async () => {
-      const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-
       const expectedMessage = 'an expected message';
-      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
       await proxyWallet.room.message.sendMessage({
         roomId: '0',
         messageContent: expectedMessage,
@@ -210,13 +236,14 @@ describe('room', () => {
   });
 
   describe('dry', () => {
-    test('dry join section', async () => {
-      const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
-      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-      const users1 = await proxyWallet.room.users.getSectionUsers({
+    test('dry join section', async (done) => {
+      setTimeout(() => {
+        done();
+      }, 3000);
+      const users1 = await proxyWallet.room.users.subscribeToSectionUsers({
         roomId: '0',
         sectionId: 'chat'
-      });
+      }).pipe(take(1)).toPromise();
 
       expect(users1).toHaveLength(0);
 
@@ -226,13 +253,14 @@ describe('room', () => {
         profile: {},
         dry: true
       });
-
-      const users2 = await proxyWallet.room.users.getSectionUsers({
+      const users2 = await proxyWallet.room.users.subscribeToSectionUsers({
         roomId: '0',
-        sectionId: 'chat'
-      });
+        sectionId: 'chat',
+        forceRefresh: true
+      }).pipe(skip(1), take(1)).toPromise();
 
       expect(users2).toHaveLength(0);
+
       await proxyWallet.room.userAndProfile.joinSection({
         roomId: '0',
         sectionId: 'chat',
@@ -240,21 +268,17 @@ describe('room', () => {
         dry: false
       });
 
-      const users3 = await proxyWallet.room.users.getSectionUsers({
+      const users3 = await proxyWallet.room.users.subscribeToSectionUsers({
         roomId: '0',
-        sectionId: 'chat'
-      });
-
+        sectionId: 'chat',
+        forceRefresh: true
+      }).pipe(skip(1), take(1)).toPromise();
       expect(users3).toHaveLength(1);
     });
   });
   describe('error', () => {
     test('get message error should return value of error', async () => {
-      const pkBlockchainWallet1 = '0x68b2e8504d8f65010750e3c1af10743d9f42a4da4fa3819fdaa0b4ffb29842ad';
-      const addressBlockchainWallet1 = '0xa226D0C579CD0ffb3Dc85cfA9A07D534d9301fD8';
-
       const expectedMessage = 'an expected message';
-      await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
       let inError = false;
       try {
         const messages = await proxyWallet
@@ -273,7 +297,7 @@ describe('room', () => {
     });
   });
 
-  describe('DEV message with redux store', () => {
+  describe('message with redux store', () => {
     const fetchRoom = async ():Promise<NFTROOM> => {
       return {
         strategies: [[]],
