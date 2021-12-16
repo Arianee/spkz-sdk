@@ -75,7 +75,7 @@ export class UsersService {
       this.messageService.userJoinSectionEvent((data:string) => {
         const member = JSON.parse(data);
         addUsersProfiles({ roomId: roomId, users: [member] });
-        addMembersToSection({ sectionId, roomId, users: [member.blockchainWallet] });
+        addMembersToSection({ sectionId, roomId, users: [{ address: member.blockchainWallet }] });
         return member;
       });
       // to code!

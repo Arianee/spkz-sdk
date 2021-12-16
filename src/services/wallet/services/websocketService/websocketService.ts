@@ -30,9 +30,11 @@ export class WebsocketService {
 
   private subscribeToRoom = async (roomId:string, sectionId:string) => {
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
-    const notificationEndpointHash = this.hashString(tokenContent.notificationEndpoint);
-    const joinRoomsLength = this.websockets[notificationEndpointHash].joinedRooms.push({ roomId, sectionId, joined: false });
-    this.joinRoom(notificationEndpointHash, joinRoomsLength - 1);
+    if (tokenContent) {
+      const notificationEndpointHash = this.hashString(tokenContent.notificationEndpoint);
+      const joinRoomsLength = this.websockets[notificationEndpointHash].joinedRooms.push({ roomId, sectionId, joined: false });
+      this.joinRoom(notificationEndpointHash, joinRoomsLength - 1);
+    }
   }
 
   private joinRoom = async (notificationEndpointHash, joinedRoomIndex) => {
@@ -55,19 +57,20 @@ export class WebsocketService {
 
   private connectToWebSocket = async (roomId:string) => {
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
-
-    const { notificationEndpoint } = tokenContent;
-    if (!notificationEndpoint) {
-      throw new Error('there is no notification endpoint');
-    }
-    const notificationEndpointHash = this.hashString(notificationEndpoint);
-    if (!this.websockets[notificationEndpointHash]) {
-      this.websockets[notificationEndpointHash] = {
-        socket: io(notificationEndpoint),
-        connected: false,
-        joinedRooms: []
-      };
-      this.setWsListeners(notificationEndpointHash);
+    if (tokenContent) {
+      const { notificationEndpoint } = tokenContent;
+      if (!notificationEndpoint) {
+        throw new Error('there is no notification endpoint');
+      }
+      const notificationEndpointHash = this.hashString(notificationEndpoint);
+      if (!this.websockets[notificationEndpointHash]) {
+        this.websockets[notificationEndpointHash] = {
+          socket: io(notificationEndpoint),
+          connected: false,
+          joinedRooms: []
+        };
+        this.setWsListeners(notificationEndpointHash);
+      }
     }
   }
 
