@@ -12,4 +12,12 @@ export class InternalMessageEventEmitterService {
   public emitMessage = (message) => {
     this.messages.emit('spkz-message', message);
   }
+
+  public userJoinSectionEvent = (cb:(user:string)=>{}):void => {
+    this.messages.on('userJoinSection', cb);
+  }
+
+  public emitUserJoinSection = (user) => {
+    this.messages.emit('userJoinSection', user);
+  }
 }

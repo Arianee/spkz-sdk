@@ -10,11 +10,17 @@ import { updateFetchStatus } from '../../../../stateManagement/src/reducers/fetc
 import { addUsersProfiles } from '../../../../stateManagement/src/reducers/usersProfile/actions';
 import { addMembersToSection } from '../../../../stateManagement/src/reducers/sectionMembers/actions';
 import { UsersClientService } from './usersClientService';
+import { WebsocketService } from '../websocketService/websocketService';
+import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class UsersService {
-  constructor (private fetchRoomService:FetchRoomService,
-    private usersClientService:UsersClientService) {
+  constructor (
+    private fetchRoomService:FetchRoomService,
+    private usersClientService:UsersClientService,
+    private websocketService: WebsocketService,
+    private messageService: InternalMessageEventEmitterService
+  ) {
   }
 
   /**
@@ -56,7 +62,9 @@ export class UsersService {
           addMembersToSection({ sectionId, roomId, users });
         });
     }
+
     if (!ws) {
+      this.websocketService.joinSection(parameters);
       updateFetchStatus({
         name,
         status: {
@@ -64,6 +72,12 @@ export class UsersService {
         }
       });
 
+      this.messageService.userJoinSectionEvent((data:string) => {
+        const member = JSON.parse(data);
+        addUsersProfiles({ roomId: roomId, users: [member] });
+        addMembersToSection({ sectionId, roomId, users: [member.blockchainWallet] });
+        return member;
+      });
       // to code!
     }
     return subscribeToSectionMemberWithProfle(parameters);

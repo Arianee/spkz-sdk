@@ -37,10 +37,12 @@ export class WebsocketService {
 
   private joinRoom = async (notificationEndpointHash, joinedRoomIndex) => {
     const room = this.websockets[notificationEndpointHash].joinedRooms[joinedRoomIndex];
-    const { sectionId, roomId } = room;
-    const payload = await this.payloadSerivce.hydratePayloadParameters({ sectionId, roomId });
-    this.websockets[notificationEndpointHash].socket.emit('joinRoom', payload);
-    room.joined = true;
+    if (!room.joined) {
+      const { sectionId, roomId } = room;
+      const payload = await this.payloadSerivce.hydratePayloadParameters({ sectionId, roomId });
+      this.websockets[notificationEndpointHash].socket.emit('joinRoom', payload);
+      room.joined = true;
+    }
   }
 
   private rejoinRooms = (notificationEndpointHash) => {
@@ -79,6 +81,11 @@ export class WebsocketService {
     this.websockets[notificationEndpointHash].socket.on('message', (data) => {
       this.messageService.emitMessage(data);
     });
+
+    this.websockets[notificationEndpointHash].socket.on('userJoinSection', (data) => {
+      this.messageService.emitUserJoinSection(data);
+    });
+
     this.websockets[notificationEndpointHash].socket.on('disconnect', () => {
       this.websockets[notificationEndpointHash].connected = false;
       this.websockets[notificationEndpointHash].joinedRooms
