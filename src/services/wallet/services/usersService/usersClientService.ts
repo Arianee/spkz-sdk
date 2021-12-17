@@ -24,7 +24,9 @@ export class UsersClientService {
     requiredDefined(sectionId, 'sectionId is required');
 
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
-
+    if (!tokenContent) {
+      return [];
+    }
     const { endpoint } = tokenContent;
     const params = {
       sectionId,
