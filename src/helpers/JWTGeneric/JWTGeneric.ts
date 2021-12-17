@@ -1,5 +1,7 @@
 import { Base64 } from 'js-base64';
 
+const SIGN_SEPARATOR = '\n\n\n\n\n\n\n The following is the technical part we need to know your actual wallet when you sign with your burner wallet \n';
+
 export class JWTGeneric {
   private header = {
     typ: 'JWT',
@@ -19,7 +21,7 @@ export class JWTGeneric {
    * @param payload
    */
   public setMessage = (payload) => {
-    this.message = payload + '\n';
+    this.message = payload + SIGN_SEPARATOR;
 
     return {
       sign: this.sign.bind(this),
@@ -148,7 +150,8 @@ export class JWTGeneric {
     payload = Base64.fromBase64(payload);
     const signedData = `${headerAndMessage}.${payload}`;
     payload = JSON.parse(payload);
-    const [userMessage, header] = headerAndMessage.split('\n');
+
+    const [userMessage, header] = headerAndMessage.split(SIGN_SEPARATOR);
 
     return {
       headerAndMessage,

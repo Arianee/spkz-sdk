@@ -266,7 +266,7 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
         const token = await jwtService.sign();
 
-        expect(token).toBe('dGhlIG9yaWdpbmFsIG5ldyBtZXNzYWdlIDogOiA6CnsidHlwIjoiSldUIiwiYWxnIjoiRVRIIn0=.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0x3866bab482e1a129b2facb854775188ac53584a185b744f62884916c8835f13f34054d8f881d158b2066670351282d17598e1686352137124bb11dfdecf3505c1c');
+        expect(token).toBe('dGhlIG9yaWdpbmFsIG5ldyBtZXNzYWdlIDogOiA6CgoKCgoKCiBUaGUgZm9sbG93aW5nIGlzIHRoZSB0ZWNobmljYWwgcGFydCB3ZSBuZWVkIHRvIGtub3cgeW91ciBhY3R1YWwgd2FsbGV0IHdoZW4geW91IHNpZ24gd2l0aCB5b3VyIGJ1cm5lciB3YWxsZXQgCnsidHlwIjoiSldUIiwiYWxnIjoiRVRIIn0=.eyJ1c2VySWQiOiIxMTAxMDAxIiwibmFtZSI6IkpvaG4gRG9lIn0=.0xbaa5ceb049c2c715ed8f0e1d41b811d9d8b56bb4051d6bbc0d97e4d1a763ec9a0cd3f224f90e2a83c4dce4cbdab0c78c5c4c6679a9b23f1f2d29abda1223d2ef1c');
       });
     });
   });
