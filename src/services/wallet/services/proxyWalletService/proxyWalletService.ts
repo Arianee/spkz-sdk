@@ -4,7 +4,7 @@ import { JWTGeneric } from '../../../../helpers/JWTGeneric/JWTGeneric';
 import { Lifecycle, scoped } from 'tsyringe';
 import Web3 from 'web3';
 import { Account } from 'web3-core';
-import { required } from '../../../../helpers/required/required';
+import { required, requiredDefined } from '../../../../helpers/required/required';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
@@ -109,7 +109,8 @@ export class ProxyWalletService {
     return this;
   }
 
-  public addFromMetamaskWc = async (clientMeta?:IClientMeta):Promise<{url:string, signature:Promise<any>}> => {
+  public addFromMetamaskWc = async (browserOpen, clientMeta?:IClientMeta):Promise<{url:string, signature:Promise<any>}> => {
+    requiredDefined(browserOpen, 'You need to specify a method to open the WalletConnect link');
     const url = await this.metamaskService.initMMWC(clientMeta);
     let signature;
     const sign = async () => {
@@ -122,15 +123,19 @@ export class ProxyWalletService {
       return this.addBlockchainWalletAuthorization(signedJWT);
     };
 
-    if (!this.metamaskService.connector.connected) {
-      this.metamaskService.connector.on('connect', async (error, payload) => {
-        this.metamaskService.defaultAccount = payload.params[0].accounts[0];
+    return new Promise((resolve) => {
+      if (!this.metamaskService.connector.connected) {
+        browserOpen(url);
+        this.metamaskService.connector.on('connect', async (error, payload) => {
+          this.metamaskService.defaultAccount = payload.params[0].accounts[0];
+          signature = sign();
+          resolve({ url, signature });
+        });
+      } else {
         signature = sign();
-      });
-    } else {
-      signature = sign();
-    }
-    return { url, signature };
+        resolve({ url, signature });
+      }
+    });
   }
 
   public async addWalletFromPrivateKey (privateKey: string) {
