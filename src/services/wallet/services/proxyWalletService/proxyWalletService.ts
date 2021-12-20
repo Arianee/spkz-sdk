@@ -124,8 +124,9 @@ export class ProxyWalletService {
     };
 
     return new Promise((resolve) => {
+      browserOpen(url);
+
       if (!this.metamaskService.connector.connected) {
-        browserOpen(url);
         this.metamaskService.connector.on('connect', async (error, payload) => {
           this.metamaskService.defaultAccount = payload.params[0].accounts[0];
           signature = sign();
