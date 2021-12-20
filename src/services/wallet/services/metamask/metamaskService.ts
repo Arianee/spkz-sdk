@@ -29,8 +29,13 @@ export class MetamaskService {
 
     if (this._window.ethereum) {
       this.hasMetamask = true;
-      const isMMUnlock = await this._window.ethereum._metamask.isUnlocked();
-      if (isMMUnlock) {
+
+      if (this._window.ethereum._metamask?.isUnlocked) {
+        const isMMUnlock = await this._window.ethereum._metamask.isUnlocked();
+        if (isMMUnlock) {
+          await this.initMetamask();
+        }
+      } else {
         await this.initMetamask();
       }
     }
@@ -117,7 +122,7 @@ export class MetamaskService {
 
     return this._window.ethereum.request({
       method: 'personal_sign',
-      params: [this.defaultAccount, data]
+      params: [data, this.defaultAccount]
     });
   }
 
