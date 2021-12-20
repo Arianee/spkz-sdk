@@ -5,6 +5,7 @@ import { required, requiredDefined } from '../../../../helpers/required/required
 import { Signaturev4 } from '../../../../models/signaturev4';
 import WalletConnect from '@walletconnect/client';
 import Web3 from 'web3';
+import { IClientMeta, IWalletConnectOptions } from '@walletconnect/types';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -78,10 +79,15 @@ export class MetamaskService {
     });
   }
 
-  public initMMWC = async (): Promise<string> => {
-    this.connector = new WalletConnect({
+  public initMMWC = async (clientMeta?:IClientMeta): Promise<string> => {
+    const connectorOptions:IWalletConnectOptions = {
       bridge: 'https://bridge.walletconnect.org'
-    });
+    };
+    if (clientMeta) {
+      connectorOptions.clientMeta = clientMeta;
+    }
+
+    this.connector = new WalletConnect(connectorOptions);
 
     if (!this.connector.connected) {
       await this.connector.createSession();
