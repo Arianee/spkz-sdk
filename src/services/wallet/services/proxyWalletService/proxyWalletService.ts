@@ -9,6 +9,7 @@ import { RightService } from '../../../utils/services/rightService/rightService'
 import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
 import { Wallet as etherWallet } from '@ethersproject/wallet';
+import { IClientMeta } from '@walletconnect/types';
 
 const localStorageAuthorizationKey = 'spkz_authorizations';
 
@@ -108,8 +109,8 @@ export class ProxyWalletService {
     return this;
   }
 
-  public addFromMetamaskWc = async ():Promise<{url:string, signature:Promise<any>}> => {
-    const url = await this.metamaskService.initMMWC();
+  public addFromMetamaskWc = async (clientMeta?:IClientMeta):Promise<{url:string, signature:Promise<any>}> => {
+    const url = await this.metamaskService.initMMWC(clientMeta);
     let signature;
     const sign = async () => {
       const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {
