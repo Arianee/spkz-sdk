@@ -15,7 +15,8 @@ const config = {
   43114: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/avalanche/mainnet',
   250: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/fantom/mainnet',
   100: 'https://rpc.xdaichain.com',
-  1285: 'https://rpc.moonriver.moonbeam.network'
+  1285: 'https://rpc.moonriver.moonbeam.network',
+  11297108109: 'https://palm-mainnet.infura.io/v3/3a961d6501e54add9a41aa53f15de99b'
 };
 
 export const web3Factory = async (chainIdOrUrl: string):Promise<Web3> => {
