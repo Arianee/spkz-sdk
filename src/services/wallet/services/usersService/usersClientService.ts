@@ -2,12 +2,13 @@ import { Lifecycle, scoped } from 'tsyringe';
 import { RPCJSONService } from '../httpService/RPCJSONService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
-import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { ResultUserProfileRPC } from '../../../../models/userProfile/userProfileRPC';
+import { FetchRoomWrapperService } from '../fetchRoomWalletService/fetchRoomWrapperService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class UsersClientService {
-  constructor (private fetchRoomService:FetchRoomService, private rpcJSONService:RPCJSONService) {
+  constructor (private fetchRoomService: FetchRoomWrapperService,
+    private rpcJSONService:RPCJSONService) {
   }
 
   /**

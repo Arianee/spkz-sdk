@@ -1,10 +1,11 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
 import { requiredDefined } from '../../../../helpers/required/required';
-import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { WebsocketService } from '../websocketService/websocketService';
-import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
+import {
+  InternalMessageEventEmitterService
+} from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
 import {
   $messagesFromSection,
   getMessages,
@@ -34,8 +35,8 @@ import { Observable } from 'rxjs';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MessageService {
-  constructor (private messagingService: ProxyWalletService,
-    private fetchRoomService: FetchRoomService,
+  constructor (
+    private messagingService: ProxyWalletService,
     private rightService: RightService,
     private websocketService: WebsocketService,
     private messageService: InternalMessageEventEmitterService,

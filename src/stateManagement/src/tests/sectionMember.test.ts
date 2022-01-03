@@ -314,9 +314,6 @@ describe('Section Member', () => {
             expect(d).toHaveLength(2);
           }
           if (num === 1) {
-            expect(d).toHaveLength(2);
-          }
-          if (num === 2) {
             expect(d).toHaveLength(3);
             done();
           }

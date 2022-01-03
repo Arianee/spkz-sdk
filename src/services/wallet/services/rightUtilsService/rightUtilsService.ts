@@ -1,14 +1,14 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
 import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
-import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
+import { FetchRoomWrapperService } from '../fetchRoomWalletService/fetchRoomWrapperService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightUtilsService {
   constructor (
     private messagingService: ProxyWalletService,
-    private fetchRoomService: FetchRoomService,
+    private fetchRoomService: FetchRoomWrapperService,
     private rightService: RightService) {
   }
 

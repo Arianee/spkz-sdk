@@ -1,4 +1,4 @@
-import { NFTROOM, SPKZ } from '../../../..';
+import { SPKZ } from '../../../..';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RPCJSONService } from '../httpService/RPCJSONService';
@@ -298,7 +298,7 @@ describe('room', () => {
   });
 
   describe('message with redux store', () => {
-    const fetchRoom = async ():Promise<NFTROOM> => {
+    const fetchRoom = async ():Promise<any> => {
       return {
         strategies: [[]],
         endpoint: 'http://monendpoint.com',
@@ -333,7 +333,7 @@ describe('room', () => {
       }
     };
 
-    test('fetch messages and subscribe', async (done) => {
+    test('DEV fetch messages and subscribe', async (done) => {
       const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
       await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
 
@@ -362,10 +362,11 @@ describe('room', () => {
       setTimeout(() => {
         proxyWallet.container.resolve(InternalMessageEventEmitterService).emitMessage(JSON.stringify({
           roomId: '1',
+          id: 3,
           sectionId: 'chat',
           content: 'my second content'
         }));
-      });
+      }, 1);
     });
   });
 });

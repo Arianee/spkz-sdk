@@ -2,15 +2,17 @@ import { Lifecycle, scoped } from 'tsyringe';
 import { RPCJSONService } from '../httpService/RPCJSONService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
-import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { UserProfileToSend } from '../../../../models/userProfile/userProfile';
 import { getSectionLastViewInfos } from '../../../../stateManagement/src/selectors/notifications.selector';
 import { resetNewMessageCountForASection } from '../../../../stateManagement/src/reducers/notifications/actions';
 import { SectionState } from '../../../../stateManagement/src/reducers/notifications/reducer';
+import { FetchRoomWrapperService } from '../fetchRoomWalletService/fetchRoomWrapperService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class UserAndProfileService {
-  constructor (private rpcJSONService:RPCJSONService, private fetchRoomService:FetchRoomService) {
+  constructor (private rpcJSONService:RPCJSONService,
+    private fetchRoomService: FetchRoomWrapperService
+  ) {
   }
 
   /**
