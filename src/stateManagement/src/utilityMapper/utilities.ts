@@ -1,6 +1,7 @@
 import { cloneDeep, get, isEqual } from 'lodash';
 import { getStore } from '../store';
 import { Observable } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 export const getProperty = (property: string | string[]) => {
   return get(getStore().getState(), property);
@@ -30,7 +31,7 @@ export function subscribeToProperty (property: string | string[] = ''):Observabl
         next(lastProperty);
       }
     });
-  });
+  }).pipe(distinctUntilChanged(isEqual));
 }
 
 export const filterOnChange = (property: string | string[]) => {

@@ -1,12 +1,17 @@
 import { StrategiesReturn, StrategyReturn } from './strategyReturn';
+import { Section } from './room/recommendedAndFeaturedRoom';
 
 export interface NFTROOM{
-  strategies: Array<any[]>;
-  sections: RoomSection[];
-
   endpoint: string;
-  notificationEndpoint?:string;
-
+  notificationEndpoint: string;
+  name: string;
+  description: string;
+  // eslint-disable-next-line camelcase
+  external_url?: string;
+  image?: string;
+  logo?: string;
+  strategies: any[][];
+  sections: Section[];
   [key: string]: any
 }
 

@@ -1,5 +1,5 @@
 export * from './jsonrpc/networkParameters';
-export * from './recommendedOrFeaturedRoom';
+export * from './room/recommendedAndFeaturedRoom';
 export * from './NFTROOM';
 export * from './userProfile/userProfile';
 export * from './strategyReturn';

@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { ProxyWalletService } from './services/proxyWalletService/proxyWalletService';
 import { RoomService } from './services/roomService/roomService';
-import { RoomsService } from './services/roomsService/roomsService';
 import { PayloadService } from './services/payloadService/payloadService';
 import { MetamaskService } from './services/metamask/metamaskService';
 import { network } from '../../models/network.enum';
@@ -20,7 +19,6 @@ export class SPKZ {
   public wallets: ProxyWalletService = this.container.resolve(ProxyWalletService);
   public bouncer: BouncerService = this.container.resolve(BouncerService);
   public environmentService = this.container.resolve(EnvironmentService);
-  public rooms: RoomsService = this.container.resolve(RoomsService);
   public room: RoomService = this.container.resolve(RoomService);
 
   public payloadService: PayloadService = this.container.resolve(PayloadService);

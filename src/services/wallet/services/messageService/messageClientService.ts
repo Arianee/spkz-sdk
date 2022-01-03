@@ -3,15 +3,15 @@ import { RPCJSONService } from '../httpService/RPCJSONService';
 import { ProxyWalletService } from '../proxyWalletService/proxyWalletService';
 import { JSONRPCMethods } from '../../../../models/JSONRPCMethods.enum';
 import { requiredDefined } from '../../../../helpers/required/required';
-import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { RightService } from '../../../utils/services/rightService/rightService';
 import { NewMessageCount } from '../../../../models/jsonrpc/writeMessageParameters';
 import { FetchParameters } from '../../../../models/FetchParameters';
+import { FetchRoomWrapperService } from '../fetchRoomWalletService/fetchRoomWrapperService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MessageClientService {
   constructor (private messagingService: ProxyWalletService,
-    private fetchRoomService: FetchRoomService,
+    private fetchRoomService: FetchRoomWrapperService,
     private rightService: RightService,
     private httpService: RPCJSONService) {
   }
@@ -34,7 +34,6 @@ export class MessageClientService {
 
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
-
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
 
     const { endpoint } = tokenContent;
