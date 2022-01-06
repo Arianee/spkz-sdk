@@ -7,6 +7,7 @@ import { abbreviateTokenBN } from '../../helpers/abbreviateNumberHelper/abbrevia
 import axios from 'axios';
 import { sumBN } from '../helpers/sumBN/sumBN';
 import { requiredDefined } from '../../helpers/required/required';
+import { retryExecFactory } from '../../helpers/retryExecFactory/retryExecFactory';
 
 const openSeaApiKey = '46bdef1fbc5e4b40b8295214c409355c';
 
@@ -15,11 +16,11 @@ const getOpenseaCollectionBalanceOf = async (address:string, collection:string, 
   url.searchParams.set('owner', address);
   url.searchParams.set('limit', minBalance);
   url.searchParams.set('collection', collection);
-  const result = await axios.get(url.toString(), {
+  const result = await retryExecFactory(() => axios.get(url.toString(), {
     headers: {
       'X-API-KEY': openSeaApiKey
     }
-  });
+  }));
   return result.data.assets;
 };
 

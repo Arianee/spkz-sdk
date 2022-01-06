@@ -84,6 +84,7 @@
     "lodash": "^4.17.21",
     "memory-cache": "^0.2.0",
     "object-hash": "^2.2.0",
+    "promise-retry": "^2.0.1",
     "redux": "^4.1.2",
     "redux-logger": "^3.0.6",
     "reflect-metadata": "^0.1.13",
