@@ -6,7 +6,9 @@ export const ActionTypes = {
     addMembers: 'SECTION.addMembers'
   },
   ROOM: {
-    addOrUpdateRoom: 'ROOM.addOrUpdateRoom'
+    addOrUpdateRooms: 'ROOM.addOrUpdateRooms',
+    setVerifiedRooms: 'ROOM.setVerifiedRooms',
+    setFeaturedRooms: 'ROOM.setFeaturedRooms'
   },
   MESSAGE: {
     paginationStatus: 'ROOM.paginationStatus',

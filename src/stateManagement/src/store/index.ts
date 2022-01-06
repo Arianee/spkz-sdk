@@ -7,6 +7,7 @@ import { NotificationsReducer } from '../reducers/notifications/reducer';
 import { UsersProfileReducer } from '../reducers/usersProfile/reducer';
 import { SectionMemberReducer } from '../reducers/sectionMembers/reducer';
 import { fetchStatusReducer } from '../reducers/fetchStatus/reducer';
+import { RoomReducer } from '../reducers/rooms/reducer';
 
 const rootReducer = combineReducers(
   {
@@ -15,7 +16,8 @@ const rootReducer = combineReducers(
     [REDUCERNAME.NOTIFICATIONS]: NotificationsReducer,
     [REDUCERNAME.USERS]: UsersProfileReducer,
     [REDUCERNAME.SECTIONMEMBER]: SectionMemberReducer,
-    [REDUCERNAME.FETCHSTATUS]: fetchStatusReducer
+    [REDUCERNAME.FETCHSTATUS]: fetchStatusReducer,
+    [REDUCERNAME.ROOM]: RoomReducer
   });
 
 let store;

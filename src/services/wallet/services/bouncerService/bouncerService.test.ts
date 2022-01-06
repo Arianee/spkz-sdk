@@ -12,13 +12,16 @@ describe('bouncer service', () => {
       const d = await proxyWallet.bouncer.getFeaturedRooms();
 
       expect(d).toBeDefined();
+      expect(d.length > 0).toBeTruthy();
     });
 
     test('fetch recommended rooms', async () => {
       proxyWallet.environmentService.swithEnv('dev');
+
       const d = await proxyWallet.bouncer.getRecommendedRooms();
 
       expect(d).toBeDefined();
+      expect(d.length > 0).toBeTruthy();
     });
   });
   describe('RPC calls', () => {
@@ -38,7 +41,7 @@ describe('bouncer service', () => {
     });
 
     describe('user profile', () => {
-      test('DEV get profile and update', async () => {
+      test('get profile and update', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
 

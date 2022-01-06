@@ -2,7 +2,7 @@ import { getStrategyHelperFactory } from './getStrategyHelper.helper';
 import { NFTROOM } from '../../models/NFTROOM';
 
 describe('startegies finder helper', () => {
-  const mockNFTROOM:NFTROOM = {
+  const mockNFTROOM:any = {
     $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
     endpoint: 'https://node1.speakez.arianee.org/rpc',
     name: 'ARIA20 Backroom',

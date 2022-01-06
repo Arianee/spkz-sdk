@@ -1,8 +1,7 @@
-import { filter, from, map } from 'rxjs';
-import { getStore } from '../store';
-import { filterOnChange, getPropertyMap, subscribeToProperty } from '../utilityMapper/utilities';
-import { REDUCERNAME } from '../reducerName';
-import { addNameToHelloWorld } from '../reducers/rooms/actions';
+import { from } from 'rxjs';
+import { subscribeToProperty } from '../utilityMapper/utilities';
+import { addNameToHelloWorld } from '../reducers/helloWorld/actions';
+
 describe('utilies', () => {
   test('subscribeToProperty', (done) => {
     let numberOfCalls = 0;

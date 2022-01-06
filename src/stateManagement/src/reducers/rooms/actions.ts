@@ -1,11 +1,12 @@
 import { getStore } from '../../store';
 import { ActionTypes } from '../../actionTypes/actionTypes';
+import { RecommendedOrFeaturedRoomFromExternalSource } from '../../../../models/room/recommendedAndFeaturedRoom';
 
-export function addNameToHelloWorld (name:string) {
+export function addOrUpdateRooms (rooms:RecommendedOrFeaturedRoomFromExternalSource[]) {
   getStore().dispatch({
-    type: ActionTypes.HELLOWORLD.ADDNAME,
+    type: ActionTypes.ROOM.addOrUpdateRooms,
     payload: {
-      name
+      rooms
     }
   });
 }
