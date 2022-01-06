@@ -7,7 +7,8 @@ describe('clause', () => {
       const strategyProvider = await executeStrategiesWithCache([[
         {
           name: 'native-balance-of',
-          addresses: ['0x776BB566dC299C9e722773d2A04B401e831a6DC8'],
+          // weth smartcontract
+          addresses: ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'],
           params: {
             minBalance: '1000000000000000000',
             chainId: '1',
