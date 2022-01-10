@@ -1,5 +1,6 @@
 import { JWTGeneric } from './JWTGeneric';
 import { addDate } from '../timestampHelper/timestampHelper';
+import { JSONRPCErrors } from '../../models/JSONRPCError';
 
 const Web3 = require('web3');
 
@@ -39,21 +40,23 @@ describe('JWTGeneric', function () {
     test('it should verify a wrong pubKey and say false', () => {
       const jwt = new JWTGeneric(signer, decoder as any);
 
-      const isAuthentic = jwt
+      const { isValid, details } = jwt
         .setToken(expectedToken)
         .verify('0x74FE09Db23Df5c35d2969B666f7AA94621E110');
 
-      expect(isAuthentic).toBeFalsy();
+      expect(isValid).toBeFalsy();
+      expect(details).toBe(JSONRPCErrors.wrongSignatureForPayload);
     });
 
     test('it should verify the right pubkey and say true', () => {
       const jwt = new JWTGeneric(signer, decoder as any);
 
-      const isAuthentic = jwt
+      const { isValid, details } = jwt
         .setToken(expectedToken)
         .verify(pubKey);
 
-      expect(isAuthentic).toBeTruthy();
+      expect(isValid).toBeTruthy();
+      expect(details).toBeNull();
     });
   });
 
@@ -73,11 +76,12 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeFalsy();
+        expect(isValid).toBeFalsy();
+        expect(details).toBe(JSONRPCErrors.authorizationsJWTExpired);
       });
       test('it should be true if not expired', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
@@ -92,11 +96,12 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeTruthy();
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
     });
     describe('nbf', () => {
@@ -113,11 +118,12 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeFalsy();
+        expect(isValid).toBeFalsy();
+        expect(details).toBe(JSONRPCErrors.authorizationsJWTNotBefore);
       });
 
       test('it should be true if after nbf', async () => {
@@ -133,11 +139,12 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeTruthy();
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
     });
     describe('iat', () => {
@@ -154,11 +161,12 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeFalsy();
+        expect(isValid).toBeFalsy();
+        expect(details).toBe(JSONRPCErrors.authorizationsJWTBeforeIat);
       });
 
       test('it should be true if after iat', async () => {
@@ -174,22 +182,24 @@ describe('JWTGeneric', function () {
         const jwtService = await jwt.setPayload(payload);
         const token = await jwtService.sign();
 
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeTruthy();
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
     });
 
     test('it should verify a token and say true', () => {
       const jwt = new JWTGeneric(signer, decoder as any);
 
-      const isAuthentic = jwt
+      const { isValid, details } = jwt
         .setToken(expectedToken)
         .verify(pubKey);
 
-      expect(isAuthentic).toBeTruthy();
+      expect(isValid).toBeTruthy();
+      expect(details).toBeNull();
     });
 
     describe('Signature with message', () => {
@@ -204,8 +214,9 @@ describe('JWTGeneric', function () {
         const jwtSigner = jwt.setMessage('the message:').setPayload(payload);
 
         const signedJWT = await jwtSigner.sign();
-        const isAuthentic = jwt.setToken(signedJWT).verify(pubKey);
-        // expect(isAuthentic).toBeTruthy();
+        const { isValid, details } = jwt.setToken(signedJWT).verify(pubKey);
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
 
       test('A payload with message should be valid', async () => {
@@ -214,8 +225,9 @@ describe('JWTGeneric', function () {
         const jwtSigner = jwt.setMessage('the message:').setPayload(payload);
 
         const signedJWT = await jwtSigner.sign();
-        const isAuthentic = jwt.setToken(signedJWT).verify(pubKey);
-        expect(isAuthentic).toBeTruthy();
+        const { isValid, details } = jwt.setToken(signedJWT).verify(pubKey);
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
 
       test('it should be true if after iat with message', async () => {
@@ -230,11 +242,12 @@ describe('JWTGeneric', function () {
 
         const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
         const token = await jwtService.sign();
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeTruthy();
+        expect(isValid).toBeTruthy();
+        expect(details).toBeNull();
       });
 
       test('it should be false if before iat with message', async () => {
@@ -244,16 +257,17 @@ describe('JWTGeneric', function () {
         const payload = {
           userId: '1101001',
           name: 'John Doe',
-          nbf: iat.getTime()
+          iat: iat.getTime()
         };
 
         const jwtService = await jwt.setPayload(payload).setMessage('the original new message : : :');
         const token = await jwtService.sign();
-        const isAuthentic = jwt
+        const { isValid, details } = jwt
           .setToken(token)
           .verify(pubKey);
 
-        expect(isAuthentic).toBeFalsy();
+        expect(isValid).toBeFalsy();
+        expect(details).toBe(JSONRPCErrors.authorizationsJWTBeforeIat);
       });
 
       test('expected token should be good', async () => {
@@ -283,11 +297,12 @@ describe('JWTGeneric', function () {
 
       const jwToken = await jwt.setPayload(payload).setMessage('the original new message : : :').sign();
 
-      const isAuthentic = jwt
+      const { isValid, details } = jwt
         .setToken(jwToken)
         .verify(pubKey);
 
-      expect(isAuthentic).toBeTruthy();
+      expect(isValid).toBeTruthy();
+      expect(details).toBeNull();
     });
   });
 });

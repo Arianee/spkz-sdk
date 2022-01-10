@@ -1,3 +1,5 @@
+import { ErrorPayload } from './jsonrpc/errorPayload';
+
 export interface AuthorizationsDetails {
     blockchainWalletAddress: string,
     proxyWallet: string,
@@ -5,5 +7,6 @@ export interface AuthorizationsDetails {
 }
 export interface AuthorizationsStatus {
     isAuthorized:boolean,
+    details?: ErrorPayload[],
     authorizations: AuthorizationsDetails[]
 }

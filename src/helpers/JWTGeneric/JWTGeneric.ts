@@ -1,4 +1,6 @@
 import { Base64 } from 'js-base64';
+import { ErrorPayload } from '../../models/jsonrpc/errorPayload';
+import { JSONRPCErrors } from '../../models/JSONRPCError';
 
 export class JWTGeneric {
   private header = {
@@ -98,7 +100,7 @@ export class JWTGeneric {
    * Verify if signature was signed by pubKey and return true/false
    * @param pubKey
    */
-  private verify (pubKey: string): boolean {
+  private verify (pubKey: string): { isValid: boolean, details: ErrorPayload } {
     const {
       signature,
       payload,
@@ -111,34 +113,55 @@ export class JWTGeneric {
     const decode = this.decoder(signedData, signature);
     const decodeBase64 = this.decoder(signedDataBase64, signature); // used for legacy sign
 
-    const arePropertyValid = this.arePropertiesValid(payload);
+    const { isValid, details } = this.arePropertiesValid(payload);
 
-    if (!arePropertyValid) {
-      return false;
+    if (!isValid) {
+      return {
+        isValid: false,
+        details
+      };
     }
-    return (pubKey.toLowerCase() === decode.toLowerCase() || pubKey.toLowerCase() === decodeBase64.toLowerCase());
+
+    const isPubKeyValid = (pubKey.toLowerCase() === decode.toLowerCase() || pubKey.toLowerCase() === decodeBase64.toLowerCase());
+
+    return {
+      isValid: isPubKeyValid,
+      details: isPubKeyValid ? details : JSONRPCErrors.wrongSignatureForPayload
+    };
   }
 
-  private arePropertiesValid = (payload) => {
+  private arePropertiesValid = (payload): { isValid: boolean, details: ErrorPayload } => {
     if (payload.exp) {
       const isExpired = new Date(payload.exp).getTime() < Date.now();
       if (isExpired) {
-        return false;
+        return {
+          isValid: false,
+          details: JSONRPCErrors.authorizationsJWTExpired
+        };
       }
     }
     if (payload.nbf) {
       const isBefore = new Date(payload.nbf).getTime() > Date.now();
       if (isBefore) {
-        return false;
+        return {
+          isValid: false,
+          details: JSONRPCErrors.authorizationsJWTNotBefore
+        };
       }
     }
     if (payload.iat) {
       const isBefore = new Date(payload.iat).getTime() > Date.now();
       if (isBefore) {
-        return false;
+        return {
+          isValid: false,
+          details: JSONRPCErrors.authorizationsJWTBeforeIat
+        };
       }
     }
-    return true;
+    return {
+      isValid: true,
+      details: null
+    };
   };
 
   private decode () {

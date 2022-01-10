@@ -9,7 +9,7 @@ export const JSONRPCErrors = {
   wrongSignatureForPayload: {
     code: 1,
     details: {},
-    message: 'The signature of the payload or the signature of blockchain wallets do not correpond'
+    message: 'The signature of the payload or the signature of blockchain wallets do not correspond'
   },
   notHasReadRight: {
     code: 2,
@@ -25,5 +25,20 @@ export const JSONRPCErrors = {
     code: 4,
     details: {},
     message: 'Blockchain wallet does not pass strategy to join room'
+  },
+  authorizationsJWTExpired: {
+    code: 5,
+    details: {},
+    message: 'The authorizations JWT is expired'
+  },
+  authorizationsJWTNotBefore: {
+    code: 6,
+    details: {},
+    message: 'The authorizations JWT nbf is greater than the current date'
+  },
+  authorizationsJWTBeforeIat: {
+    code: 7,
+    details: {},
+    message: 'The authorizations JWT iat is greater than the current date'
   }
 };
