@@ -43,7 +43,7 @@ describe('clause', () => {
       const strategyProvider = await executeStrategiesWithCache([[
         {
           name: 'native-balance-of',
-          addresses: ['0x68c817bfef37b5cbb691a2d02517fb8b76e7cd47'],
+          addresses: ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'],
           params: {
             minBalance: '10000000000000000000',
             chainId: '137',
@@ -70,7 +70,7 @@ describe('clause', () => {
       const strategyProvider = await executeStrategiesWithCache([[
         {
           name: 'native-balance-of',
-          addresses: ['0x68c817bfef37b5cbb691a2d02517fb8b76e7cd47'],
+          addresses: ['0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270'],
 
           params: {
             minBalance: '10000000000000000000',
@@ -81,7 +81,7 @@ describe('clause', () => {
       ], [
         {
           name: 'native-balance-of',
-          addresses: ['0x68c817bfef37b5cbb691a2d02517fb8b76e7cd47'],
+          addresses: ['0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'],
           params: {
             minBalance: '1000000000000000000',
             chainId: '1',

@@ -7,9 +7,9 @@ export interface NFTROOM{
   name: string;
   description: string;
   // eslint-disable-next-line camelcase
-  external_url?: string;
-  image?: string;
-  logo?: string;
+  external_url: string;
+  image: string;
+  logo: string;
   strategies: any[][];
   sections: Section[];
   [key: string]: any

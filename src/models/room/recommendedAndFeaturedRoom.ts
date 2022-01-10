@@ -15,8 +15,8 @@ export interface RoomDetails {
     description: string;
   // eslint-disable-next-line camelcase
     external_url?: string;
-    image?: string;
-    logo?: string;
+    image: string;
+    logo: string;
     strategies: any[][];
     sections: Section[];
   }
