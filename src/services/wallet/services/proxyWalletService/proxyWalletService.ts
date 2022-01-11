@@ -80,7 +80,7 @@ export class ProxyWalletService {
       if (valueFromStorage) {
         try {
           const parseValue: any[] = JSON.parse(valueFromStorage);
-          const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
+          const { isAuthorized } = RightService.isProxyWalletAuthorized(parseValue, this.address);
           if (isAuthorized) {
             return parseValue;
           }

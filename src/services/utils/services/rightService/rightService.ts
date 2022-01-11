@@ -26,8 +26,7 @@ export class RightService {
       .map(authorization => {
         const { payload } = JWTDecoder(authorization).decode();
         const { iss, sub } = payload;
-        console.info('payload');
-        console.info(payload);
+
         const { isValid, details } = JWTDecoder(authorization).verify(iss);
 
         const isProxyWalletAuthorized = sub.toLowerCase() === publicKeyToVerify.toLowerCase();

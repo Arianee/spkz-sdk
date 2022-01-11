@@ -17,7 +17,6 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { authorizations, roomId, sectionId } = params;
         requiredDefined(authorizations, 'authorizations should be defined');
 
-        console.info(params);
         const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {

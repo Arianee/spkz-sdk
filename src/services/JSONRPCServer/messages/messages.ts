@@ -20,9 +20,6 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       requiredDefined(authorizations, 'authorizations should be defined');
 
       const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
-      console.info('fetch messages infos');
-      console.info(isAuthorized, blockchainWallets, details);
-      console.info(authorizations, params);
 
       if (isAuthorized === false) {
         const errorPayload:ErrorPayload[] = details;
