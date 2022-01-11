@@ -66,11 +66,11 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       requiredDefined(content, 'content should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets, proxyWalletAddress } = await utils.rightService
+      const { isAuthorized, blockchainWallets, proxyWalletAddress, details } = await utils.rightService
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
       const firstBlockchainWallet = blockchainWallets[0];

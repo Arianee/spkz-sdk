@@ -85,12 +85,13 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
       const {
         isAuthorized,
         blockchainWallets,
-        proxyWalletAddress
+        proxyWalletAddress,
+        details
       } = await utils.rightService
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload[] = details;
         return callback(errorPayload);
       }
 
