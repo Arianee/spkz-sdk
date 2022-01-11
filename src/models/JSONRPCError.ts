@@ -1,5 +1,3 @@
-import { ErrorPayload } from './jsonrpc/errorPayload';
-
 export const JSONRPCErrors = {
   unknownError: {
     code: -1,

@@ -29,11 +29,12 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
 
       const {
         isAuthorized,
-        blockchainWallets
+        blockchainWallets,
+        details
       } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload[] = details;
         return callback(errorPayload);
       }
 
@@ -141,11 +142,12 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
 
       const {
         isAuthorized,
-        blockchainWallets
+        blockchainWallets,
+        details
       } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload[] = details;
         return callback(errorPayload);
       }
       const firstBlockchainWallet = blockchainWallets[0];
@@ -197,11 +199,12 @@ export const userJSONRPCFactory = (networkParameters: NetworkParameters) => (
 
       const {
         isAuthorized,
-        blockchainWallets
+        blockchainWallets,
+        details
       } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload: ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload: ErrorPayload[] = details;
         return callback(errorPayload);
       }
 

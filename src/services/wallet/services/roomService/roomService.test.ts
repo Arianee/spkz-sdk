@@ -8,6 +8,7 @@ import {
 import axios from 'axios';
 import { skip, take } from 'rxjs/operators';
 import { getStore } from '../../../../stateManagement/src/store';
+import Web3 from 'web3';
 
 jest.setTimeout(60000);
 
@@ -33,6 +34,7 @@ describe('room', () => {
         .addWalletFromPrivateKey(d);
       return newSpkz;
     }));
+
     proxyWallet = proxiesWallet[0];
   });
 

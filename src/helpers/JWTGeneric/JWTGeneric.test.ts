@@ -1,6 +1,6 @@
 import { JWTGeneric } from './JWTGeneric';
 import { addDate } from '../timestampHelper/timestampHelper';
-import { JSONRPCErrors } from '../../models/JSONRPCError';
+import { JWTGenericErrors } from '../../models/JWTGenericErrors';
 
 const Web3 = require('web3');
 
@@ -45,7 +45,7 @@ describe('JWTGeneric', function () {
         .verify('0x74FE09Db23Df5c35d2969B666f7AA94621E110');
 
       expect(isValid).toBeFalsy();
-      expect(details).toBe(JSONRPCErrors.wrongSignatureForPayload);
+      expect(details).toBe(JWTGenericErrors.publicKeyAndDecodedKeyMismatch);
     });
 
     test('it should verify the right pubkey and say true', () => {
@@ -81,7 +81,7 @@ describe('JWTGeneric', function () {
           .verify(pubKey);
 
         expect(isValid).toBeFalsy();
-        expect(details).toBe(JSONRPCErrors.authorizationsJWTExpired);
+        expect(details).toBe(JWTGenericErrors.authorizationsJWTExpired);
       });
       test('it should be true if not expired', async () => {
         const jwt = new JWTGeneric(signer, decoder as any);
@@ -123,7 +123,7 @@ describe('JWTGeneric', function () {
           .verify(pubKey);
 
         expect(isValid).toBeFalsy();
-        expect(details).toBe(JSONRPCErrors.authorizationsJWTNotBefore);
+        expect(details).toBe(JWTGenericErrors.authorizationsJWTNotBefore);
       });
 
       test('it should be true if after nbf', async () => {
@@ -166,7 +166,7 @@ describe('JWTGeneric', function () {
           .verify(pubKey);
 
         expect(isValid).toBeFalsy();
-        expect(details).toBe(JSONRPCErrors.authorizationsJWTBeforeIat);
+        expect(details).toBe(JWTGenericErrors.authorizationsJWTBeforeIat);
       });
 
       test('it should be true if after iat', async () => {
@@ -267,7 +267,7 @@ describe('JWTGeneric', function () {
           .verify(pubKey);
 
         expect(isValid).toBeFalsy();
-        expect(details).toBe(JSONRPCErrors.authorizationsJWTBeforeIat);
+        expect(details).toBe(JWTGenericErrors.authorizationsJWTBeforeIat);
       });
 
       test('expected token should be good', async () => {

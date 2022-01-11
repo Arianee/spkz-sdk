@@ -1,6 +1,6 @@
 import { Base64 } from 'js-base64';
 import { ErrorPayload } from '../../models/jsonrpc/errorPayload';
-import { JSONRPCErrors } from '../../models/JSONRPCError';
+import { JWTGenericErrors } from '../../models/JWTGenericErrors';
 
 export class JWTGeneric {
   private header = {
@@ -126,7 +126,7 @@ export class JWTGeneric {
 
     return {
       isValid: isPubKeyValid,
-      details: isPubKeyValid ? details : JSONRPCErrors.wrongSignatureForPayload
+      details: isPubKeyValid ? details : JWTGenericErrors.publicKeyAndDecodedKeyMismatch
     };
   }
 
@@ -136,7 +136,7 @@ export class JWTGeneric {
       if (isExpired) {
         return {
           isValid: false,
-          details: JSONRPCErrors.authorizationsJWTExpired
+          details: JWTGenericErrors.authorizationsJWTExpired
         };
       }
     }
@@ -145,7 +145,7 @@ export class JWTGeneric {
       if (isBefore) {
         return {
           isValid: false,
-          details: JSONRPCErrors.authorizationsJWTNotBefore
+          details: JWTGenericErrors.authorizationsJWTNotBefore
         };
       }
     }
@@ -154,7 +154,7 @@ export class JWTGeneric {
       if (isBefore) {
         return {
           isValid: false,
-          details: JSONRPCErrors.authorizationsJWTBeforeIat
+          details: JWTGenericErrors.authorizationsJWTBeforeIat
         };
       }
     }

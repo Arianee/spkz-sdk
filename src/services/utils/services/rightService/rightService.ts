@@ -26,6 +26,8 @@ export class RightService {
       .map(authorization => {
         const { payload } = JWTDecoder(authorization).decode();
         const { iss, sub } = payload;
+        console.info('payload');
+        console.info(payload);
         const { isValid, details } = JWTDecoder(authorization).verify(iss);
 
         const isProxyWalletAuthorized = sub.toLowerCase() === publicKeyToVerify.toLowerCase();
@@ -51,8 +53,11 @@ export class RightService {
      * @returns {boolean}
      */
     public static isProxyWalletAuthorized=(authorizationsJWT:string[], publicKeyToVerify): { isAuthorized: boolean, details: ErrorPayload[] } => {
-      const { isAuthorized, details } = RightService.proxyWalletAuthorisationStatus(authorizationsJWT, publicKeyToVerify);
-      return { isAuthorized, details };
+      const authStatus = RightService.proxyWalletAuthorisationStatus(authorizationsJWT, publicKeyToVerify);
+      return {
+        isAuthorized: authStatus.isAuthorized,
+        details: authStatus.details
+      };
     }
 
     public static extractBlockchainWalletAddressWhoAuthorizedProxyWallet=

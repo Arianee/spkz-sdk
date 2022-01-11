@@ -21,7 +21,7 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = details[0];
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 
@@ -50,7 +50,7 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = details[0];
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 
@@ -79,7 +79,7 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
       const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = details[0];
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
 
@@ -111,7 +111,7 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = details[0];
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 
