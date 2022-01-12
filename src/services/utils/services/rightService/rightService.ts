@@ -8,6 +8,7 @@ import { decoder, JWTDecoder } from '../../../../helpers/JWTGeneric/signerAndDec
 import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
 import { FullRoomStrategies } from '../../../..';
+import { ErrorPayload } from 'models/jsonrpc/errorPayload';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
@@ -25,19 +26,22 @@ export class RightService {
       .map(authorization => {
         const { payload } = JWTDecoder(authorization).decode();
         const { iss, sub } = payload;
-        const isValid = JWTDecoder(authorization).verify(iss);
+
+        const { isValid, details } = JWTDecoder(authorization).verify(iss);
 
         const isProxyWalletAuthorized = sub.toLowerCase() === publicKeyToVerify.toLowerCase();
         return {
           blockchainWalletAddress: iss,
           proxyWallet: sub,
-          isAuthorized: isValid && isProxyWalletAuthorized
+          isAuthorized: isValid && isProxyWalletAuthorized,
+          details
         };
       });
 
     return {
       isAuthorized: authorisationStatus.map(d => d.isAuthorized).includes(false) === false,
-      authorizations: authorisationStatus
+      authorizations: authorisationStatus,
+      details: authorisationStatus.map(d => d.details)
     };
   }
 
@@ -47,17 +51,19 @@ export class RightService {
      * @param publicKeyToVerify
      * @returns {boolean}
      */
-    public static isProxyWalletAuthorized=(authorizationsJWT:string[], publicKeyToVerify):boolean => {
-      const authorisationStatus = RightService.proxyWalletAuthorisationStatus(authorizationsJWT, publicKeyToVerify);
-
-      return authorisationStatus.isAuthorized;
+    public static isProxyWalletAuthorized=(authorizationsJWT:string[], publicKeyToVerify): { isAuthorized: boolean, details: ErrorPayload[] } => {
+      const authStatus = RightService.proxyWalletAuthorisationStatus(authorizationsJWT, publicKeyToVerify);
+      return {
+        isAuthorized: authStatus.isAuthorized,
+        details: authStatus.details
+      };
     }
 
     public static extractBlockchainWalletAddressWhoAuthorizedProxyWallet=
         (authorizationsJWT:string[], proxyWalletAddress:string):{
-          isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[]
+          isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[]
         } => {
-          const isAuthorized = RightService.isProxyWalletAuthorized(authorizationsJWT, proxyWalletAddress);
+          const { isAuthorized, details } = RightService.isProxyWalletAuthorized(authorizationsJWT, proxyWalletAddress);
           if (isAuthorized) {
             const blockchainWallets = authorizationsJWT
               .map(authorization => JWTDecoder(authorization).decode().payload.iss);
@@ -65,13 +71,15 @@ export class RightService {
             return {
               isAuthorized,
               blockchainWallets,
-              proxyWalletAddress
+              proxyWalletAddress,
+              details
             };
           } else {
             return {
               isAuthorized,
               blockchainWallets: [],
-              proxyWalletAddress
+              proxyWalletAddress,
+              details
             };
           }
         }
@@ -84,7 +92,7 @@ export class RightService {
      * @returns {Promise<boolean>}
      */
     public static async verifyPayloadSignatures (params:any):Promise<{
-      isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[]
+      isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[]
     }> {
       requiredDefined(params, 'params rpc should not be null');
       requiredDefined(params.signature, 'params.signature rpc payload should not be null');

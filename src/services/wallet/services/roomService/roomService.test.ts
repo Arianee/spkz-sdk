@@ -33,6 +33,7 @@ describe('room', () => {
         .addWalletFromPrivateKey(d);
       return newSpkz;
     }));
+
     proxyWallet = proxiesWallet[0];
   });
 

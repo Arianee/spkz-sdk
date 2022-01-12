@@ -17,10 +17,10 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { authorizations, roomId, sectionId } = params;
         requiredDefined(authorizations, 'authorizations should be defined');
 
-        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 
@@ -46,10 +46,10 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { authorizations } = params;
         requiredDefined(authorizations, 'authorizations should be defined');
 
-        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 
@@ -75,10 +75,10 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
       requiredDefined(roomId, 'roomId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+      const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
 
@@ -107,10 +107,10 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
         const { authorizations, roomId, sectionId, userProfile } = params;
         requiredDefined(authorizations, 'authorizations should be defined');
 
-        const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
         if (isAuthorized === false) {
-          const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+          const errorPayload:ErrorPayload[] = details;
           return callback(errorPayload);
         }
 

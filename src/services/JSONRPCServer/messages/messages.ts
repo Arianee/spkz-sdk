@@ -19,10 +19,10 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       requiredDefined(sectionId, 'sectionId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+      const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
 
@@ -66,11 +66,11 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       requiredDefined(content, 'content should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets, proxyWalletAddress } = await utils.rightService
+      const { isAuthorized, blockchainWallets, proxyWalletAddress, details } = await utils.rightService
         .verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
       const firstBlockchainWallet = blockchainWallets[0];
@@ -110,10 +110,10 @@ export const messagesJSONRPCFactory = (networkParameters:NetworkParameters) => (
       requiredDefined(roomId, 'roomId should be defined');
       requiredDefined(authorizations, 'authorizations should be defined');
 
-      const { isAuthorized, blockchainWallets } = await utils.rightService.verifyPayloadSignatures(params);
+      const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
 
       if (isAuthorized === false) {
-        const errorPayload:ErrorPayload = JSONRPCErrors.wrongSignatureForPayload;
+        const errorPayload:ErrorPayload[] = details;
         return callback(errorPayload);
       }
 

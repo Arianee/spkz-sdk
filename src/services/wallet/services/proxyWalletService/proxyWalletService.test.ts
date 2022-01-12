@@ -36,8 +36,8 @@ describe('proxy wallet', () => {
     } = signerDecoder('0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161');
     const genericJWT = new JWTGeneric(signer, decoder);
 
-    const verify = genericJWT.setToken(proxyWallet.wallets.authorizations[0]).verify(address);
-    expect(verify).toBeTruthy();
+    const { isValid, details } = genericJWT.setToken(proxyWallet.wallets.authorizations[0]).verify(address);
+    expect(isValid).toBeTruthy();
 
     await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
     expect(proxyWallet.wallets.authorizedAddresses).toHaveLength(1);

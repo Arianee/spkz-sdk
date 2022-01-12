@@ -80,7 +80,7 @@ export class ProxyWalletService {
       if (valueFromStorage) {
         try {
           const parseValue: any[] = JSON.parse(valueFromStorage);
-          const isAuthorized = RightService.isProxyWalletAuthorized(parseValue, this.address);
+          const { isAuthorized } = RightService.isProxyWalletAuthorized(parseValue, this.address);
           if (isAuthorized) {
             return parseValue;
           }
@@ -172,7 +172,7 @@ export class ProxyWalletService {
 
   async addBlockchainWalletAuthorization (jwt): Promise<ProxyWalletService> {
     const issuer = this.jwtHelper.setToken(jwt).decode().payload.iss;
-    required(this.jwtHelper.setToken(jwt).verify(issuer), 'iss of jwt should be the issuer');
+    required(this.jwtHelper.setToken(jwt).verify(issuer).isValid, 'iss of jwt should be the issuer');
     if (!this._authorizedAddresses.includes(issuer)) {
       this._authorizedAddresses.push(issuer);
       this._authorizations.push(jwt);
