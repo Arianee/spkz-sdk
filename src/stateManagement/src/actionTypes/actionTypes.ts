@@ -27,5 +27,8 @@ export const ActionTypes = {
   },
   HELLOWORLD: {
     ADDNAME: 'helloWorldReducer.addName'
+  },
+  USERROOMS: {
+    addOrUpdateUserRooms: 'USERROOMS.addOrUpdateUserRooms'
   }
 };
