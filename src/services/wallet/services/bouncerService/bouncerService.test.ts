@@ -32,11 +32,15 @@ describe('bouncer service', () => {
       test('get favorite room from bouncer', async () => {
         const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
         await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
-        const room0 = await proxyWallet.bouncer.getUserRooms();
-        expect(room0).toHaveLength(0);
+        const userRoomObservable = proxyWallet.bouncer.getUserRooms();
+        let c = 0;
+        userRoomObservable
+          .subscribe(userRooms => {
+            expect(userRooms).toHaveLength(c);
+            c++;
+          });
+
         await proxyWallet.bouncer.joinRoom({ roomId: 0 });
-        const room1 = await proxyWallet.bouncer.getUserRooms();
-        expect(room1).toHaveLength(1);
       });
     });
 

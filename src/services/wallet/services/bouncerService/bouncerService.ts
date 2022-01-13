@@ -21,6 +21,8 @@ import {
 } from '../../../../stateManagement/src/selectors/room.selector';
 import { filter, take } from 'rxjs/operators';
 import { updateFetchStatus } from '../../../../stateManagement/src/reducers/fetchStatus/actions';
+import { addUserRooms } from '../../../../stateManagement/src/reducers/userRooms/actions';
+import { userRooms } from '../../../../stateManagement/src/selectors/userRooms.selector';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
@@ -56,19 +58,14 @@ export class BouncerService {
       profile);
   }
 
-  public async getUserRooms (): Promise<RoomUser[]> {
-    if (!this._cache.get('bouncerUserRooms')) {
-      const getUserRoom = async () => {
-        const userRooms: RoomUser[] = await this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
-          JSONRPCMethods.bouncer.rooms.getUserRooms,
-          {});
-        userRooms.forEach(room => this.fetchRoomService.addToCache(room.roomId, room.roomDetails));
-        return userRooms;
-      };
-      this._cache.put('bouncerUserRooms', getUserRoom());
-    }
-
-    return this._cache.get('bouncerUserRooms');
+  public getUserRooms (): Observable<RoomUser[]> {
+    this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+      JSONRPCMethods.bouncer.rooms.getUserRooms,
+      {})
+      .then((userRooms: RoomUser[]) => {
+        addUserRooms({ userRooms });
+      });
+    return userRooms();
   }
 
   public async joinRoom (parameters: { roomId }) {
@@ -80,10 +77,12 @@ export class BouncerService {
     const params = {
       roomId
     };
-
-    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+    const signedRPCCall = await this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.rooms.join,
       params);
+
+    this.getUserRooms();
+    return signedRPCCall;
   }
 
   /**

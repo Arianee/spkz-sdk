@@ -8,6 +8,7 @@ import { UsersProfileReducer } from '../reducers/usersProfile/reducer';
 import { SectionMemberReducer } from '../reducers/sectionMembers/reducer';
 import { fetchStatusReducer } from '../reducers/fetchStatus/reducer';
 import { RoomReducer } from '../reducers/rooms/reducer';
+import { UserRoomReducer } from '../reducers/userRooms/reducer';
 
 const rootReducer = combineReducers(
   {
@@ -17,7 +18,8 @@ const rootReducer = combineReducers(
     [REDUCERNAME.USERS]: UsersProfileReducer,
     [REDUCERNAME.SECTIONMEMBER]: SectionMemberReducer,
     [REDUCERNAME.FETCHSTATUS]: fetchStatusReducer,
-    [REDUCERNAME.ROOM]: RoomReducer
+    [REDUCERNAME.ROOM]: RoomReducer,
+    [REDUCERNAME.USERROOMS]: UserRoomReducer
   });
 
 let store;
