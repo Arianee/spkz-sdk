@@ -61,25 +61,41 @@ export class RightService {
 
     public static extractBlockchainWalletAddressWhoAuthorizedProxyWallet=
         (authorizationsJWT:string[], proxyWalletAddress:string):{
-          isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[]
+          isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[], issuedAt: Date[], expirationDate: Date[]
         } => {
           const { isAuthorized, details } = RightService.isProxyWalletAuthorized(authorizationsJWT, proxyWalletAddress);
           if (isAuthorized) {
             const blockchainWallets = authorizationsJWT
               .map(authorization => JWTDecoder(authorization).decode().payload.iss);
 
+            const issuedAt = authorizationsJWT
+              .map(authorization => {
+                const iat = JWTDecoder(authorization).decode().payload.iat;
+                return iat ? new Date(iat) : null;
+              });
+
+            const expirationDate = authorizationsJWT
+              .map(authorization => {
+                const exp = JWTDecoder(authorization).decode().payload.exp;
+                return exp ? new Date(exp) : null;
+              });
+
             return {
               isAuthorized,
               blockchainWallets,
               proxyWalletAddress,
-              details
+              details,
+              issuedAt,
+              expirationDate
             };
           } else {
             return {
               isAuthorized,
               blockchainWallets: [],
               proxyWalletAddress,
-              details
+              details,
+              issuedAt: [],
+              expirationDate: []
             };
           }
         }
@@ -92,7 +108,7 @@ export class RightService {
      * @returns {Promise<boolean>}
      */
     public static async verifyPayloadSignatures (params:any):Promise<{
-      isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[]
+      isAuthorized:boolean, proxyWalletAddress:string, blockchainWallets:string[], details: ErrorPayload[], issuedAt: Date[], expirationDate: Date[]
     }> {
       requiredDefined(params, 'params rpc should not be null');
       requiredDefined(params.signature, 'params.signature rpc payload should not be null');

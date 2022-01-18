@@ -76,7 +76,9 @@ describe('rightService', () => {
             blockchainWallets: [],
             isAuthorized: false,
             proxyWalletAddress: '0x931e35f78f7948dff3ea7d3bf45cb294f53c93cd',
-            details: [null]
+            details: [null],
+            issuedAt: [],
+            expirationDate: []
           });
       });
     });
