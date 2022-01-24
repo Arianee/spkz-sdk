@@ -6,3 +6,4 @@ export * from './strategyReturn';
 export * from './signaturev4';
 export * from './jsonrpc/writeMessageParameters';
 export * from './jsonrpc/bouncer';
+export * from './jsonrpc/errorPayload';
