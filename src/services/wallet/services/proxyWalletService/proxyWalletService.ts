@@ -140,7 +140,7 @@ export class ProxyWalletService {
     });
   }
 
-  public async addWalletFromPrivateKey (privateKey: string) {
+  public async addWalletFromPrivateKey (privateKey: string = etherWallet.createRandom().privateKey) {
     const {
       signer,
       decoder,
