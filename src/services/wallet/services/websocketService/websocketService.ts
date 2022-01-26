@@ -65,7 +65,10 @@ export class WebsocketService {
       const notificationEndpointHash = this.hashString(notificationEndpoint);
       if (!this.websockets[notificationEndpointHash]) {
         this.websockets[notificationEndpointHash] = {
-          socket: io(notificationEndpoint),
+          socket: io(notificationEndpoint,
+            {
+              transports: ['websocket']
+            }),
           connected: false,
           joinedRooms: []
         };
