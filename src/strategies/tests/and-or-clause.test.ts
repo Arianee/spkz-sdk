@@ -29,7 +29,7 @@ describe('erc-20-balance-of', () => {
           ]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     const { enrichedInformations, message, code } = strategyProvider.strategies[0][0];
 
@@ -66,7 +66,7 @@ describe('erc-20-balance-of', () => {
           ]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     const { enrichedInformations, message, code } = strategyProvider.strategies[0][0];
     expect(enrichedInformations).toBeDefined();
@@ -98,7 +98,7 @@ describe('erc-20-balance-of', () => {
           ]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);

@@ -14,7 +14,7 @@ describe('execute strategies of is exact address of', () => {
           ]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
 
@@ -32,7 +32,7 @@ describe('execute strategies of is exact address of', () => {
           ]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
 

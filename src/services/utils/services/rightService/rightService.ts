@@ -1,6 +1,7 @@
 import { getStrategyHelperFactory } from '../../../../helpers/getStrategyHelper/getStrategyHelper.helper';
 import { executeStrategies, executeStrategiesWithCache } from '../../../../strategies/executeStrategy';
 import { FetchRoomService } from '../fetchRoomService/fetchRoomService';
+import { EnvironmentService } from '../environmentService/environementService';
 import { cloneDeep } from 'lodash';
 import { Lifecycle, scoped } from 'tsyringe';
 import { requiredDefined } from '../../../../helpers/required/required';
@@ -12,9 +13,10 @@ import { ErrorPayload } from 'models/jsonrpc/errorPayload';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
-  constructor (private fetchRoomService:FetchRoomService) {
-
-  }
+  constructor (
+    private fetchRoomService: FetchRoomService,
+    private environmentService: EnvironmentService
+  ) {}
 
   public proxyWalletAuthorisationStatus=RightService.proxyWalletAuthorisationStatus;
 
@@ -162,7 +164,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getRoomStrategies();
 
-    return executeStrategiesWithCache(strategies, roomId);
+    return executeStrategiesWithCache(strategies, { tokenId: roomId, chainId: this.environmentService.environment.chainId });
   };
 
   public canWriteSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -175,7 +177,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionWriteStrategies(sectionId);
 
-    return executeStrategiesWithCache(strategies, roomId);
+    return executeStrategiesWithCache(strategies, { tokenId: roomId, chainId: this.environmentService.environment.chainId });
   }
 
   public canReadSection=async (parameters:{ roomId: string, sectionId:string, address?:string}) => {
@@ -188,7 +190,7 @@ export class RightService {
     const strategies = getStrategyHelperFactory(tokenContent, [address])
       .getSectionReadStrategies(sectionId);
 
-    return executeStrategiesWithCache(strategies, roomId);
+    return executeStrategiesWithCache(strategies, { tokenId: roomId, chainId: this.environmentService.environment.chainId });
   }
 
   /**
