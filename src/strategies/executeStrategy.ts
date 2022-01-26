@@ -3,11 +3,17 @@ import * as implementedStrategies from './strategies';
 import { StrategiesReturn } from '../models/strategyReturn';
 import { requiredDefined } from '../helpers/required/required';
 import { CacheStrategyWrapper } from '../helpers/cacheWrapper/cacheStrategyWrapper';
+import { erc721ABI } from '../abi/erc721.abi';
+import { web3Factory } from './helpers/web3Factory';
+import { ContractAddresses } from '../environment/environment';
 
 const camelCase = require('camelcase');
 const cacheWrapper = new CacheStrategyWrapper();
 
-export const executeStrategies = async (strategies: Strategy[][], tokenId:string = '0', cache = false): Promise<StrategiesReturn> => {
+export const executeStrategies = async (strategies: Strategy[][], lounge: { tokenId: string, chainId: string }, cache = false): Promise<StrategiesReturn> => {
+  const { tokenId, chainId } = lounge;
+  requiredDefined(tokenId, 'tokenId must be defined');
+  requiredDefined(chainId, 'chainId must be defined');
   // Checking all strategies exist
   strategies
     .forEach(orStrategies =>
@@ -15,7 +21,6 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
         const camelCaseName = camelCase(strategy.name);
         requiredDefined(implementedStrategies[camelCaseName], `this strategy does not exist ${strategy.name}`);
       }));
-
   const strategiesResults = await Promise.all(
     strategies
       .map(orStrategy => {
@@ -45,11 +50,20 @@ export const executeStrategies = async (strategies: Strategy[][], tokenId:string
   }
   isAuthorized = strategiesResults.length === 0 ? true : isAuthorized;
 
+  const web3Provider = await web3Factory(chainId);
+  const roomContract = new web3Provider.eth.Contract(erc721ABI as any, ContractAddresses[chainId]);
+  const ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
+  const isOwner = strategies.some(s => s.some(a => a.addresses.map(a => a.toLowerCase()).includes(ownerOf.toLowerCase())));
+
   return {
     isAuthorized,
-    strategies: strategiesResults
+    strategies: strategiesResults,
+    owner: {
+      isOwner,
+      address: ownerOf.toLowerCase()
+    }
   };
 };
 
-export const executeStrategiesWithCache = (strategies: Strategy[][], tokenId:string = '0') =>
-  executeStrategies(strategies, tokenId, true);
+export const executeStrategiesWithCache = (strategies: Strategy[][], lounge: { tokenId: string, chainId: string }) =>
+  executeStrategies(strategies, lounge, true);

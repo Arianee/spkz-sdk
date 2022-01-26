@@ -26,4 +26,8 @@ export type StrategyReturnPromise = Promise<StrategyReturn>;
 export interface StrategiesReturn {
     strategies: StrategyReturn[][],
     isAuthorized: boolean,
+    owner: {
+        isOwner: boolean;
+        address: string
+    }
 }

@@ -2,8 +2,8 @@ import { executeStrategiesWithCache } from '../executeStrategy';
 
 jest.setTimeout(60000);
 
-describe('execute strategies of room-owner', () => {
-  test('wallet not-owner of room XX should be not authorized', async () => {
+describe('execute strategies of lounge owner', () => {
+  test('Should be wallet not owner of lounge XX should be not authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'room-owner',
@@ -13,41 +13,27 @@ describe('execute strategies of room-owner', () => {
           networkId: '1'
         }
       }]
-    ], { tokenId: '0', chainId: '80001' });
-
+    ], { tokenId: '51', chainId: '80001' });
     expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(2);
+    expect(strategyProvider.owner).toStrictEqual({ address: '0x4f6334f3061e199c600a8ab2a022de091004d99f', isOwner: false });
   });
 
-  test('wallet without address', async () => {
+  test('Should be wallet owner of lounge XX should be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'room-owner',
+        addresses: ['0x4f6334f3061e199c600a8ab2a022de091004d99f'],
         params: {
           chainId: '80001',
           networkId: '1'
         }
       }]
-    ], { tokenId: '0', chainId: '80001' });
-
-    expect(strategyProvider.isAuthorized).toBeFalsy();
-  });
-
-  test('wallet owner of room XX should be authorized', async () => {
-    const strategyProvider = await executeStrategiesWithCache([
-      [{
-        name: 'room-owner',
-        addresses: ['0x0d0F862890F5b7E9AaCC6c4310499fc1621d2E80'],
-        params: {
-          chainId: '80001',
-          networkId: '1'
-        }
-      }]
-    ], { tokenId: '0', chainId: '80001' });
-
+    ], { tokenId: '51', chainId: '80001' });
+    expect(strategyProvider.isAuthorized).toBeTruthy();
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);
-    expect(strategyProvider.isAuthorized).toBeTruthy();
+    expect(strategyProvider.owner).toStrictEqual({ address: '0x4f6334f3061e199c600a8ab2a022de091004d99f', isOwner: true });
   });
 });

@@ -15,7 +15,7 @@ describe('poap holder of', () => {
           eventId: '14629'
         }
       }
-    ]]
+    ]], { tokenId: '0', chainId: '80001' }
     );
     expect(strategyProvider.isAuthorized).toBeTruthy();
     expect(strategyProvider.strategies[0][0].enrichedInformations.logo).toBeDefined();
@@ -34,7 +34,7 @@ describe('poap holder of', () => {
           eventId: '14629'
         }
       }
-    ]]
+    ]], { tokenId: '0', chainId: '80001' }
     );
     expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].enrichedInformations.logo).toBeDefined();
@@ -54,7 +54,7 @@ describe('poap holder of', () => {
           eventId: 'aaaa'
         }
       }
-    ]]
+    ]], { tokenId: '0', chainId: '80001' }
     );
     expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].code).toBe(4);
