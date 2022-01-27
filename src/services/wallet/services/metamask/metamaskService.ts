@@ -6,6 +6,7 @@ import { Signaturev4 } from '../../../../models/signaturev4';
 import WalletConnect from '@walletconnect/client';
 import Web3 from 'web3';
 import { IClientMeta, IWalletConnectOptions } from '@walletconnect/types';
+import { ContractService } from '../../../utils/services/contractService/contractService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -18,7 +19,7 @@ export class MetamaskService {
   private _window: any;
   public connector;
 
-  constructor () {
+  constructor (private contractService:ContractService) {
     if (typeof window !== 'undefined') {
       this._window = window;
     }
@@ -133,5 +134,9 @@ export class MetamaskService {
       method: 'eth_signTypedData_v4',
       params: [this.defaultAccount, payload]
     });
+  }
+
+  public roomSmartContract () {
+    return this.contractService.erc721Contract(this._window.ethereum);
   }
 }
