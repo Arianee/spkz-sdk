@@ -17,7 +17,7 @@ export const environment:{[key:string]:IEnvironment} = {
   test: {
     bouncerURL: 'http://localhost:3000',
     bouncerRPCURL: 'http://localhost:3000/spkz/rpc',
-    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
+    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/33cb8e850e3bf3962b9c7163/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
@@ -25,7 +25,7 @@ export const environment:{[key:string]:IEnvironment} = {
   dev: {
     bouncerURL: 'https://dev.bouncer.spkz.io',
     bouncerRPCURL: 'https://dev.bouncer.spkz.io/spkz/rpc',
-    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
+    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/33cb8e850e3bf3962b9c7163/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
@@ -33,7 +33,7 @@ export const environment:{[key:string]:IEnvironment} = {
   uat: {
     bouncerURL: 'https://uat.bouncer.spkz.io',
     bouncerRPCURL: 'https://uat.bouncer.spkz.io/spkz/rpc',
-    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mumbai',
+    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/33cb8e850e3bf3962b9c7163/polygon/mumbai',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
@@ -41,7 +41,7 @@ export const environment:{[key:string]:IEnvironment} = {
   prod: {
     bouncerURL: 'https://bouncer.spkz.io',
     bouncerRPCURL: 'https://bouncer.spkz.io/spkz/rpc',
-    defaultProvider: 'https://speedy-nodes-nyc.moralis.io/337ce5317ffe1f66093a6c3b/polygon/mainnet',
+    defaultProvider: 'https://polygon.spkz.io',
     roomContractAddress: ContractAddresses['137'],
     chainId: '137',
     networkdId: '1'
