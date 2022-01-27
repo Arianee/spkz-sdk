@@ -17,23 +17,6 @@ describe('execute strategies of lounge owner', () => {
     expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(2);
-    expect(strategyProvider.owner).toStrictEqual({ address: '0x4f6334f3061e199c600a8ab2a022de091004d99f', isOwner: false });
-  });
-
-  test('Should be wallet owner of lounge XX should be authorized', async () => {
-    const strategyProvider = await executeStrategiesWithCache([
-      [{
-        name: 'room-owner',
-        addresses: ['0x4f6334f3061e199c600a8ab2a022de091004d99f'],
-        params: {
-          chainId: '80001',
-          networkId: '1'
-        }
-      }]
-    ], { tokenId: '51', chainId: '80001' });
-    expect(strategyProvider.isAuthorized).toBeTruthy();
-    expect(strategyProvider.strategies[0][0].message).toBeDefined();
-    expect(strategyProvider.strategies[0][0].code).toBe(0);
-    expect(strategyProvider.owner).toStrictEqual({ address: '0x4f6334f3061e199c600a8ab2a022de091004d99f', isOwner: true });
+    expect(strategyProvider.owner).toStrictEqual({ address: '0x4f6334f3061e199c600a8ab2a022de091004d99f' });
   });
 });

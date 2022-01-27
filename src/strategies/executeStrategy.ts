@@ -53,13 +53,11 @@ export const executeStrategies = async (strategies: Strategy[][], lounge: { toke
   const web3Provider = await web3Factory(chainId);
   const roomContract = new web3Provider.eth.Contract(erc721ABI as any, ContractAddresses[chainId]);
   const ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
-  const isOwner = strategies.some(s => s.some(a => a.addresses.map(a => a.toLowerCase()).includes(ownerOf.toLowerCase())));
 
   return {
     isAuthorized,
     strategies: strategiesResults,
     owner: {
-      isOwner,
       address: ownerOf.toLowerCase()
     }
   };
