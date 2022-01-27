@@ -172,7 +172,7 @@ export const erc721ABI = [
         type: 'string'
       }
     ],
-    name: 'updateTokenURI',
+    name: 'setTokenUri',
     outputs: [],
     payable: false,
     stateMutability: 'nonpayable',

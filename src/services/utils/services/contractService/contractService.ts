@@ -9,8 +9,8 @@ export class ContractService {
 
   }
 
-  public erc721Contract=() => {
-    return new (new Web3(this.environmentService.environment.defaultProvider))
+  public erc721Contract=(provider = this.environmentService.environment.defaultProvider) => {
+    return new (new Web3(provider))
       .eth.Contract(erc721ABI as any, this.environmentService.environment.roomContractAddress);
   };
 }
