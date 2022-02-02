@@ -51,11 +51,12 @@ export class MessageClientService {
    * @param {{roomId: string; sectionId: string; messageContent: any}} parameters
    * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
    */
-  sendMessage = async (parameters: { roomId: string, sectionId: string, messageContent: any }) => {
+  sendMessage = async (parameters: { roomId: string, sectionId: string, messageContent: any, nonce?: string }) => {
     const {
       roomId,
       sectionId,
-      messageContent
+      messageContent,
+      nonce
     } = parameters;
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
@@ -67,7 +68,8 @@ export class MessageClientService {
     const params = {
       content: messageContent,
       sectionId,
-      roomId
+      roomId,
+      nonce
     };
 
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.write, params);

@@ -30,7 +30,7 @@ export class PayloadService {
 
   public hydratePayloadParameters=async (params):Promise<any> => {
     params.authorizations = this.messagingWallet.authorizations;
-    params.nonce = Date.now().toString();
+    params.nonce = params.nonce ? params.nonce : Date.now().toString();
     return await this.globalSignPayload(params);
   }
 }
