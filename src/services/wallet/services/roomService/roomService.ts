@@ -30,7 +30,7 @@ public message = this.messageService;
   public users = this.usersService;
   public rightUtils = this.rightUtilsService;
 
-  public updateOnIPFSOnlyAndWaitForAvalaibility=async (content:NFTROOM) => {
+  public updateOnIPFSOnlyAndWaitForAvalaibility=async (content:NFTROOM | any) => {
     const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
     await retryExecFactory(
       () => this.httpService.fetch(contentURLOnIPFS, { timeout: 10000 }),
