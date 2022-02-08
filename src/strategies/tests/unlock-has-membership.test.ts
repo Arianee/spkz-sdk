@@ -2,9 +2,9 @@ import { executeStrategiesWithCache } from '../executeStrategy';
 
 jest.setTimeout(60000);
 
-describe('unlock holder of', () => {
+describe('unlock has membership', () => {
   test('should return true if at least one address has a KEY for the Lock contract', async () => {
-    const lockContract = '0x1E56354687DcbC11d4643e6Aa243170E2c86fE70';
+    const lockContract = '0xF5809C0983b1821E9B428Cf25448ADaE27715A13';
     const addressWithKey = '0x5D1e2E92488b9911C08a559ad9E3A8bD0F31B2F4';
 
     const strategyProvider = await executeStrategiesWithCache([[
@@ -29,7 +29,7 @@ describe('unlock holder of', () => {
   });
 
   test('should return false if no address has a KEY for the Lock contract', async () => {
-    const lockContract = '0x1E56354687DcbC11d4643e6Aa243170E2c86fE70';
+    const lockContract = '0xF5809C0983b1821E9B428Cf25448ADaE27715A13';
 
     const strategyProvider = await executeStrategiesWithCache([[
       {
