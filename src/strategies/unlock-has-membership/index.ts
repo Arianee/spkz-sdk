@@ -104,7 +104,7 @@ export const strategy = async (strategy: Strategy<UnlockHasOwnership>): Strategy
     name,
     logo:
       strategy.params.logo ||
-      'https://raw.githubusercontent.com/Arianee/spkz-metadata/main/assets/default-icon.png'
+      `https://locksmith.unlock-protocol.com/lock/${params.address}/icon`
   };
 
   return {
