@@ -10,7 +10,7 @@ const config = {
   1: 'https://eth.spkz.io',
   3: 'https://ropsten.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
   4: 'https://rinkeby.arianee.net',
-
+  10: 'https://mainnet.optimism.io/',
   42: 'https://kovan.infura.io/v3/2a9cbd5377b6406f8780c2958dc7bad6',
   56: 'https://speedy-nodes-nyc.moralis.io/33cb8e850e3bf3962b9c7163/bsc/mainnet',
   42161: 'https://speedy-nodes-nyc.moralis.io/33cb8e850e3bf3962b9c7163/arbitrum/mainnet',
