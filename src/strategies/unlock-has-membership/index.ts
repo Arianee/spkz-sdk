@@ -1,5 +1,5 @@
 import { EnrichedInformations, StrategyReturnPromise } from '../../models/strategyReturn';
-import { UnlockHolderOf, Strategy } from '../../models/strategy';
+import { UnlockHasOwnership, Strategy } from '../../models/strategy';
 import { ErrorCode } from '../../models/errorCode';
 import { minMaxMessage } from '../helpers/messageHelper';
 import { requiredDefined } from '../../helpers/required/required';
@@ -16,7 +16,7 @@ const getLockInfos = async (chainId: string, address: string): Promise<LockInfos
   requiredDefined(address, 'address of lock contract is required');
   requiredDefined(chainId, 'chainId of lock contract is required');
 
-  const web3Provider = await web3Factory(chainId);
+  const web3Provider = await web3Factory(chainId.toString());
 
   const lockContract = new web3Provider.eth.Contract(lockABI as any, address);
 
@@ -54,7 +54,7 @@ const getBalanceOf = async (
   requiredDefined(contractAddress, 'address of lock contract is required');
   requiredDefined(chainId, 'chainId of lock contract is required');
 
-  const web3Provider = await web3Factory(chainId);
+  const web3Provider = await web3Factory(chainId.toString());
 
   const lockContract = new web3Provider.eth.Contract(lockABI as any, contractAddress);
   const balanceOf = await lockContract.methods.balanceOf(address).call().catch(null);
@@ -62,7 +62,7 @@ const getBalanceOf = async (
   return balanceOf ? parseInt(balanceOf) : null;
 };
 
-export const strategy = async (strategy: Strategy<UnlockHolderOf>): StrategyReturnPromise => {
+export const strategy = async (strategy: Strategy<UnlockHasOwnership>): StrategyReturnPromise => {
   const { params } = strategy;
   requiredDefined(params.chainId, 'chainId should be defined');
   requiredDefined(params.address, 'address should be defined');

@@ -8,7 +8,7 @@ export interface Strategy<T = ERC20BalancesOf
   | ERC1155BalancesOf
   | OpenseaCollectionBalanceOf
   | PoapHolderOf
-  | UnlockHolderOf
+  | UnlockHasOwnership
   > {
   name: string,
   addresses?: string[],
@@ -86,7 +86,7 @@ export interface PoapHolderOf{
   symbol?: string
 }
 
-export interface UnlockHolderOf{
+export interface UnlockHasOwnership{
   chainId: string;
   address: string;
   logo?: string,
