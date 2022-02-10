@@ -1,5 +1,5 @@
 import { StrategiesReturn, StrategyReturn } from './strategyReturn';
-import { Section } from './room/recommendedAndFeaturedRoom';
+import { Section, SectionType } from './room/recommendedAndFeaturedRoom';
 
 export interface NFTROOM{
   endpoint: string;
@@ -20,7 +20,7 @@ export interface RoomSection{
   writeStrategies?:any,
   readStrategies?:any,
   title:string,
-  type?:string,
+  type?:SectionType,
   url?:string
 }
 
