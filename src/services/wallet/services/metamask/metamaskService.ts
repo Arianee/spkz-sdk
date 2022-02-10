@@ -27,7 +27,6 @@ export class MetamaskService {
 
   public initMetamaskSilently = async (chainId?:string): Promise<void> => {
     requiredDefined(this._window, "You can't use metamask on nodejs");
-
     if (this._window.ethereum) {
       this.hasMetamask = true;
 
@@ -40,7 +39,7 @@ export class MetamaskService {
         await this.initMetamask();
       }
 
-      if (chainId && chainId.toString() !== this.currentChainId.toString()) {
+      if (chainId && chainId.toString() !== parseInt(this.currentChainId.toString(), 16).toString()) {
         await this.switchToNetwork(chainId as any);
       }
     }
