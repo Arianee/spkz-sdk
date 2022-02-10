@@ -102,6 +102,7 @@ export const strategy = async (strategy: Strategy<UnlockHasOwnership>): Strategy
   const enrichedInformations: EnrichedInformations = {
     symbol,
     name,
+    acquireURLs: strategy.acquireURLs,
     logo:
       strategy.params.logo ||
       `https://locksmith.unlock-protocol.com/lock/${params.address}/icon`
