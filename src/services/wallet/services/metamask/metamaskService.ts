@@ -25,7 +25,7 @@ export class MetamaskService {
     }
   }
 
-  public initMetamaskSilently = async (): Promise<void> => {
+  public initMetamaskSilently = async (chainId?:string): Promise<void> => {
     requiredDefined(this._window, "You can't use metamask on nodejs");
 
     if (this._window.ethereum) {
@@ -38,6 +38,10 @@ export class MetamaskService {
         }
       } else {
         await this.initMetamask();
+      }
+
+      if (chainId && chainId.toString() !== this.currentChainId.toString()) {
+        await this.switchToNetwork(chainId as any);
       }
     }
   }
@@ -73,7 +77,7 @@ export class MetamaskService {
 
     const networkInfo = await getNetworkInfo(network);
 
-    this._window.ethereum.request({
+    await this._window.ethereum.request({
       method: 'wallet_addEthereumChain',
       params: [{
         chainId: `0x${networkInfo.chainId.toString(16)}`,
