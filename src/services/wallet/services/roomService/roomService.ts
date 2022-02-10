@@ -9,6 +9,7 @@ import { MetamaskService } from '../metamask/metamaskService';
 import { Scope } from '@arianee/required';
 import { HttpService } from '../../../utils/services/httpService/httpService';
 import { retryExecFactory } from '../../../../helpers/retryExecFactory/retryExecFactory';
+import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -19,7 +20,8 @@ export class RoomService {
     private rightUtilsService: RightUtilsService,
     private IPFSService: IPFSService,
     private metamask: MetamaskService,
-    private httpService:HttpService
+    private httpService:HttpService,
+    private environmentService:EnvironmentService
   ) {
   }
 
@@ -51,7 +53,7 @@ public message = this.messageService;
     const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
     // check if metamaskadddress == owner address
     // network === polygon
-    await this.metamask.initMetamaskSilently();
+    await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
 
     await this.metamask
       .roomSmartContract()
