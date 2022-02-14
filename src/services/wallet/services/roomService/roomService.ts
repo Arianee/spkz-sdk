@@ -20,26 +20,54 @@ export class RoomService {
     private rightUtilsService: RightUtilsService,
     private IPFSService: IPFSService,
     private metamask: MetamaskService,
-    private httpService:HttpService,
-    private environmentService:EnvironmentService
+    private httpService: HttpService,
+    private environmentService: EnvironmentService
   ) {
   }
 
-  public scope=Scope({ scopes: ['RoomService'] })
+  public scope = Scope({ scopes: ['RoomService'] });
 
-public message = this.messageService;
+  public message = this.messageService;
   public userAndProfile = this.userAndProfileService;
   public users = this.usersService;
   public rightUtils = this.rightUtilsService;
 
-  public updateOnIPFSOnlyAndWaitForAvalaibility=async (content:NFTROOM | any) => {
+  public updateOnIPFSOnlyAndWaitForAvalaibility = async (content: NFTROOM | any) => {
     const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
     await retryExecFactory(
       () => this.httpService.fetch(contentURLOnIPFS, { timeout: 10000 }),
       12
     );
     return contentURLOnIPFS;
-  }
+  };
+
+  // Promise<{ content: NFTROOM, roomId: string }>
+  public createRoom = async (parameters: { content: NFTROOM }): Promise<{ content: NFTROOM, roomId: string, [key: string]: any }> => {
+    const {
+      content
+    } = parameters;
+    const { requiredDefined } = this.scope.subScope('createRoom');
+    requiredDefined(content, 'content must be defined');
+    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
+
+    await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
+
+    const to = this.metamask.defaultAccount;
+
+    const result = await this.metamask
+      .roomSmartContract()
+      .methods
+      .safeMint(to, contentURLOnIPFS)
+      .send({ from: this.metamask.defaultAccount });
+
+    const roomId = result.events.Transfer.returnValues.tokenId;
+
+    return {
+      roomId,
+      content,
+      tokenURI: contentURLOnIPFS
+    };
+  };
 
   public updateContent = async (parameters: { content: NFTROOM, roomId: string }) => {
     const {
