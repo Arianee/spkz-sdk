@@ -22,12 +22,13 @@ const config = {
 };
 
 export const web3Factory = async (chainIdOrUrl: string):Promise<Web3> => {
-  if (chainIdOrUrl.startsWith('http://') || chainIdOrUrl.startsWith('https://') || chainIdOrUrl.startsWith('ws://')) {
-    return new Web3(chainIdOrUrl);
-  } else if (config[chainIdOrUrl]) {
-    return new Web3(config[chainIdOrUrl]);
+  const chainIdOrUrlStr = chainIdOrUrl.toString();
+  if (chainIdOrUrlStr.startsWith('http://') || chainIdOrUrlStr.startsWith('https://') || chainIdOrUrlStr.startsWith('ws://')) {
+    return new Web3(chainIdOrUrlStr);
+  } else if (config[chainIdOrUrlStr]) {
+    return new Web3(config[chainIdOrUrlStr]);
   } else {
-    const networkInfo = await getNetworkInfo(chainIdOrUrl as unknown as network);
+    const networkInfo = await getNetworkInfo(chainIdOrUrlStr as unknown as network);
     const goodrpcUrls = getGoodRpcUrl(networkInfo.rpc);
     return new Web3(goodrpcUrls[0]);
   }
