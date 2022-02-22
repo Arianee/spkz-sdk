@@ -5,7 +5,7 @@ export interface Strategy<T = ERC20BalancesOf
   | isExactAddresses
   | RoomOwner
   | ERC721BalancesOfIssuedBy
-  | ERC1155BalancesOf
+  | ERC1155BalanceOfBatch
   | OpenseaCollectionBalanceOf
   | PoapHolderOf
   | UnlockHasOwnership
@@ -59,16 +59,18 @@ export interface RoomOwner {
   networkId: string
 }
 
-export interface ERC1155BalanceOf extends ERC20BalanceOf {
-    id: string
+export interface ERC1155BalanceOf {
+  id: string;
+  amount: string;
 }
 
-export interface ERC1155BalancesOf {
-    minBalance: string,
-    tokens?: Array<ERC1155BalanceOf>,
-    logo?: string,
-    name?: string,
-    symbol?: string
+export interface ERC1155BalanceOfBatch {
+  chainId: string;
+  address: string;
+  logo?: string;
+  name?: string;
+  symbol?: string;
+  minBalances: ERC1155BalanceOf[];
 }
 
 export interface OpenseaCollectionBalanceOf{

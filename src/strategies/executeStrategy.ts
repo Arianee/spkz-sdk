@@ -19,7 +19,7 @@ export const executeStrategies = async (strategies: Strategy[][], lounge: { toke
     .forEach(orStrategies =>
       orStrategies.forEach(strategy => {
         const camelCaseName = camelCase(strategy.name);
-        requiredDefined(implementedStrategies[camelCaseName], `this strategy does not exist ${strategy.name}`);
+        requiredDefined(implementedStrategies[camelCaseName], `this strategy does not exist ${strategy.name} (camelCase name: ${camelCaseName})`);
       }));
   const strategiesResults = await Promise.all(
     strategies
