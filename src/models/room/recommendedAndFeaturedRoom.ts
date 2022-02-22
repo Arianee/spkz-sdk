@@ -8,7 +8,7 @@ export interface Section {
     type?: SectionType
   }
 
-export type SectionType = 'chat' | 'monoMessage' | 'external_url';
+export type SectionType = 'chat' | 'welcome' | 'external_url';
 
 export interface RoomDetails {
     endpoint: string;
