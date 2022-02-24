@@ -1,29 +1,68 @@
-import { required, requiredDefined, requiredType } from '../required/required';
+import { required, requiredDefined, requiredType } from '@arianee/required';
 import { Strategy } from '../../models/strategy';
 import { cloneDeep } from 'lodash';
 import { NFTROOM } from '../../models/NFTROOM';
 
-export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:string[]) => {
+export enum StrategyHelperErrorEnum {
+  NFTRoomNotAnObject = 0,
+  NFTStrategiesNotAnArray = 1,
+  NoSectionStrategy = 2,
+  NoStrategy = 3,
+  NoStrategyName = 4,
+  NoEndpoint = 5,
+  NoNotificationEndpoint = 6,
+}
+
+export const getStrategyHelperFactory = (nftRoom: NFTROOM, publicKeySOfCaller?: string[]) => {
   const verifyJSON = () => {
     requiredDefined(nftRoom, {
-      code: 0,
+      code: StrategyHelperErrorEnum.NFTRoomNotAnObject,
       content: nftRoom,
       message: 'nft must be an object'
     });
-    requiredType(nftRoom, 'object', {
-      code: 1,
 
-      message: 'nft room must be an object'
+    requiredType(nftRoom, 'object', {
+      code: StrategyHelperErrorEnum.NFTRoomNotAnObject,
+      content: nftRoom,
+      message: 'nft must be an object'
     });
+
     requiredDefined(nftRoom.strategies, {
-      code: 2,
+      code: StrategyHelperErrorEnum.NoStrategy,
       content: nftRoom,
       message: 'nft.strategies must be defined and must be an array of array [[]].'
     });
 
-    const checkStrategies = (strats, stratlabel:string) => {
+    requiredType(nftRoom.strategies, 'array', {
+      code: StrategyHelperErrorEnum.NFTStrategiesNotAnArray,
+      message: 'nft.strategies must be defined and must be an array of array [[]].'
+    });
+    requiredType(nftRoom.strategies[0], 'array', {
+      code: StrategyHelperErrorEnum.NFTStrategiesNotAnArray,
+      message: 'nft.strategies must be defined and must be an array of array [[]].'
+    });
+
+    requiredDefined(nftRoom.endpoint, {
+      code: StrategyHelperErrorEnum.NoEndpoint,
+      content: nftRoom.endpoint,
+      message: 'endpoint must be a string.'
+    });
+
+    requiredDefined(nftRoom.notificationEndpoint, {
+      code: StrategyHelperErrorEnum.NoNotificationEndpoint,
+      content: nftRoom.notificationEndpoint,
+      message: 'notificationEndpoint must be a string.'
+    });
+
+    requiredType(nftRoom.sections, 'array', {
+      code: 7,
+      content: nftRoom.sections,
+      message: 'sections cannot be empty.'
+    });
+
+    const checkStrategies = (strats, stratlabel: string) => {
       const error = (subCode = 0) => ({
-        code: 3,
+        code: StrategyHelperErrorEnum.NoSectionStrategy,
         subCode,
         content: nftRoom,
         message: `strategies of ${stratlabel} must be defined and must be an array of array [[]].`
@@ -35,7 +74,7 @@ export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:st
         requiredType(strat, 'array', error(3));
         strat.forEach(subStrat => {
           requiredDefined(subStrat.name, {
-            code: 4,
+            code: StrategyHelperErrorEnum.NoStrategyName,
             content: nftRoom,
             message: 'Your strategy has no name.'
           });
@@ -74,7 +113,7 @@ export const getStrategyHelperFactory = (nftRoom:NFTROOM, publicKeySOfCaller?:st
     }
   };
 
-  const getStrategy = (key?:string) => (sectionId?:string):Strategy[][] => {
+  const getStrategy = (key?: string) => (sectionId?: string): Strategy[][] => {
     if (sectionId) {
       const section = nftRoom.sections.find(d => d.id === sectionId);
       requiredDefined(section, `${sectionId} does not exist on this nft room`);

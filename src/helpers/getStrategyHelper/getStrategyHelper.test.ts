@@ -6,6 +6,7 @@ describe('startegies finder helper', () => {
     $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
     endpoint: 'https://node1.speakez.arianee.org/rpc',
     name: 'ARIA20 Backroom',
+    notificationEndpoint: 'https://node1.speakez.arianee.org/rpc',
     description: 'Welcome to the ARIA20 Backroom, a space exclusively reserved for holders of the ARIA20 token.',
     external_url: 'https://beta.spkz.io/room/8200974',
     image: 'https://firebasestorage.googleapis.com/v0/b/speakez-front.appspot.com/o/8d26efad-9721-46c5-a4b3-04ba735cac29?alt=media&token=4263d07b-68eb-48e9-b581-23025d470a68',
@@ -149,7 +150,7 @@ describe('startegies finder helper', () => {
         getStrategyHelperFactory(wrongJSON);
       } catch (e) {
         inError = true;
-        expect(e.code).toBe(0);
+        expect(e.message.code).toBe(0);
       }
       expect(inError).toBeTruthy();
     });
@@ -161,7 +162,7 @@ describe('startegies finder helper', () => {
         getStrategyHelperFactory(wrongJSON);
       } catch (e) {
         inError = true;
-        expect(e.code).toBe(1);
+        expect(e.message.code).toBe(0);
       }
       expect(inError).toBeTruthy();
     });
@@ -174,41 +175,50 @@ describe('startegies finder helper', () => {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(2);
+          expect(e.message.code).toBe(3);
         }
         expect(inError).toBeTruthy();
       });
       test('should be an array of array main (1) strategies', () => {
-        const wrongJSON:NFTROOM = { strategies: [] } as any;
+        const wrongJSON:NFTROOM = {
+          ...mockNFTROOM,
+          strategies: []
+        } as any;
         let inError = false;
         try {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(3);
+          expect(e.message.code).toBe(1);
         }
         expect(inError).toBeTruthy();
       });
 
       test('should be an array of array main (2) strategies', () => {
-        const wrongJSON:NFTROOM = { strategies: ['zefzef'] } as any;
+        const wrongJSON:NFTROOM = {
+          ...mockNFTROOM,
+          strategies: ['zefzef']
+        } as any;
         let inError = false;
         try {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(3);
+          expect(e.message.code).toBe(1);
         }
         expect(inError).toBeTruthy();
       });
       test('should be an array of array (not more)main (3) strategies', () => {
-        const wrongJSON:NFTROOM = { strategies: [[{}]] } as any;
+        const wrongJSON:NFTROOM = {
+          ...mockNFTROOM,
+          strategies: [[{}]]
+        } as any;
         let inError = false;
         try {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(4);
+          expect(e.message.code).toBe(4);
         }
         expect(inError).toBeTruthy();
       });
@@ -217,12 +227,14 @@ describe('startegies finder helper', () => {
     describe(' sections', () => {
       test('check writeStrategies', () => {
         const wrongJSON:NFTROOM = {
+          ...mockNFTROOM,
           strategies: [[]],
           sections: [
             {
               title: 'Chat',
               id: 'chat',
-              writeStrategies: []
+              writeStrategies: [],
+              readStrategies: [[]]
             }
           ]
         } as any;
@@ -231,18 +243,20 @@ describe('startegies finder helper', () => {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(3);
+          expect(e.message.code).toBe(2);
         }
         expect(inError).toBeTruthy();
       });
       test('check readStrategies', () => {
         const wrongJSON:NFTROOM = {
+          ...mockNFTROOM,
           strategies: [[]],
           sections: [
             {
               title: 'Chat',
               id: 'chat',
-              readStrategies: []
+              readStrategies: [],
+              writeStrategies: [[]]
             }
           ]
         } as any;
@@ -251,7 +265,7 @@ describe('startegies finder helper', () => {
           getStrategyHelperFactory(wrongJSON);
         } catch (e) {
           inError = true;
-          expect(e.code).toBe(3);
+          expect(e.message.code).toBe(2);
         }
         expect(inError).toBeTruthy();
       });
