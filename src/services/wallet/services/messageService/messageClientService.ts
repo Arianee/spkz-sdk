@@ -39,8 +39,8 @@ export class MessageClientService {
     const { endpoint } = tokenContent;
 
     const params = {
-      ...parameters,
-      ...defaultParameters
+      ...defaultParameters,
+      ...parameters
     };
 
     return this.httpService.signedRPCCall(endpoint, JSONRPCMethods.room.message.read, params);
