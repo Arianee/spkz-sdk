@@ -5,6 +5,7 @@ import { SPKZ } from './services/wallet';
 import { utils } from './services/utils';
 
 export { getStrategyHelperFactory, StrategyHelperErrorEnum } from './helpers/getStrategyHelper/getStrategyHelper.helper';
+export { validateStrategy } from './helpers/validateStrategy/validateStrategy.helper';
 export { utils, createOrRetrieveWallet, clearWallet, SPKZ, web3Factory };
 export * from './models/public-api';
 /* RPC methods:
