@@ -1,3 +1,4 @@
+export { IPFSContentType } from '../services/utils/services/nftRoomAdminService/IPFSService';
 export * from './jsonrpc/networkParameters';
 export * from './room/recommendedAndFeaturedRoom';
 export * from './NFTROOM';
