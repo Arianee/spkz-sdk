@@ -1,8 +1,12 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { EnvironmentService } from '../environmentService/environementService';
-import { NFTROOM } from '../../../../models/NFTROOM';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 
+export const enum IPFSContentType {
+  JSON,
+  FILE,
+  STRING,
+}
 @scoped(Lifecycle.ContainerScoped)
 export class IPFSService {
   public ipfsClient:IPFSHTTPClient=create({ url: 'https://ipfs.infura.io:5001' });
@@ -12,9 +16,10 @@ export class IPFSService {
 
   }
 
-  public storeContentOnIPFS=async (nftroom:NFTROOM | any) => {
-    const nftroomString = JSON.stringify(nftroom);
-    const { path } = await this.ipfsClient.add(nftroomString);
+  public storeContentOnIPFS=async (data:Object | any, type:IPFSContentType) => {
+    const dataToSend:any = type === IPFSContentType.JSON ? JSON.stringify(data) : data;
+
+    const { path } = await this.ipfsClient.add(dataToSend);
     return this.publicGateway(path);
   }
 }

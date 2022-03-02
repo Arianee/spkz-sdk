@@ -4,7 +4,7 @@ import { UserAndProfileService } from '../userAndProfileService/userAndProfileSe
 import { UsersService } from '../usersService/usersService';
 import { RightUtilsService } from '../rightUtilsService/rightUtilsService';
 import { NFTROOM } from '../../../../models/NFTROOM';
-import { IPFSService } from '../../../utils/services/nftRoomAdminService/IPFSService';
+import { IPFSContentType, IPFSService } from '../../../utils/services/nftRoomAdminService/IPFSService';
 import { MetamaskService } from '../metamask/metamaskService';
 import { Scope } from '@arianee/required';
 import { HttpService } from '../../../utils/services/httpService/httpService';
@@ -32,8 +32,8 @@ export class RoomService {
   public users = this.usersService;
   public rightUtils = this.rightUtilsService;
 
-  public updateOnIPFSOnlyAndWaitForAvalaibility = async (content: NFTROOM | any) => {
-    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
+  public updateOnIPFSOnlyAndWaitForAvalaibility = async (content: any, type:IPFSContentType = IPFSContentType.JSON) => {
+    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content, type);
     await retryExecFactory(
       () => this.httpService.fetch(contentURLOnIPFS, { timeout: 10000 }),
       12
@@ -48,7 +48,7 @@ export class RoomService {
     } = parameters;
     const { requiredDefined } = this.scope.subScope('createRoom');
     requiredDefined(content, 'content must be defined');
-    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
+    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content, IPFSContentType.JSON);
 
     await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
 
@@ -78,7 +78,7 @@ export class RoomService {
     requiredDefined(roomId, 'roomId must be defined');
     requiredDefined(content, 'content must be defined');
 
-    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content);
+    const contentURLOnIPFS = await this.IPFSService.storeContentOnIPFS(content, IPFSContentType.JSON);
     // check if metamaskadddress == owner address
     // network === polygon
     await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
