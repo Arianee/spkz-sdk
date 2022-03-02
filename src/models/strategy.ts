@@ -6,6 +6,7 @@ export interface Strategy<T = ERC20BalancesOf
   | RoomOwner
   | ERC721BalancesOfIssuedBy
   | ERC1155BalanceOfBatch
+  | ERC1155BalanceOf
   | OpenseaCollectionBalanceOf
   | PoapHolderOf
   | UnlockHasOwnership

@@ -1,6 +1,6 @@
 import { validateSubstrategy } from '../helpers/validateStrategy/validateStrategy.helper';
-import Web3 from 'web3';
 import { ERC20BalanceOf, ERC20BalancesOf, ERC721BalancesOf, isExactAddresses, PoapHolderOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf } from './strategy';
+import * as validators from '../helpers/validateStrategy/utils/validators';
 
 export type StrategySchema<T> = {
     [K in keyof T]: (value: any) => StrategySchemaReturn;
@@ -12,38 +12,15 @@ export interface StrategySchemaReturn {
     description: string;
 }
 
-const isUndefined = value => value === undefined;
-const isNull = value => value === null;
-const isString = value => typeof value === 'string';
-const isEthereumAddress = value => Web3.utils.isAddress(value);
-const minLength = (value, min) => value.length >= min;
-const maxLength = (value, max) => value.length <= max;
-const onlyNumericChars = value => /[0-9]+/.test(value);
-const isURL = value => {
-  try {
-    return !!(new URL(value));
-  } catch {
-    return false;
-  }
-};
-const isArray = value => Array.isArray(value);
-
-const isChainId = value => isString(value) && minLength(value, 1) && onlyNumericChars(value);
-const isNetworkId = value => isChainId(value);
-const isEventId = value => isChainId(value);
-const isTokenId = value => isChainId(value);
-const isMinBalance = value => isString(value) && minLength(value, 1) && onlyNumericChars(value);
-const isNotSet = value => isUndefined(value) || isNull(value) || (isString(value) && value === '');
-
 export const ERC20BalancesOfSchema : StrategySchema<ERC20BalancesOf> = {
   minBalance: value => ({
     key: 'minBalance',
-    valid: isMinBalance(value),
+    valid: validators.isMinBalance(value),
     description: 'Min balance must be a number'
   }),
   tokens: value => {
-    const tokensValidations = isArray(value) ? value.map(token => validateSubstrategy('erc-20-balance-of-substrategy', token)) : [];
-    const valid = isArray(value) && tokensValidations.length > 0 && tokensValidations.every(validation => validation.valid);
+    const tokensValidations = validators.isArray(value) ? value.map(token => validateSubstrategy('erc-20-balance-of-substrategy', token)) : [];
+    const valid = validators.isArray(value) && tokensValidations.length > 0 && tokensValidations.every(validation => validation.valid);
     let description = 'Error in tokens';
     tokensValidations.forEach(validation => {
       description += validation.details.map(detail => '<br/>- ' + detail.description).join('');
@@ -57,7 +34,7 @@ export const ERC20BalancesOfSchema : StrategySchema<ERC20BalancesOf> = {
   },
   logo: value => ({
     key: 'logo',
-    valid: isNotSet(value) || isURL(value),
+    valid: validators.isNotSet(value) || validators.isURL(value),
     description: 'Logo must be a valid URL'
   })
 };
@@ -65,17 +42,17 @@ export const ERC20BalancesOfSchema : StrategySchema<ERC20BalancesOf> = {
 export const ERC20BalanceOfSchema : StrategySchema<ERC20BalanceOf> = {
   chainId: value => ({
     key: 'chainId',
-    valid: isChainId(value),
+    valid: validators.isChainId(value),
     description: 'Chain ID must be a number'
   }),
   networkId: value => ({
     key: 'networkId',
-    valid: isNotSet(value) || isNetworkId(value),
+    valid: validators.isNotSet(value) || validators.isNetworkId(value),
     description: 'Network ID must be a number'
   }),
   address: value => ({
     key: 'address',
-    valid: isEthereumAddress(value),
+    valid: validators.isEthereumAddress(value),
     description: 'Address must be a valid Ethereum address'
   })
 };
@@ -83,12 +60,12 @@ export const ERC20BalanceOfSchema : StrategySchema<ERC20BalanceOf> = {
 export const ERC721BalancesOfSchema : StrategySchema<ERC721BalancesOf> = {
   minBalance: value => ({
     key: 'minBalance',
-    valid: isMinBalance(value),
+    valid: validators.isMinBalance(value),
     description: 'Min balance must be a number'
   }),
   tokens: value => {
-    const tokensValidations = isArray(value) ? value.map(token => validateSubstrategy('erc-20-balance-of-substrategy', token)) : [];
-    const valid = isArray(value) && tokensValidations.length > 0 && tokensValidations.every(validation => validation.valid);
+    const tokensValidations = validators.isArray(value) ? value.map(token => validateSubstrategy('erc-20-balance-of-substrategy', token)) : [];
+    const valid = validators.isArray(value) && tokensValidations.length > 0 && tokensValidations.every(validation => validation.valid);
     let description = 'Error in tokens';
     tokensValidations.forEach(validation => {
       description += validation.details.map(detail => '<br/>- ' + detail.description).join('');
@@ -102,17 +79,17 @@ export const ERC721BalancesOfSchema : StrategySchema<ERC721BalancesOf> = {
   },
   logo: value => ({
     key: 'logo',
-    valid: isNotSet(value) || isURL(value),
+    valid: validators.isNotSet(value) || validators.isURL(value),
     description: 'Logo must be a valid URL'
   }),
   name: value => ({
     key: 'name',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Name must be a string'
   }),
   symbol: value => ({
     key: 'symbol',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Symbol must be a string'
   })
 };
@@ -120,32 +97,32 @@ export const ERC721BalancesOfSchema : StrategySchema<ERC721BalancesOf> = {
 export const ERC1155BalanceOfBatchSchema : StrategySchema<ERC1155BalanceOfBatch> = {
   chainId: value => ({
     key: 'chainId',
-    valid: isChainId(value),
+    valid: validators.isChainId(value),
     description: 'Chain ID must be a number'
   }),
   address: value => ({
     key: 'address',
-    valid: isEthereumAddress(value),
+    valid: validators.isEthereumAddress(value),
     description: 'Address must be a valid Ethereum address'
   }),
   logo: value => ({
     key: 'logo',
-    valid: isNotSet(value) || isURL(value),
+    valid: validators.isNotSet(value) || validators.isURL(value),
     description: 'Logo must be a valid URL'
   }),
   name: value => ({
     key: 'name',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Name must be a string'
   }),
   symbol: value => ({
     key: 'symbol',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Symbol must be a string'
   }),
   minBalances: value => {
-    const balancesValidations = isArray(value) ? value.map(balance => validateSubstrategy('erc-1155-balance-of-substrategy', balance)) : [];
-    const valid = isArray(value) && balancesValidations.length > 0 && balancesValidations.every(validation => validation.valid);
+    const balancesValidations = validators.isArray(value) ? value.map(balance => validateSubstrategy('erc-1155-balance-of-substrategy', balance)) : [];
+    const valid = validators.isArray(value) && balancesValidations.length > 0 && balancesValidations.every(validation => validation.valid);
     let description = 'Error in tokens';
     if (balancesValidations.length === 0) description += '<br/>- There must be at least 1 token';
     balancesValidations.forEach(validation => {
@@ -163,12 +140,12 @@ export const ERC1155BalanceOfBatchSchema : StrategySchema<ERC1155BalanceOfBatch>
 export const ERC1155BalanceOfSchema : StrategySchema<ERC1155BalanceOf> = {
   id: value => ({
     key: 'id',
-    valid: isTokenId(value),
+    valid: validators.isTokenId(value),
     description: 'ID must be a number'
   }),
   amount: value => ({
     key: 'amount',
-    valid: isMinBalance(value),
+    valid: validators.isMinBalance(value),
     description: 'Amount must be a number'
   })
 };
@@ -176,22 +153,22 @@ export const ERC1155BalanceOfSchema : StrategySchema<ERC1155BalanceOf> = {
 export const PoapHolderOfSchema : StrategySchema<PoapHolderOf> = {
   eventId: value => ({
     key: 'eventId',
-    valid: isEventId(value),
+    valid: validators.isEventId(value),
     description: 'Event ID must be a number'
   }),
   logo: value => ({
     key: 'logo',
-    valid: isNotSet(value) || isURL(value),
+    valid: validators.isNotSet(value) || validators.isURL(value),
     description: 'Logo must be a valid URL'
   }),
   name: value => ({
     key: 'name',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Name must be a string'
   }),
   symbol: value => ({
     key: 'symbol',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Symbol must be a string'
   })
 };
@@ -199,27 +176,27 @@ export const PoapHolderOfSchema : StrategySchema<PoapHolderOf> = {
 export const UnlockHasOwnershipSchema : StrategySchema<UnlockHasOwnership> = {
   chainId: value => ({
     key: 'chainId',
-    valid: isChainId(value),
+    valid: validators.isChainId(value),
     description: 'Chain ID must be a number'
   }),
   address: value => ({
     key: 'address',
-    valid: isEthereumAddress(value),
+    valid: validators.isEthereumAddress(value),
     description: 'Address must be a valid Ethereum address'
   }),
   logo: value => ({
     key: 'logo',
-    valid: isNotSet(value) || isURL(value),
+    valid: validators.isNotSet(value) || validators.isURL(value),
     description: 'Logo must be a valid URL'
   }),
   name: value => ({
     key: 'name',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Name must be a string'
   }),
   symbol: value => ({
     key: 'symbol',
-    valid: isNotSet(value) || isString(value),
+    valid: validators.isNotSet(value) || validators.isString(value),
     description: 'Symbol must be a string'
   })
 };
@@ -227,7 +204,7 @@ export const UnlockHasOwnershipSchema : StrategySchema<UnlockHasOwnership> = {
 export const IsExactAddressesSchema : StrategySchema<isExactAddresses> = {
   addresses: value => ({
     key: 'addresses',
-    valid: isArray(value) && minLength(value, 1) && value.every(address => isEthereumAddress(address)),
+    valid: validators.isArray(value) && validators.minLength(value, 1) && value.every(address => validators.isEthereumAddress(address)),
     description: 'Addresses must contain at least one valid Ethereum address'
   })
 };
