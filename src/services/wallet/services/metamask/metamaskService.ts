@@ -10,6 +10,7 @@ import { ContractService } from '../../../utils/services/contractService/contrac
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
+  private localStorageWalletConnectKey = 'walletconnect'
   public accounts: string[];
   public defaultAccount: string;
 
@@ -17,7 +18,7 @@ export class MetamaskService {
   public currentChainId=137;
 
   private _window: any;
-  public connector;
+  public connector: WalletConnect;
 
   constructor (private contractService:ContractService) {
     if (typeof window !== 'undefined') {
@@ -141,5 +142,13 @@ export class MetamaskService {
 
   public roomSmartContract () {
     return this.contractService.erc721Contract(this._window.ethereum);
+  }
+
+  public async killSession () {
+    if (this.connector?.connected) {
+      await this.connector.killSession();
+    } else {
+      localStorage.removeItem(this.localStorageWalletConnectKey);
+    }
   }
 }
