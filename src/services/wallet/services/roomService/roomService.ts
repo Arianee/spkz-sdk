@@ -9,6 +9,7 @@ import { MetamaskService } from '../metamask/metamaskService';
 import { Scope } from '@arianee/required';
 import { HttpService } from '../../../utils/services/httpService/httpService';
 import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
+import { GasStationService } from '../../../utils/services/gasStationService/gasStationService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RoomService {
@@ -20,7 +21,8 @@ export class RoomService {
     public IPFSService: IPFSService,
     private metamask: MetamaskService,
     private httpService: HttpService,
-    private environmentService: EnvironmentService
+    private environmentService: EnvironmentService,
+    private gasStationService:GasStationService
   ) {
   }
 
@@ -43,12 +45,13 @@ export class RoomService {
     await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
 
     const to = this.metamask.defaultAccount;
+    const gasPrice = await this.gasStationService.fetchGasStation();
 
     const result = await this.metamask
       .roomSmartContract()
       .methods
       .safeMint(to, contentURLOnIPFS)
-      .send({ from: this.metamask.defaultAccount });
+      .send({ from: this.metamask.defaultAccount, gasPrice });
 
     const roomId = result.events.Transfer.returnValues.tokenId;
 
@@ -72,11 +75,12 @@ export class RoomService {
     // check if metamaskadddress == owner address
     // network === polygon
     await this.metamask.initMetamaskSilently(this.environmentService.environment.chainId);
+    const gasPrice = await this.gasStationService.fetchGasStation();
 
     await this.metamask
       .roomSmartContract()
       .methods
       .setTokenUri(roomId, contentURLOnIPFS)
-      .send({ from: this.metamask.defaultAccount });
+      .send({ from: this.metamask.defaultAccount, gasPrice });
   };
 }
