@@ -109,18 +109,19 @@ export class ProxyWalletService {
     return this;
   }
 
-  public addFromMetamaskWc = async (browserOpen, clientMeta?:IClientMeta):Promise<{url:string, signature:Promise<any>}> => {
+  public addFromMetamaskWc = async (browserOpen, clientMeta?:IClientMeta):Promise<{url:string, sign:Function}> => {
     requiredDefined(browserOpen, 'You need to specify a method to open the WalletConnect link');
     const url = await this.metamaskService.initMMWC(clientMeta);
-    let signature;
     const sign = async () => {
-      const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {
-      });
+      const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {});
       const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
 
-      const jwt = jwtSigner.setPayload(payloadToSign)
+      const jwt = jwtSigner
+        .setPayload(payloadToSign)
         .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+
       const signedJWT = await jwt.sign();
+
       return this.addBlockchainWalletAuthorization(signedJWT);
     };
 
@@ -130,12 +131,10 @@ export class ProxyWalletService {
       if (!this.metamaskService.connector.connected) {
         this.metamaskService.connector.on('connect', async (error, payload) => {
           this.metamaskService.defaultAccount = payload.params[0].accounts[0];
-          signature = sign();
-          resolve({ url, signature });
+          resolve({ url, sign });
         });
       } else {
-        signature = sign();
-        resolve({ url, signature });
+        resolve({ url, sign });
       }
     });
   }
