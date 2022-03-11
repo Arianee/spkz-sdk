@@ -18,7 +18,7 @@ export const getSectionMember = (parameters: { roomId: string, sectionId: string
   requiredDefined(roomId, 'roomId is required');
   requiredDefined(sectionId, 'sectionId is required');
 
-  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId.toLowerCase()}`;
+  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId}`;
   return getProperty(propertiesKey);
 };
 
@@ -32,7 +32,7 @@ export const subcribeSectionMembers = (parameters:{roomId, sectionId:string}):Ob
   requiredDefined(roomId, 'roomId is required');
   requiredDefined(sectionId, 'sectionId is required');
 
-  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId.toLowerCase()}`;
+  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId}`;
   return subscribeToProperty(propertiesKey);
 };
 

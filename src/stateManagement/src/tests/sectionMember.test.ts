@@ -63,7 +63,7 @@ describe('Section Member', () => {
     });
     const user2 = () => cloneDeep({
       userprofile: {
-        sectionId: 'chat',
+        sectionId: 'TheChatCaseSensitive',
         profile: {},
         roomId: '3',
         authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -72,7 +72,7 @@ describe('Section Member', () => {
       },
       id: '155',
       payload: {
-        sectionId: 'chat',
+        sectionId: 'TheChatCaseSensitive',
         profile: {},
         roomId: '3',
         authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -88,7 +88,7 @@ describe('Section Member', () => {
     });
     const user3 = () => cloneDeep({
       userprofile: {
-        sectionId: 'chat',
+        sectionId: 'TheChatCaseSensitive',
         profile: {
           address: '0x2bc',
           ens: {
@@ -108,7 +108,7 @@ describe('Section Member', () => {
       },
       id: '21S3',
       payload: {
-        sectionId: 'chat',
+        sectionId: 'TheChatCaseSensitive',
         profile: {
           address: '0x2bc',
           ens: {
@@ -138,7 +138,7 @@ describe('Section Member', () => {
       test('it should add a member to the right roomId/sectionId', () => {
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0xaaaa'
@@ -167,7 +167,7 @@ describe('Section Member', () => {
 
         addMembersToSection({
           roomId: '33',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0xeee'
@@ -182,7 +182,7 @@ describe('Section Member', () => {
 
         const sectionChatRoom33Members = getSectionMember({
           roomId: '33',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         });
         expect(sectionChatRoom33Members).toEqual(['0xeee', '0xfff']);
         const sectionChat2Room33Members = getSectionMember({
@@ -195,7 +195,7 @@ describe('Section Member', () => {
       test('it should not re add a member to the right roomId/sectionId', () => {
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0xaaaa'
@@ -210,13 +210,13 @@ describe('Section Member', () => {
 
         const members1 = getSectionMember({
           roomId: '22',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         });
         expect(members1).toEqual(['0xaaaa', '0xbbbb']);
 
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0xaaaa'
@@ -235,7 +235,7 @@ describe('Section Member', () => {
 
         const members2 = getSectionMember({
           roomId: '22',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         });
         expect(members2).toEqual(['0xaaaa', '0xbbbb', '0xcccc']);
       });
@@ -247,7 +247,7 @@ describe('Section Member', () => {
 
         subcribeSectionMembers({
           roomId: '22',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         }).subscribe(d => {
           if (num === 0) {
             expect(d).toHaveLength(0);
@@ -262,24 +262,24 @@ describe('Section Member', () => {
         // add members as empty array
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: []
         });
         // second time members as empty array => it should not emit new observable
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: []
         });
         // second time members as empty array => it should not emit new observable
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: []
         });
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0xaaaa'
@@ -297,7 +297,7 @@ describe('Section Member', () => {
         let num = 0;
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
            user1() as any,
             user2() as any
@@ -308,7 +308,7 @@ describe('Section Member', () => {
 
         subcribeSectionMembers({
           roomId: '22',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         }).subscribe(d => {
           if (num === 0) {
             expect(d).toHaveLength(2);
@@ -323,7 +323,7 @@ describe('Section Member', () => {
         // re add already existing user
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             user1() as any
           ].map(d => ({
@@ -333,7 +333,7 @@ describe('Section Member', () => {
 
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             user1() as any,
             user2() as any,
@@ -349,7 +349,7 @@ describe('Section Member', () => {
       it('should return user with profile', (done) => {
         const user1 = {
           userprofile: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb',
               ens: {
@@ -369,7 +369,7 @@ describe('Section Member', () => {
           },
           id: '213',
           payload: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb',
               ens: {
@@ -396,7 +396,7 @@ describe('Section Member', () => {
         };
         const user2 = {
           userprofile: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {},
             roomId: '3',
             authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -405,7 +405,7 @@ describe('Section Member', () => {
           },
           id: '155',
           payload: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {},
             roomId: '3',
             authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -422,7 +422,7 @@ describe('Section Member', () => {
         let num = 0;
         subscribeToSectionMemberWithProfle({
           roomId: '22',
-          sectionId: 'chat'
+          sectionId: 'TheChatCaseSensitive'
         })
           .subscribe(d => {
             if (num === 0) {
@@ -444,7 +444,7 @@ describe('Section Member', () => {
 
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb'
@@ -479,7 +479,7 @@ describe('Section Member', () => {
       it('should return ONE user with profile', (done) => {
         const user1 = {
           userprofile: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb',
               ens: {
@@ -499,7 +499,7 @@ describe('Section Member', () => {
           },
           id: '213',
           payload: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb',
               ens: {
@@ -526,7 +526,7 @@ describe('Section Member', () => {
         };
         const user2 = {
           userprofile: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {},
             roomId: '3',
             authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -535,7 +535,7 @@ describe('Section Member', () => {
           },
           id: '155',
           payload: {
-            sectionId: 'chat',
+            sectionId: 'TheChatCaseSensitive',
             profile: {},
             roomId: '3',
             authorizations: ['eyJ0eXAiOiJKV1QiLCJhbGciOiJFVEgifQ==.eyJpc3MiOiIweGY5MWQ0Y2YzM2EwOGFiYzEyMjdjZmQ2OWZjOTJjMmIxZGY5ZmQyM2MiLCJleHAiOjE2MzQ4NDY4NDEyMjAsInN1YiI6IjB4YWFmZGRmYWE4YzllOWFkMzY0ZDY4MWM4YWFiYTAxNDNlMWFlZjkyZCJ9.0x04bd0e82e15a7dd640a45e581b8c32e68393599f6555fbd36511f47d09e77c2d334ea40510599fa3a46cd97fd578bb0a97efd4fea878676dd6e87a76337a8e321c'],
@@ -560,7 +560,7 @@ describe('Section Member', () => {
 
         addMembersToSection({
           roomId: '22',
-          sectionId: 'chat',
+          sectionId: 'TheChatCaseSensitive',
           users: [
             {
               address: '0x2bc0b60c58ac96cff37e9a168d0963157bdb6efb'
