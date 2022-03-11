@@ -109,32 +109,32 @@ export class ProxyWalletService {
     return this;
   }
 
-  public addFromMetamaskWc = async (browserOpen, clientMeta?:IClientMeta):Promise<{url:string, sign:Function}> => {
-    requiredDefined(browserOpen, 'You need to specify a method to open the WalletConnect link');
-    const url = await this.metamaskService.initMMWC(clientMeta);
-    const sign = async () => {
-      const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {});
-      const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+  public sign = async () => {
+    const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {});
+    const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
 
-      const jwt = jwtSigner
-        .setPayload(payloadToSign)
-        .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+    const jwt = jwtSigner
+      .setPayload(payloadToSign)
+      .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+    const signedJWT = await jwt.sign();
+    return this.addBlockchainWalletAuthorization(signedJWT);
+  };
 
-      const signedJWT = await jwt.sign();
-
-      return this.addBlockchainWalletAuthorization(signedJWT);
-    };
+  public addFromWc = async (browserOpen?: any, clientMeta?:IClientMeta):Promise<{url?:string, sign:Function}> => {
+    const resulat = await this.metamaskService.initWC(clientMeta || null);
 
     return new Promise((resolve) => {
-      browserOpen(url);
+      if (browserOpen) {
+        browserOpen(resulat);
+      }
 
       if (!this.metamaskService.connector.connected) {
         this.metamaskService.connector.on('connect', async (error, payload) => {
           this.metamaskService.defaultAccount = payload.params[0].accounts[0];
-          resolve({ url, sign });
+          resolve(resulat ? { url: resulat, sign: this.sign } : { sign: this.sign });
         });
       } else {
-        resolve({ url, sign });
+        resolve(resulat ? { url: resulat, sign: this.sign } : { sign: this.sign });
       }
     });
   }
