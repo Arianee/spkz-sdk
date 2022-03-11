@@ -5,7 +5,8 @@ import { required, requiredDefined } from '../../../../helpers/required/required
 import { Signaturev4 } from '../../../../models/signaturev4';
 import WalletConnect from '@walletconnect/client';
 import Web3 from 'web3';
-import { IClientMeta, IWalletConnectOptions } from '@walletconnect/types';
+import { IClientMeta, IWalletConnectOptions, IInternalEvent } from '@walletconnect/types';
+import QRCodeModal from '@walletconnect/qrcode-modal';
 import { ContractService } from '../../../utils/services/contractService/contractService';
 
 @scoped(Lifecycle.ContainerScoped)
@@ -89,12 +90,14 @@ export class MetamaskService {
     });
   }
 
-  public initMMWC = async (clientMeta?:IClientMeta): Promise<string> => {
+  public initWC = async (clientMeta?:IClientMeta): Promise<string| null> => {
     const connectorOptions:IWalletConnectOptions = {
       bridge: 'https://bridge.walletconnect.org'
     };
     if (clientMeta) {
       connectorOptions.clientMeta = clientMeta;
+    } else {
+      connectorOptions.qrcodeModal = QRCodeModal;
     }
 
     this.connector = new WalletConnect(connectorOptions);
@@ -105,9 +108,12 @@ export class MetamaskService {
       this.defaultAccount = this.connector.accounts[0];
     }
 
-    const url = new URL('https://metamask.app.link/wc');
-    url.searchParams.set('uri', this.connector.uri);
-    return url.toString();
+    if (clientMeta) {
+      const url = new URL('https://metamask.app.link/wc');
+      url.searchParams.set('uri', this.connector.uri);
+      return url.toString();
+    }
+    return null;
   }
 
   public signWithWc = async (data) => {
