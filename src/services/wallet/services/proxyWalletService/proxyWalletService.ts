@@ -10,6 +10,7 @@ import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
 import { Wallet as etherWallet } from '@ethersproject/wallet';
 import { IClientMeta } from '@walletconnect/types';
+import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 
 const localStorageAuthorizationKey = 'spkz_authorizations';
 
@@ -17,7 +18,8 @@ const localStorageAuthorizationKey = 'spkz_authorizations';
 export class ProxyWalletService {
   constructor (
     private rightService: RightService,
-    private metamaskService: MetamaskService
+    private metamaskService: MetamaskService,
+    private environmentService: EnvironmentService
   ) {
   }
 
@@ -41,6 +43,8 @@ export class ProxyWalletService {
   public decoder: (message, signature) => any;
   public jwtHelper: JWTGeneric;
   private _privateKey: string;
+
+  readonly defaultSignMessage = 'You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !';
 
   get privateKey (): string {
     return this._privateKey;
@@ -98,11 +102,11 @@ export class ProxyWalletService {
   public async addFromMetamask () {
     await this.metamaskService.initMetamask();
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
-
+    const message = this.environmentService.spkzConfiguration?.customSignMessage || this.defaultSignMessage;
     const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {
     });
     const zef = jwtSigner.setPayload(payloadToSign)
-      .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+      .setMessage(message);
     const signedJWT = await zef.sign();
 
     this.addBlockchainWalletAuthorization(signedJWT);
@@ -112,10 +116,10 @@ export class ProxyWalletService {
   public sign = async () => {
     const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {});
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
-
+    const message = this.environmentService.spkzConfiguration?.customSignMessage || this.defaultSignMessage;
     const jwt = jwtSigner
       .setPayload(payloadToSign)
-      .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+      .setMessage(message);
     const signedJWT = await jwt.sign();
     return this.addBlockchainWalletAuthorization(signedJWT);
   };
