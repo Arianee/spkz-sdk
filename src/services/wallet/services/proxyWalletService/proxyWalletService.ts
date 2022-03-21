@@ -124,23 +124,18 @@ export class ProxyWalletService {
     return this.addBlockchainWalletAuthorization(signedJWT);
   };
 
-  public addFromWc = async (browserOpen?: any, clientMeta?:IClientMeta):Promise<{url?:string, sign:Function}> => {
-    const resulat = await this.metamaskService.initWC(clientMeta || null);
+  public addFromWc = async (clientMeta?:IClientMeta, defaultQrcode = false):Promise<{url:string, sign:Function}> => {
+    const url = await this.metamaskService.initWC(clientMeta, defaultQrcode);
 
-    return new Promise((resolve) => {
-      if (browserOpen) {
-        browserOpen(resulat);
-      }
+    return {
+      url,
+      sign: this.delayedSign
+    };
+  }
 
-      if (!this.metamaskService.connector.connected) {
-        this.metamaskService.connector.on('connect', async (error, payload) => {
-          this.metamaskService.defaultAccount = payload.params[0].accounts[0];
-          resolve(resulat ? { url: resulat, sign: this.sign } : { sign: this.sign });
-        });
-      } else {
-        resolve(resulat ? { url: resulat, sign: this.sign } : { sign: this.sign });
-      }
-    });
+  private delayedSign = async () => {
+    await this.metamaskService.getDefaultAccountFromWalletConnect();
+    return this.sign();
   }
 
   public async addWalletFromPrivateKey (privateKey: string = etherWallet.createRandom().privateKey) {
