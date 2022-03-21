@@ -3,10 +3,12 @@ import { requiredDefined } from '../../../../helpers/required/required';
 import { environment as environmentSettings, IEnvironment } from '../../../../environment/environment';
 import { get } from 'lodash';
 import { isBrowser, isNode } from '../../../../helpers/isNodeOrBrowser.helper';
+import { SpkzConfiguration } from '../../../../models/spkzConfiguration';
 
 @scoped(Lifecycle.ContainerScoped)
 export class EnvironmentService {
     public environment:IEnvironment
+    public spkzConfiguration?:SpkzConfiguration
 
     constructor () {
       this.setEnvFromProcessEnvOrWindow();

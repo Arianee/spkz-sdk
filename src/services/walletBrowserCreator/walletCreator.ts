@@ -1,11 +1,12 @@
 import { Wallet as etherWallet } from 'ethers';
 import { isPrivateKeyValid } from '../../helpers/isPrivateKeyValid/isPrivateKeyValid';
 import { SPKZ } from '../wallet';
-import { required, requiredDefined } from '../../helpers/required/required';
+import { requiredDefined } from '../../helpers/required/required';
+import { SpkzConfiguration } from '../../models/spkzConfiguration';
 
 const key = 'spkz_proxyWalletPK';
 
-const createOrRetrieveWallet = () => {
+const createOrRetrieveWallet = (configuration?:SpkzConfiguration) => {
   requiredDefined(window, '1/ this method is intended to be used on a browser');
   requiredDefined(window.localStorage, '2/ this method is intended to be used on a browser');
 
@@ -17,7 +18,11 @@ const createOrRetrieveWallet = () => {
   }
 
   if (isPrivateKeyValid(pk)) {
-    return SPKZ.fromPrivateKey(pk);
+    const spkz = SPKZ.fromPrivateKey(pk);
+    if (configuration) {
+      spkz.environmentService.spkzConfiguration = configuration;
+    }
+    return spkz;
   } else {
     throw new Error('private key is not valid');
   }
