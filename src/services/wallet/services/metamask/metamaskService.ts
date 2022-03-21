@@ -90,13 +90,12 @@ export class MetamaskService {
     });
   }
 
-  public initWC = async (clientMeta?:IClientMeta): Promise<string| null> => {
+  public initWC = async (clientMeta?:IClientMeta, defaultQrCode?:boolean): Promise<string> => {
     const connectorOptions:IWalletConnectOptions = {
       bridge: 'https://bridge.walletconnect.org'
     };
-    if (clientMeta) {
-      connectorOptions.clientMeta = clientMeta;
-    } else {
+    connectorOptions.clientMeta = clientMeta;
+    if (defaultQrCode) {
       connectorOptions.qrcodeModal = QRCodeModal;
     }
 
@@ -108,12 +107,23 @@ export class MetamaskService {
       this.defaultAccount = this.connector.accounts[0];
     }
 
-    if (clientMeta) {
-      const url = new URL('https://metamask.app.link/wc');
-      url.searchParams.set('uri', this.connector.uri);
-      return url.toString();
-    }
-    return null;
+    return this.connector.uri;
+  }
+
+  public getDefaultAccountFromWalletConnect () {
+    return new Promise((resolve, reject) => {
+      if (this.defaultAccount) {
+        return this.defaultAccount;
+      } else {
+        this.connector.on('connect', (error, payload) => {
+          if (error) {
+            return reject(error);
+          }
+          this.defaultAccount = payload.params[0].accounts[0];
+          return resolve(this.defaultAccount);
+        });
+      }
+    });
   }
 
   public signWithWc = async (data) => {
