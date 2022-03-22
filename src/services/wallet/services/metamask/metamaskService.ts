@@ -103,6 +103,9 @@ export class MetamaskService {
 
     if (!this.connector.connected) {
       await this.connector.createSession();
+      this.connector.on('connect', (error, payload) => {
+        this.defaultAccount = payload.params[0].accounts[0];
+      });
     } else {
       this.defaultAccount = this.connector.accounts[0];
     }
