@@ -113,7 +113,7 @@ export class MetamaskService {
   public getDefaultAccountFromWalletConnect () {
     return new Promise((resolve, reject) => {
       if (this.defaultAccount) {
-        return this.defaultAccount;
+        return resolve(this.defaultAccount);
       } else {
         this.connector.on('connect', (error, payload) => {
           if (error) {
