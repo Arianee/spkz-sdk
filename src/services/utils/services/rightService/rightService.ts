@@ -9,7 +9,7 @@ import { decoder, JWTDecoder } from '../../../../helpers/JWTGeneric/signerAndDec
 import { AuthorizationsDetails, AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { StrategiesReturn } from '../../../../models/strategyReturn';
 import { FullRoomStrategies } from '../../../..';
-import { ErrorPayload } from 'models/jsonrpc/errorPayload';
+import { ErrorPayload } from '../../../../models/jsonrpc/errorPayload';
 
 @scoped(Lifecycle.ContainerScoped)
 export class RightService {
