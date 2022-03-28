@@ -3,6 +3,7 @@ export const enum ErrorCode {
     NOTENOUGH,
     NOTOWNER,
     NOTISSUER,
-    ERRORINSTRATEGY
+    ERRORINSTRATEGY,
+    OWNER
 
 }
