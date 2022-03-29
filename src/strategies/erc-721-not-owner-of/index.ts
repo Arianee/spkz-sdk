@@ -11,9 +11,9 @@ const ownerOf = async (erc721Contract, tokenId: string, userAddresses: string[])
 };
 
 /**
- * Check if an user owns one or more of the required NFTs
+ * Check if an user doesn't own one or more of the NFTs
  * @param strategy the strategy params
- * @returns an authorized StrategyReturnPromise if the user owns all the required NFTs, an unauthorized one otherwise
+ * @returns an authorized StrategyReturnPromise if the user own none of the NFTs, an unauthorized one otherwise
  */
 export const strategy = async (strategy: Strategy<ERC721OwnerOf>): StrategyReturnPromise => {
   const { params } = strategy;
@@ -28,13 +28,13 @@ export const strategy = async (strategy: Strategy<ERC721OwnerOf>): StrategyRetur
   const web3Provider = await web3Factory(chainId);
   const contract = new web3Provider.eth.Contract(erc721ABI as any, erc721address);
 
-  const isOwnerOfOneOrMore = (await Promise.all(tokenIds.map(tokenId => ownerOf(contract, tokenId, userAddresses)))).includes(true);
+  const isNotOwnerOfOneOrMore = !(await Promise.all(tokenIds.map(tokenId => ownerOf(contract, tokenId, userAddresses)))).includes(true);
 
-  const isAuthorized = isOwnerOfOneOrMore;
+  const isAuthorized = isNotOwnerOfOneOrMore;
 
-  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
+  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.OWNER;
   const ids = tokenIds.map(tokenId => tokenId).join(', ');
-  const message = isAuthorized ? `You are the owner of one or more of the NFTs : ${ids}` : `You do not own at least one of those NFTs : ${ids}`;
+  const message = isAuthorized ? `You are not the owner of the NFTs : ${ids}` : `You own one or more of those NFTs : ${ids}`;
 
   return {
     isAuthorized,

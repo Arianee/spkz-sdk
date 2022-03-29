@@ -1,4 +1,4 @@
-import { ERC20BalancesOf, ERC20BalanceOf, Strategy, ERC721BalancesOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, PoapHolderOf, isExactAddresses, ERC721BalancesOfIssuedBy } from '../../models/strategy';
+import { ERC20BalancesOf, ERC20BalanceOf, Strategy, ERC721BalancesOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, PoapHolderOf, isExactAddresses, ERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from '../../models/strategy';
 import { validateStrategy, validateSubstrategy } from './validateStrategy.helper';
 
 describe('strategies schemas', () => {
@@ -158,6 +158,82 @@ describe('strategies schemas', () => {
       const res = validateStrategy(strategy);
       // 4 errors: in issuer, minBalance, tokens, logo
       expect(res.details).toHaveLength(4);
+      expect(res.valid).toBeFalsy();
+    });
+  });
+
+  describe('ERC721OwnerOfSchema', () => {
+    it('should be valid if the strategy is correct', () => {
+      const strategy : Strategy<ERC721OwnerOf> = {
+        name: 'erc-721-owner-of',
+        params: {
+          contract: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          chainId: '1',
+          tokenIds: ['1'],
+          logo: 'https://arianee.net/idk.png',
+          name: 'test',
+          symbol: 'TEST'
+        }
+      };
+
+      const res = validateStrategy(strategy);
+      expect(res.valid).toBeTruthy();
+    });
+
+    it('should not be valid if the strategy is incorrect', () => {
+      const strategy : Strategy<ERC721OwnerOf> = {
+        name: 'erc-721-owner-of',
+        params: {
+          contract: 'INVALID ETH ADDRESS',
+          chainId: 1 as any,
+          tokenIds: [1 as any],
+          logo: 'https://arianee.net/idk.png',
+          name: 'test',
+          symbol: 'TEST'
+        }
+      };
+
+      const res = validateStrategy(strategy);
+      // 3 errors: in contract, chainId, tokenIds
+      expect(res.details).toHaveLength(3);
+      expect(res.valid).toBeFalsy();
+    });
+  });
+
+  describe('ERC721NotOwnerOfSchema', () => {
+    it('should be valid if the strategy is correct', () => {
+      const strategy : Strategy<ERC721NotOwnerOf> = {
+        name: 'erc-721-not-owner-of',
+        params: {
+          contract: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
+          chainId: '1',
+          tokenIds: ['1'],
+          logo: 'https://arianee.net/idk.png',
+          name: 'test',
+          symbol: 'TEST'
+        }
+      };
+
+      const res = validateStrategy(strategy);
+      expect(res.valid).toBeTruthy();
+    });
+
+    it('should not be valid if the strategy is incorrect', () => {
+      const strategy : Strategy<ERC721NotOwnerOf> = {
+        name: 'erc-721-not-owner-of',
+        params: {
+          contract: 'INVALID ETH ADDRESS',
+          chainId: 1 as any,
+          tokenIds: [1 as any],
+          logo: 'https://arianee.net/idk.png',
+          name: 'test',
+          symbol: 'TEST'
+        }
+      };
+
+      const res = validateStrategy(strategy);
+      // 3 errors: in contract, chainId, tokenIds
+      expect(res.details).toHaveLength(3);
       expect(res.valid).toBeFalsy();
     });
   });

@@ -1,5 +1,5 @@
 import { Strategy } from '../../models/strategy';
-import { ERC1155BalanceOfBatchSchema, ERC1155BalanceOfSchema, ERC20BalanceOfSchema, ERC20BalancesOfSchema, ERC721BalancesOfSchema, ERC721BalancesOfIssuedBySchema, IsExactAddressesSchema, PoapHolderOfSchema, StrategySchema, StrategySchemaReturn, UnlockHasOwnershipSchema } from '../../models/strategySchemas';
+import { ERC1155BalanceOfBatchSchema, ERC1155BalanceOfSchema, ERC20BalanceOfSchema, ERC20BalancesOfSchema, ERC721BalancesOfSchema, ERC721BalancesOfIssuedBySchema, IsExactAddressesSchema, PoapHolderOfSchema, StrategySchema, StrategySchemaReturn, UnlockHasOwnershipSchema, ERC721OwnerOfSchema, ERC721NotOwnerOfSchema } from '../../models/strategySchemas';
 
 export const validateStrategy = (strategy: Strategy) : { valid: boolean, details: StrategySchemaReturn[] } => {
   const schema = getSchemaForStrategy(strategy);
@@ -52,6 +52,10 @@ const getSchemaForStrategy = (strategy: Strategy) : StrategySchema<any> | null =
       return ERC1155BalanceOfBatchSchema;
     case 'erc-1155-balance-of-substrategy':
       return ERC1155BalanceOfSchema;
+    case 'erc-721-owner-of':
+      return ERC721OwnerOfSchema;
+    case 'erc-721-not-owner-of':
+      return ERC721NotOwnerOfSchema;
     default:
       return null;
   }

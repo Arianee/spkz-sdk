@@ -10,6 +10,8 @@ export interface Strategy<T = ERC20BalancesOf
   | OpenseaCollectionBalanceOf
   | PoapHolderOf
   | UnlockHasOwnership
+  | ERC721OwnerOf
+  | ERC721NotOwnerOf
   > {
   name: string,
   addresses?: string[],
@@ -40,6 +42,17 @@ export interface ERC721BalancesOf {
   name?: string,
   symbol?: string
 }
+
+export interface ERC721OwnerOf {
+  contract: string;
+  chainId: string;
+  tokenIds?: Array<string>
+  logo?: string,
+  name?: string,
+  symbol?: string
+}
+
+export interface ERC721NotOwnerOf extends ERC721OwnerOf {}
 
 export interface isExactAddresses {
   addresses: Array<string>

@@ -1,5 +1,5 @@
 import { validateSubstrategy } from '../helpers/validateStrategy/validateStrategy.helper';
-import { ERC20BalanceOf, ERC20BalancesOf, ERC721BalancesOf, isExactAddresses, PoapHolderOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, ERC721BalancesOfIssuedBy } from './strategy';
+import { ERC20BalanceOf, ERC20BalancesOf, ERC721BalancesOf, isExactAddresses, PoapHolderOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, ERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from './strategy';
 import * as validators from '../helpers/validateStrategy/utils/validators';
 
 export type StrategySchema<T> = {
@@ -115,6 +115,80 @@ export const ERC721BalancesOfIssuedBySchema : StrategySchema<ERC721BalancesOfIss
 
     return {
       key: 'tokens',
+      valid,
+      description
+    };
+  },
+  logo: value => ({
+    key: 'logo',
+    valid: validators.isNotSet(value) || validators.isURL(value),
+    description: 'Logo must be a valid URL'
+  }),
+  name: value => ({
+    key: 'name',
+    valid: validators.isNotSet(value) || validators.isString(value),
+    description: 'Name must be a string'
+  }),
+  symbol: value => ({
+    key: 'symbol',
+    valid: validators.isNotSet(value) || validators.isString(value),
+    description: 'Symbol must be a string'
+  })
+};
+
+export const ERC721OwnerOfSchema : StrategySchema<ERC721OwnerOf> = {
+  contract: value => ({
+    key: 'contract',
+    valid: validators.isEthereumAddress(value),
+    description: 'Contract must be a valid Ethereum address'
+  }),
+  chainId: value => ({
+    key: 'chainId',
+    valid: validators.isChainId(value),
+    description: 'Chain ID must be a number'
+  }),
+  tokenIds: value => {
+    const valid = validators.isArray(value) ? value.every(tokenId => validators.isTokenId(tokenId)) : false;
+    const description = 'Token IDs must be numbers';
+    return {
+      key: 'tokenIds',
+      valid,
+      description
+    };
+  },
+  logo: value => ({
+    key: 'logo',
+    valid: validators.isNotSet(value) || validators.isURL(value),
+    description: 'Logo must be a valid URL'
+  }),
+  name: value => ({
+    key: 'name',
+    valid: validators.isNotSet(value) || validators.isString(value),
+    description: 'Name must be a string'
+  }),
+  symbol: value => ({
+    key: 'symbol',
+    valid: validators.isNotSet(value) || validators.isString(value),
+    description: 'Symbol must be a string'
+  })
+};
+
+export const ERC721NotOwnerOfSchema : StrategySchema<ERC721NotOwnerOf> = {
+  contract: value => ({
+    key: 'contract',
+    valid: validators.isEthereumAddress(value),
+    description: 'Contract must be a valid Ethereum address'
+  }),
+  chainId: value => ({
+    key: 'chainId',
+    valid: validators.isChainId(value),
+    description: 'Chain ID must be a number'
+  }),
+  tokenIds: value => {
+    const valid = validators.isArray(value) ? value.every(tokenId => validators.isTokenId(tokenId)) : false;
+    const description = 'Token IDs must be numbers';
+    return {
+      key: 'tokenIds',
       valid,
       description
     };
