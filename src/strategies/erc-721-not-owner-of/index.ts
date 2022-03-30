@@ -40,6 +40,10 @@ export const strategy = async (strategy: Strategy<ERC721OwnerOf>): StrategyRetur
     isAuthorized,
     strategy: strategy,
     message: message,
-    code
+    code,
+    enrichedInformations: {
+      name: isAuthorized ? 'You must not own blacklisted NFTs' : 'You cannot access this area',
+      ...(!isAuthorized && { logo: 'ipfs://QmWa7P5J6RiXXMKFA8kopaba6gpEpEj5MUTGog3MFU8jPe' })
+    }
   };
 };
