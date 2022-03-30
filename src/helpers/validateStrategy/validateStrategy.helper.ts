@@ -1,5 +1,5 @@
 import { Strategy } from '../../models/strategy';
-import { ERC1155BalanceOfBatchSchema, ERC1155BalanceOfSchema, ERC20BalanceOfSchema, ERC20BalancesOfSchema, ERC721BalancesOfSchema, ERC721BalancesOfIssuedBySchema, IsExactAddressesSchema, PoapHolderOfSchema, StrategySchema, StrategySchemaReturn, UnlockHasOwnershipSchema, ERC721OwnerOfSchema, ERC721NotOwnerOfSchema } from '../../models/strategySchemas';
+import { ERC1155BalanceOfBatchSchema, ERC1155BalanceOfSchema, ERC20BalanceOfSchema, ERC20BalancesOfSchema, ERC721BalancesOfSchema, ArianeeERC721BalancesOfIssuedBySchema, IsExactAddressesSchema, PoapHolderOfSchema, StrategySchema, StrategySchemaReturn, UnlockHasOwnershipSchema, ERC721OwnerOfSchema, ERC721NotOwnerOfSchema } from '../../models/strategySchemas';
 
 export const validateStrategy = (strategy: Strategy) : { valid: boolean, details: StrategySchemaReturn[] } => {
   const schema = getSchemaForStrategy(strategy);
@@ -38,8 +38,8 @@ const getSchemaForStrategy = (strategy: Strategy) : StrategySchema<any> | null =
       return ERC20BalancesOfSchema;
     case 'erc-721-balance-of':
       return ERC721BalancesOfSchema;
-    case 'erc-721-balance-of-issued-by':
-      return ERC721BalancesOfIssuedBySchema;
+    case 'arianee-erc-721-balance-of-issued-by':
+      return ArianeeERC721BalancesOfIssuedBySchema;
     case 'erc-20-balance-of-substrategy':
       return ERC20BalanceOfSchema;
     case 'poap-holder-of':

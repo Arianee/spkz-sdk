@@ -5,7 +5,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
   test('wallet without erc 721 of specific should be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
-        name: 'erc-721-balance-of-issued-by',
+        name: 'arianee-erc-721-balance-of-issued-by',
         addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
         params: {
           minBalance: '1',
@@ -32,7 +32,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
   test('wallet without erc 721 of specific issuer should be not authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
-        name: 'erc-721-balance-of-issued-by',
+        name: 'arianee-erc-721-balance-of-issued-by',
         addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
         params: {
           minBalance: '14',
@@ -54,7 +54,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
   test('wallet force logo and name', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
-        name: 'erc-721-balance-of-issued-by',
+        name: 'arianee-erc-721-balance-of-issued-by',
         addresses: ['0x2361aBD3937d4f0D7ed72860aE39167B110B727e'],
         params: {
           symbol: 'My Symbol',
