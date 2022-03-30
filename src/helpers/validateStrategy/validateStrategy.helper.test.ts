@@ -1,4 +1,4 @@
-import { ERC20BalancesOf, ERC20BalanceOf, Strategy, ERC721BalancesOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, PoapHolderOf, isExactAddresses, ERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from '../../models/strategy';
+import { ERC20BalancesOf, ERC20BalanceOf, Strategy, ERC721BalancesOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, PoapHolderOf, isExactAddresses, ArianeeERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from '../../models/strategy';
 import { validateStrategy, validateSubstrategy } from './validateStrategy.helper';
 
 describe('strategies schemas', () => {
@@ -118,8 +118,8 @@ describe('strategies schemas', () => {
 
   describe('ERC721BalancesOfIssuedBySchema', () => {
     it('should be valid if the strategy is correct', () => {
-      const strategy : Strategy<ERC721BalancesOfIssuedBy> = {
-        name: 'erc-721-balance-of-issued-by',
+      const strategy : Strategy<ArianeeERC721BalancesOfIssuedBy> = {
+        name: 'arianee-erc-721-balance-of-issued-by',
         params: {
           minBalance: '1',
           issuer: '0x135935c83aCF4E0C1Aa0BD948DC710eC76b478b0',
@@ -139,8 +139,8 @@ describe('strategies schemas', () => {
     });
 
     it('should not be valid if the strategy is incorrect', () => {
-      const strategy : Strategy<ERC721BalancesOfIssuedBy> = {
-        name: 'erc-721-balance-of-issued-by',
+      const strategy : Strategy<ArianeeERC721BalancesOfIssuedBy> = {
+        name: 'arianee-erc-721-balance-of-issued-by',
         params: {
           issuer: 'INVALID ETH ADDRESS',
           minBalance: 1 as any,
