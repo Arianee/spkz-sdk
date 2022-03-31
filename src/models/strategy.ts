@@ -4,7 +4,7 @@ export interface Strategy<T = ERC20BalancesOf
   | NativeBalancesOf
   | isExactAddresses
   | RoomOwner
-  | ERC721BalancesOfIssuedBy
+  | ArianeeERC721BalancesOfIssuedBy
   | ERC1155BalanceOfBatch
   | ERC1155BalanceOf
   | OpenseaCollectionBalanceOf
@@ -58,7 +58,7 @@ export interface isExactAddresses {
   addresses: Array<string>
 }
 
-export interface ERC721BalancesOfIssuedBy extends ERC721BalancesOf {
+export interface ArianeeERC721BalancesOfIssuedBy extends ERC721BalancesOf {
   issuer: string
 }
 

@@ -1,5 +1,5 @@
 import { validateSubstrategy } from '../helpers/validateStrategy/validateStrategy.helper';
-import { ERC20BalanceOf, ERC20BalancesOf, ERC721BalancesOf, isExactAddresses, PoapHolderOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, ERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from './strategy';
+import { ERC20BalanceOf, ERC20BalancesOf, ERC721BalancesOf, isExactAddresses, PoapHolderOf, UnlockHasOwnership, ERC1155BalanceOfBatch, ERC1155BalanceOf, ArianeeERC721BalancesOfIssuedBy, ERC721OwnerOf, ERC721NotOwnerOf } from './strategy';
 import * as validators from '../helpers/validateStrategy/utils/validators';
 
 export type StrategySchema<T> = {
@@ -94,7 +94,7 @@ export const ERC721BalancesOfSchema : StrategySchema<ERC721BalancesOf> = {
   })
 };
 
-export const ERC721BalancesOfIssuedBySchema : StrategySchema<ERC721BalancesOfIssuedBy> = {
+export const ArianeeERC721BalancesOfIssuedBySchema : StrategySchema<ArianeeERC721BalancesOfIssuedBy> = {
   minBalance: value => ({
     key: 'minBalance',
     valid: validators.isMinBalance(value),
