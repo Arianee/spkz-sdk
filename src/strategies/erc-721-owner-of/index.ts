@@ -6,7 +6,7 @@ import { ErrorCode } from '../../models/errorCode';
 import { web3Factory } from '../helpers/web3Factory';
 
 const ownerOf = async (erc721Contract, tokenId: string, userAddresses: string[]) : Promise<Boolean> => {
-  const ownerOfTokenId = await erc721Contract.methods.ownerOf(tokenId).call().catch(() => null);
+  const ownerOfTokenId = await erc721Contract.methods.ownerOf(tokenId).call().catch(() => '');
   return userAddresses.includes(ownerOfTokenId.toLowerCase());
 };
 
