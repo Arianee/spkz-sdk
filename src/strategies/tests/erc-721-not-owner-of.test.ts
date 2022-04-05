@@ -53,6 +53,28 @@ describe('execute erc-721-not-owner-of strategies with cache', () => {
     expect(strategiesReturn.strategies[0][0].isAuthorized).toBeFalsy();
   });
 
+  it('should authorize if the tokenId does not exist', async () => {
+    const strategy: Strategy<ERC721OwnerOf> = {
+      name: 'erc-721-not-owner-of',
+      addresses: ['0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4'],
+      params: {
+        contract: '0x56c35dF413b3cd753f85427e55A8dF66A79f1bd7',
+        chainId: '80001',
+        tokenIds: [
+          '999999967543219999999999999'
+        ]
+      }
+    };
+
+    const strategiesReturn = await executeStrategiesWithCache([[strategy]], {
+      tokenId: '0',
+      chainId: '80001'
+    });
+
+    expect(strategiesReturn.strategies[0][0].message).toBe('You are not the owner of the NFTs : 999999967543219999999999999');
+    expect(strategiesReturn.strategies[0][0].isAuthorized).toBeTruthy();
+  });
+
   it('should authorize if the user addresses owns none of the NFTs', async () => {
     const addressWhoOwnsNoNFT = '0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4';
 
