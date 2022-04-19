@@ -8,3 +8,8 @@ export interface BouncerUserQuery {
  network:string;
  chainId:string;
 }
+
+export interface NotificationPreferences {
+  blockchainWallet: string;
+  payload: string;
+}
