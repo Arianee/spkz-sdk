@@ -128,11 +128,39 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
       }
     };
 
+    const updateNotificationPreferences = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
+
+        const { authorizations, roomId, sectionId, notificationPreferences } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
+
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
+
+        if (isAuthorized === false) {
+          const errorPayload:ErrorPayload[] = details;
+          return callback(errorPayload);
+        }
+
+        const firstBlockchainWallet = blockchainWallets[0];
+
+        await configuration.updateNotificationPreferences({
+          payload: params,
+          blockchainWallet: firstBlockchainWallet.toString()
+        });
+        return callback(null, params);
+      } catch (e) {
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
+      }
+    };
+
     return {
       [JSONRPCMethods.bouncer.rooms.getUserRooms]: getUserRooms,
       [JSONRPCMethods.bouncer.users.getMyProfile]: getMyProfile,
       [JSONRPCMethods.bouncer.users.updateMyProfile]: updateMyProfile,
-      [JSONRPCMethods.bouncer.rooms.join]: joinRoom
-
+      [JSONRPCMethods.bouncer.rooms.join]: joinRoom,
+      [JSONRPCMethods.bouncer.rooms.updateNotificationPreferences]: updateNotificationPreferences
     };
   };
