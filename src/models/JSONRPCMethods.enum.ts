@@ -4,7 +4,7 @@ export const JSONRPCMethods = {
     users: {
       getMyProfile: 'bouncer.users.getMyProfile',
       updateMyProfile: 'bouncer.users.updateMyProfile',
-      updateNotificationPreferences: 'bouncer.rooms.updateNotificationPreferences'
+      updateNotificationPreferences: 'bouncer.users.updateNotificationPreferences'
     },
     rooms: {
       join: 'bouncer.rooms.join',

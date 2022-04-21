@@ -99,5 +99,13 @@ describe('bouncer service', () => {
         expect(myProfile1).toBeDefined();
       });
     });
+
+    describe('Notification Preferences', () => {
+      test('get Update Notification Preferences', async () => {
+        const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+        await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+        await proxyWallet.bouncer.updateNotificationPreferences({ roomId: '0', sectionId: 'welcome', preferences: 'ALL' });
+      });
+    });
   });
 });

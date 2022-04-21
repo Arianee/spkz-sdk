@@ -144,9 +144,9 @@ const spkzJSONRPC = new SPKZJSONRPC({
     }
   })
   .setBouncerMethod({
-    updateNotificationPreferences: (notificationPref: NotificationPreferences): Promise<NotificationPreferences> => {
-      dbbouncerNotificationPreferences[notificationPref.blockchainWallet] = notificationPref;
-      return Promise.resolve(dbbouncerNotificationPreferences[notificationPref.blockchainWallet]);
+    updateNotificationPreferences: (notificationPreferences: NotificationPreferences): Promise<NotificationPreferences> => {
+      dbbouncerNotificationPreferences[notificationPreferences.blockchainWallet] = notificationPreferences;
+      return Promise.resolve(dbbouncerNotificationPreferences[notificationPreferences.blockchainWallet]);
     },
     updateProfile: (bouncerUser: BouncerUser): Promise<BouncerUser> => {
       dbbouncerUserProfile[bouncerUser.blockchainWallet] = bouncerUser;

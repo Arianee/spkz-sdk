@@ -11,5 +11,7 @@ export interface BouncerUserQuery {
 
 export interface NotificationPreferences {
   blockchainWallet: string;
-  payload: string;
+  roomId?: string,
+  sectionId?: string,
+  preferences: 'ALL' | 'MENTIONS_ONLY' | 'NONE',
 }
