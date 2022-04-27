@@ -107,5 +107,13 @@ describe('bouncer service', () => {
         await proxyWallet.bouncer.updateNotificationPreferences({ roomId: '0', sectionId: 'welcome', preferences: 'ALL' });
       });
     });
+
+    describe('Badge Count', () => {
+      test('get Update Badge Count', async () => {
+        const pkBlockchainWallet1 = '0xc88c2ebe8243c838b54fcafebef2ae909556c8f96becfbbe4a2d49a9417c4161';
+        await proxyWallet.wallets.addWalletFromPrivateKey(pkBlockchainWallet1);
+        await proxyWallet.bouncer.updateBadgeCount({ badgeCount: 12 });
+      });
+    });
   });
 });

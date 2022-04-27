@@ -9,7 +9,7 @@ import {
   SectionUser,
   WriteMessageParameters
 } from './models/jsonrpc/writeMessageParameters';
-import { BouncerUser, BouncerUserQuery, NotificationPreferences } from './models/jsonrpc/bouncer';
+import { BadgeCount, BouncerUser, BouncerUserQuery, NotificationPreferences } from './models/jsonrpc/bouncer';
 import cors from 'cors';
 
 const express = require('express');
@@ -27,6 +27,7 @@ let dbRoomUsers = {};
 let dbSectionUsers = {};
 let dbbouncerUserProfile = {};
 let dbbouncerNotificationPreferences = {};
+let dbbouncerBadgeCount = {};
 let dbProfile = {};
 let dbBouncerRoom = {};
 
@@ -144,6 +145,10 @@ const spkzJSONRPC = new SPKZJSONRPC({
     }
   })
   .setBouncerMethod({
+    updateBadgeCount: (badgeCount: BadgeCount): Promise<BadgeCount> => {
+      dbbouncerBadgeCount[badgeCount.blockchainWallet] = badgeCount;
+      return Promise.resolve(dbbouncerNotificationPreferences[badgeCount.blockchainWallet]);
+    },
     updateNotificationPreferences: (notificationPreferences: NotificationPreferences): Promise<NotificationPreferences> => {
       dbbouncerNotificationPreferences[notificationPreferences.blockchainWallet] = notificationPreferences;
       return Promise.resolve(dbbouncerNotificationPreferences[notificationPreferences.blockchainWallet]);
@@ -186,6 +191,7 @@ app.get('/reset', (req, res) => {
   dbProfile = {};
   dbbouncerUserProfile = {};
   dbbouncerNotificationPreferences = {};
+  dbbouncerBadgeCount = {};
   dbBouncerRoom = {};
   res.send('database reset');
 });
