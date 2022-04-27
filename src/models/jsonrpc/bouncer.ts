@@ -15,3 +15,8 @@ export interface NotificationPreferences {
   sectionId?: string,
   preferences: 'ALL' | 'MENTIONS_ONLY' | 'NONE',
 }
+
+export interface BadgeCount {
+  blockchainWallet: string;
+  badgeCount: number
+}

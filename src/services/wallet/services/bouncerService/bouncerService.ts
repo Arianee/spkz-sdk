@@ -24,6 +24,7 @@ import { updateFetchStatus } from '../../../../stateManagement/src/reducers/fetc
 import { addUserRooms } from '../../../../stateManagement/src/reducers/userRooms/actions';
 import { userRooms } from '../../../../stateManagement/src/selectors/userRooms.selector';
 import { NotificationPreferencesToSend } from '../../../../models/notificationPreferencesToSend';
+import { BadgeCountToSend } from '../../../../models/badgeCountToSend';
 
 @scoped(Lifecycle.ContainerScoped)
 export class BouncerService {
@@ -63,6 +64,12 @@ export class BouncerService {
     return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
       JSONRPCMethods.bouncer.users.updateNotificationPreferences,
       notificationPreferencesToSend);
+  }
+
+  public updateBadgeCount (badgeCount: BadgeCountToSend) {
+    return this.rpcService.signedRPCCall(this.environementService.environment.bouncerRPCURL,
+      JSONRPCMethods.bouncer.users.updateBadgeCount,
+      badgeCount);
   }
 
   public getUserRooms (): Observable<RoomUser[]> {

@@ -7,7 +7,7 @@ import {
   SectionUserGet,
   WriteMessageParameters
 } from './writeMessageParameters';
-import { BouncerUser, BouncerUserQuery, NotificationPreferences } from './bouncer';
+import { BouncerUser, BouncerUserQuery, NotificationPreferences, BadgeCount } from './bouncer';
 
 export interface SectionUserParameters {
   joinSection: AsyncFunc<SectionUser, any>,
@@ -28,4 +28,5 @@ export interface BouncerParameters {
   joinRoom: AsyncFunc<RoomUser>,
   updateProfile: AsyncFunc<BouncerUser, BouncerUser>,
   updateNotificationPreferences: AsyncFunc<NotificationPreferences, NotificationPreferences>,
+  updateBadgeCount: AsyncFunc<BadgeCount, BadgeCount>,
 }
