@@ -17,7 +17,7 @@ export const environment:{[key:string]:IEnvironment} = {
   test: {
     bouncerURL: 'http://localhost:3000',
     bouncerRPCURL: 'http://localhost:3000/spkz/rpc',
-    defaultProvider: 'http://mumbai.arianee.net',
+    defaultProvider: 'https://mumbai.arianee.net',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
@@ -25,7 +25,7 @@ export const environment:{[key:string]:IEnvironment} = {
   dev: {
     bouncerURL: 'https://dev.bouncer.spkz.io',
     bouncerRPCURL: 'https://dev.bouncer.spkz.io/spkz/rpc',
-    defaultProvider: 'http://mumbai.arianee.net',
+    defaultProvider: 'https://mumbai.arianee.net',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
@@ -33,7 +33,7 @@ export const environment:{[key:string]:IEnvironment} = {
   uat: {
     bouncerURL: 'https://uat.bouncer.spkz.io',
     bouncerRPCURL: 'https://uat.bouncer.spkz.io/spkz/rpc',
-    defaultProvider: 'http://mumbai.arianee.net',
+    defaultProvider: 'https://mumbai.arianee.net',
     roomContractAddress: ContractAddresses['80001'],
     chainId: '80001',
     networkdId: '80001'
