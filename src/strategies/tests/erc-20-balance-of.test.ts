@@ -23,7 +23,7 @@ describe('clause', () => {
         },
         {
           name: 'erc-20-balance-of',
-          addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+          addresses: ['0x1383ddcf0aee4adb6402f5aaf47b327cbbd2bf2d'],
           params: {
             minBalance: '12',
             tokens: [
