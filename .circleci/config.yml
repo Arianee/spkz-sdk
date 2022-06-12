@@ -170,10 +170,10 @@ workflows:
           filters:
             branches:
               only: master
-  every-two-hour-workflow:
+  uat:
     triggers:
       - schedule:
-          cron: "0 * * * *"
+          cron: "0 11 * * *"
           filters:
             branches:
               only:
