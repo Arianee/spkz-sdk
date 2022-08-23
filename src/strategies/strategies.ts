@@ -13,3 +13,4 @@ export { strategy as openseaCollectionBalanceOf } from './opensea-collection-bal
 export { strategy as nativeBalanceOf } from './native-balance-of';
 export { strategy as poapHolderOf } from './poap-holder-of';
 export { strategy as unlockHasMembership } from './unlock-has-membership';
+export { strategy as apiBalanceOf } from './api-balance-of';

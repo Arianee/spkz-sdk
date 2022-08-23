@@ -12,6 +12,7 @@ export interface Strategy<T = ERC20BalancesOf
   | UnlockHasOwnership
   | ERC721OwnerOf
   | ERC721NotOwnerOf
+  | ApiBalanceOf
   > {
   name: string,
   addresses?: string[],
@@ -108,4 +109,12 @@ export interface UnlockHasOwnership{
   logo?: string,
   name?: string,
   symbol?: string
+}
+
+export interface ApiBalanceOf {
+  url: string;
+  minBalance: number;
+  headers: {
+    [key: string]: any;
+  }
 }
