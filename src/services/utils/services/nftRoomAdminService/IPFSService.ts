@@ -12,11 +12,10 @@ export const enum IPFSContentType {
 
 @scoped(Lifecycle.ContainerScoped)
 export class IPFSService {
-  public ipfsClient: IPFSHTTPClient = create({ url: 'https://ipfs.infura.io:5001' });
+  public ipfsClient: IPFSHTTPClient = create({ url: 'https://ipfs.moralis.io:2053' });
 
   public readonly ipfsProviders = [
     'https://cloudflare-ipfs.com/ipfs/:ipfsHash',
-    'https://ipfs.infura.io:5001/api/v0/cat?arg=:ipfsHash',
     'https://ipfs.moralis.io:2053/ipfs/:ipfsHash',
     'https://ipfs.io/ipfs/:ipfsHash'
   ];

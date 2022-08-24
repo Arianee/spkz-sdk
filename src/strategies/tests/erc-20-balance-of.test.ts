@@ -3,7 +3,7 @@ jest.setTimeout(60000);
 
 describe('clause', () => {
   describe('AND clause', () => {
-    test('should return true if have aria on Mainnet AND POA', async () => {
+    test.skip('should return true if have aria on Mainnet AND POA', async () => {
       const strategyProvider = await executeStrategiesWithCache([[
         {
           name: 'erc-20-balance-of',
