@@ -75,5 +75,5 @@ export class HttpService {
     }
   }
 
-    private httpFetch=(url, config) => axios(url, config).then(result => result.data);
+    private httpFetch=(url, config) => axios(url, config).then(result => result.data).catch(e => console.error(e.message, `url(${url})`));
 }

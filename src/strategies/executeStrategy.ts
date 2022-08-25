@@ -10,10 +10,13 @@ import { ContractAddresses } from '../environment/environment';
 const camelCase = require('camelcase');
 const cacheWrapper = new CacheStrategyWrapper();
 
-export const executeStrategies = async (strategies: Strategy[][], lounge: { tokenId: string, chainId: string }, cache = false): Promise<StrategiesReturn> => {
-  const { tokenId, chainId } = lounge;
-  requiredDefined(tokenId, 'tokenId must be defined');
-  requiredDefined(chainId, 'chainId must be defined');
+export const executeStrategies = async (strategies: Strategy[][], lounge?: { tokenId: string, chainId: string } | null, cache = false): Promise<StrategiesReturn> => {
+  const { tokenId, chainId } = lounge || {};
+  if (lounge) {
+    requiredDefined(tokenId, 'tokenId must be defined');
+    requiredDefined(chainId, 'chainId must be defined');
+  }
+
   // Checking all strategies exist
   strategies
     .forEach(orStrategies =>
@@ -21,6 +24,7 @@ export const executeStrategies = async (strategies: Strategy[][], lounge: { toke
         const camelCaseName = camelCase(strategy.name);
         requiredDefined(implementedStrategies[camelCaseName], `this strategy does not exist ${strategy.name} (camelCase name: ${camelCaseName})`);
       }));
+
   const strategiesResults = await Promise.all(
     strategies
       .map(orStrategy => {
@@ -30,7 +34,7 @@ export const executeStrategies = async (strategies: Strategy[][], lounge: { toke
           const camelCaseName = camelCase(strategy.name);
           // remove null and undefined adresses
           strategy.addresses = strategy.addresses ? strategy.addresses.filter(d => d) : [];
-          strategy.tokenId = tokenId;
+          if (tokenId) strategy.tokenId = tokenId;
           const factoryFunc = () => implementedStrategies[camelCaseName](strategy);
           if (cache) {
             return cacheWrapper.execute(strategy, factoryFunc);
@@ -50,9 +54,12 @@ export const executeStrategies = async (strategies: Strategy[][], lounge: { toke
   }
   isAuthorized = strategiesResults.length === 0 ? true : isAuthorized;
 
-  const web3Provider = await web3Factory(chainId);
-  const roomContract = new web3Provider.eth.Contract(erc721ABI as any, ContractAddresses[chainId]);
-  const ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
+  let ownerOf = 'none';
+  if (tokenId) {
+    const web3Provider = await web3Factory(chainId);
+    const roomContract = new web3Provider.eth.Contract(erc721ABI as any, ContractAddresses[chainId]);
+    ownerOf = await roomContract.methods.ownerOf(tokenId).call().catch(() => null);
+  }
 
   return {
     isAuthorized,

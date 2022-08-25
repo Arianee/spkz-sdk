@@ -44,8 +44,14 @@ export class FetchRoomService {
   };
 
   public rawFetchRoom = async (roomId) => {
-    const tokenURI:string | undefined = await this.contractService.erc721Contract().methods.tokenURI(roomId)
+    let tokenURI:string | undefined = await this.contractService.erc721Contract().methods.tokenURI(roomId)
       .call().catch((e) => { console.error('error fetchingRoom', e); return undefined; });
+
+    // Convert hardcoded ipfs url to ipfs hash
+    if (tokenURI.startsWith('https://ipfs.infura.io:5001/api/v0/cat?arg=')) {
+      tokenURI = 'ipfs://' + tokenURI.replace('https://ipfs.infura.io:5001/api/v0/cat?arg=', '');
+    }
+
     if (tokenURI === undefined) {
       return undefined;
     }
