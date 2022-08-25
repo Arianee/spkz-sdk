@@ -1,8 +1,27 @@
+/**
+ * Strategy: api-balance-of
+ * Parameters:
+ * - url: the url to be fetched (GET), MUST return an array
+ * - minBalance: the min size of the array returned by the url
+ * - headers: optional, headers to pass to the GET request
+ *
+ * Strategy is authorized if the array returned by the url is of size >= minBalance
+ * Note: all occurrences of __ADDRESS__ in url will be replaced by the first address
+ * of the addresses array of the strategy (Strategy.addresses[0]).
+ *
+ */
 import { requiredDefined } from '@arianee/required';
 import axios from 'axios';
 import { ErrorCode } from '../../models/errorCode';
 import { ApiBalanceOf, Strategy } from '../../models/strategy';
 import { StrategyReturnPromise } from '../../models/strategyReturn';
+
+const ADDRESS_PARAM_REGEX = /__ADDRESS__/g;
+
+export const replaceAddressOccurrencesInEndpoint = (endpoint: string, _strategy: Strategy<ApiBalanceOf>) => {
+  if (!_strategy.addresses || _strategy.addresses.length === 0) return endpoint;
+  return endpoint.replace(ADDRESS_PARAM_REGEX, _strategy.addresses[0]);
+};
 
 export const getArrayFromEndpoint = async (endpoint: string, headers: ApiBalanceOf['headers']) : Promise<any[]> => {
   const maybeArray = await (await axios.get(endpoint, { headers })).data;
@@ -41,7 +60,8 @@ export const strategy = async (_strategy: Strategy<ApiBalanceOf>): StrategyRetur
   let message;
   let code: ErrorCode;
   try {
-    const array = await getArrayFromEndpoint(url, headers);
+    const replacedEndpoint = replaceAddressOccurrencesInEndpoint(url, _strategy);
+    const array = await getArrayFromEndpoint(replacedEndpoint, headers);
     isAuthorized = arrayLengthIsGreaterThan(array, minBalance);
     code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
     message = isAuthorized ? null : 'Api returned an array whose length is less than min balance';
