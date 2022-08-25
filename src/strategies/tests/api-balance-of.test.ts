@@ -1,6 +1,6 @@
 import { Strategy, ApiBalanceOf } from '../../models/strategy';
 import { executeStrategies, executeStrategiesWithCache } from '../executeStrategy';
-import { arrayLengthIsGreaterThan, getArrayFromEndpoint, validateStrategy } from '../api-balance-of/index';
+import { arrayLengthIsGreaterThan, getArrayFromEndpoint, replaceAddressOccurrencesInEndpoint, validateStrategy } from '../api-balance-of/index';
 import axios from 'axios';
 import { ErrorCode } from '../../models/errorCode';
 
@@ -55,6 +55,52 @@ describe('arrayLengthIsGreaterThan', () => {
   });
   it('should return false if the array length is lower than minLength', () => {
     expect(arrayLengthIsGreaterThan(['a', 'b'], 154151)).toBeFalsy();
+  });
+});
+
+describe('replaceAddressOccurrencesInEndpoint', () => {
+  it('should return a new string with __ADDRESS__ replaced by strategy.addresses[0]', () => {
+    const strategy : Strategy<ApiBalanceOf> = {
+      name: 'api-balance-of',
+      addresses: ['0xabcdef', '0xghijkl'],
+      params: {
+        url: 'https://arianee.org/?address=__ADDRESS__',
+        headers: { Authorization: 'Basic 123' },
+        minBalance: 1
+      }
+    };
+
+    expect(replaceAddressOccurrencesInEndpoint(strategy.params!.url, strategy)).toEqual('https://arianee.org/?address=' + strategy.addresses![0]);
+  });
+
+  it('should return the original string if no __ADDRESS__ occurrence in the url', () => {
+    const strategy : Strategy<ApiBalanceOf> = {
+      name: 'api-balance-of',
+      addresses: ['0xabcdef', '0xghijkl'],
+      params: {
+        url: 'https://arianee.org/',
+        headers: { Authorization: 'Basic 123' },
+        minBalance: 1
+      }
+    };
+
+    expect(replaceAddressOccurrencesInEndpoint(strategy.params!.url, strategy)).toEqual('https://arianee.org/');
+  });
+
+  it('should return the original string if addresses is not defined or of length 0', () => {
+    const strategy : Strategy<ApiBalanceOf> = {
+      name: 'api-balance-of',
+      addresses: [],
+      params: {
+        url: 'https://arianee.org/',
+        headers: { Authorization: 'Basic 123' },
+        minBalance: 1
+      }
+    };
+
+    expect(replaceAddressOccurrencesInEndpoint(strategy.params!.url, strategy)).toEqual('https://arianee.org/');
+    delete strategy.addresses;
+    expect(replaceAddressOccurrencesInEndpoint(strategy.params!.url, strategy)).toEqual('https://arianee.org/');
   });
 });
 
