@@ -3,6 +3,7 @@ import { EnvironmentService } from '../environmentService/environementService';
 import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import { HttpService } from '../httpService/httpService';
 import { retryExecFactory } from '../../../../helpers/retryExecFactory/retryExecFactory';
+import axios from 'axios';
 
 export const enum IPFSContentType {
   JSON,
@@ -70,10 +71,20 @@ export class IPFSService {
    * @param data
    * @param type
    */
-  public storeContentOnIPFS = async (data: Object | any, type: IPFSContentType) => {
+  public storeContentOnIPFS = async (data: Object | any, type: IPFSContentType) : Promise<string> => {
     const dataToSend: any = type === IPFSContentType.JSON ? JSON.stringify(data) : data;
+    const contentType = new Map<IPFSContentType, string>([
+      [IPFSContentType.STRING, 'text/plain'],
+      [IPFSContentType.JSON, 'application/json'],
+      [IPFSContentType.FILE, 'image/*']]
+    );
 
-    const { path } = await this.ipfsClient.add(dataToSend);
-    return `ipfs://${path}`;
+    const response = await axios.post(`${this.environmentService.environment.bouncerURL}/ipfs/add`, dataToSend, {
+      headers: {
+        'Content-Type': contentType[type] || 'text/plain'
+      }
+    });
+    const { Hash } = await response.data;
+    return `ipfs://${Hash}`;
   };
 }
