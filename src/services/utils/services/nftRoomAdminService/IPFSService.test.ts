@@ -25,7 +25,7 @@ describe('NFTRoomService', () => {
     expect(mockedAxios.post).toHaveBeenCalledWith(
       environmentServiceMock.environment.bouncerURL + '/ipfs/add',
       JSON.stringify(data),
-      { headers: { 'Content-Type': 'text/plain' } });
+      { headers: { 'Content-Type': 'application/json' } });
   });
 
   describe('fetchOnIPFS', () => {
