@@ -1,13 +1,31 @@
+import axios from 'axios';
+import { environment } from '../../../../environment/environment';
 import { IPFSContentType, IPFSService } from './IPFSService';
 
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 describe('NFTRoomService', () => {
-  test.skip('Ping infura IPFS', async () => {
-    // TODO: FIX IPFS PUSH (criticial)
+  test('Add json to IPFS', async () => {
+    const environmentServiceMock = {
+      environment: {
+        bouncerURL: environment.test.bouncerURL
+      }
+    };
 
-    const instance = new IPFSService({} as any, {} as any);
-    const result = await instance.storeContentOnIPFS({ name: 'my name' }, IPFSContentType.JSON);
+    mockedAxios.post.mockResolvedValue(
+      { data: { Hash: 'QmXkXp83XuqoGSBxyMYQACyjfP1SWZqeE8KaKcv2oecvG2' } }
+    );
 
-    expect(result).toBe('ipfs://QmXkXp83XuqoGSBxyMYQACyjfP1SWZqeE8KaKcv2oecvG2');
+    const instance = new IPFSService(environmentServiceMock as any, {} as any);
+
+    const data = { name: 'my name' };
+    const hash = await instance.storeContentOnIPFS(data, IPFSContentType.JSON);
+
+    expect(hash).toEqual('ipfs://QmXkXp83XuqoGSBxyMYQACyjfP1SWZqeE8KaKcv2oecvG2');
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      environmentServiceMock.environment.bouncerURL + '/ipfs/add',
+      JSON.stringify(data),
+      { headers: { 'Content-Type': 'text/plain' } });
   });
 
   describe('fetchOnIPFS', () => {
