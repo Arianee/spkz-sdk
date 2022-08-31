@@ -81,7 +81,7 @@ export class IPFSService {
 
     const response = await axios.post(`${this.environmentService.environment.bouncerURL}/ipfs/add`, dataToSend, {
       headers: {
-        'Content-Type': contentType[type] || 'text/plain'
+        'Content-Type': contentType.get(type) || 'text/plain'
       }
     });
     const { Hash } = await response.data;
