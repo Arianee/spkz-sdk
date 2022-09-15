@@ -3,6 +3,8 @@ import { ResultUserProfileRPC } from './userProfileRPC';
 export interface UserProfileToSend {
   avatar?: ProfileAvatar;
   ens?: ProfileEns;
+  custom?: CustomProfile;
+  displayNameType?: 'ens' | 'custom' | 'publicAddress',
   biography?: string;
   address?: string;
 }
@@ -29,4 +31,8 @@ export interface ProfileAvatar{
     previewUrl: string;
   }
   metadataUri:string
+}
+
+export interface CustomProfile {
+  name: string;
 }
