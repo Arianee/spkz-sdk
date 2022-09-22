@@ -1,6 +1,6 @@
 import { Strategy, ApiBalanceOf } from '../../models/strategy';
 import { executeStrategies, executeStrategiesWithCache } from '../executeStrategy';
-import { arrayLengthIsGreaterThan, getArrayFromEndpoint, replaceAddressOccurrencesInEndpoint, validateStrategy } from '../api-balance-of/index';
+import { arrayLengthIsWithin, getArrayFromEndpoint, replaceAddressOccurrencesInEndpoint, validateStrategy } from '../api-balance-of/index';
 import axios from 'axios';
 import { ErrorCode } from '../../models/errorCode';
 
@@ -48,13 +48,21 @@ describe('getArrayFromEndpoint', () => {
   });
 });
 
-describe('arrayLengthIsGreaterThan', () => {
-  it('should return true if the array length is greater than or equal to minLength', () => {
-    expect(arrayLengthIsGreaterThan(['a', 'b'], 1)).toBeTruthy();
-    expect(arrayLengthIsGreaterThan(['a', 'b'], 2)).toBeTruthy();
+describe('arrayLengthIsWithin', () => {
+  it('should return true if the array length is greater than or equal to minLength and maxLength is not set', () => {
+    expect(arrayLengthIsWithin(['a', 'b'], 1)).toBeTruthy();
+    expect(arrayLengthIsWithin(['a', 'b'], 2)).toBeTruthy();
+  });
+  it('should return true if the array length is within minLength and maxLength', () => {
+    expect(arrayLengthIsWithin(['a', 'b'], 1, 2)).toBeTruthy();
+    expect(arrayLengthIsWithin(['a', 'b'], 2, 2)).toBeTruthy();
+    expect(arrayLengthIsWithin(['a', 'b'], -Infinity, Infinity)).toBeTruthy();
   });
   it('should return false if the array length is lower than minLength', () => {
-    expect(arrayLengthIsGreaterThan(['a', 'b'], 154151)).toBeFalsy();
+    expect(arrayLengthIsWithin(['a', 'b'], 3)).toBeFalsy();
+  });
+  it('should return false if the array length is not within minLength and maxLength', () => {
+    expect(arrayLengthIsWithin(['a', 'b'], 4, 8)).toBeFalsy();
   });
 });
 
@@ -165,6 +173,32 @@ describe('Execute api-balance-of strategies', () => {
     expect(strategiesReturn.strategies[0][0].isAuthorized).toBeTruthy();
   });
 
+  it('should authorize if the strategy\'s url returns an array whose length is within the min balance and the max balance', async () => {
+    const strategy : Strategy<ApiBalanceOf> = {
+      name: 'api-balance-of',
+      addresses: ['0xabcdef'],
+      params: {
+        url: 'https://arianee.org',
+        headers: { Authorization: 'Basic 123' },
+        minBalance: 1,
+        maxBalance: 3
+      }
+    };
+
+    mockedAxios.get.mockResolvedValue({
+      data: ['a', 'b', 'c']
+    });
+
+    const strategiesReturn = await executeStrategies([[strategy]], {
+      tokenId: '0',
+      chainId: '80001'
+    });
+
+    expect(strategiesReturn.strategies[0][0].message).toBe(null);
+    expect(strategiesReturn.strategies[0][0].code).toBe(ErrorCode.SUCCESS);
+    expect(strategiesReturn.strategies[0][0].isAuthorized).toBeTruthy();
+  });
+
   it('should not authorize if the strategy\'s url returns an array whose length is less than the min balance', async () => {
     const strategy : Strategy<ApiBalanceOf> = {
       name: 'api-balance-of',
@@ -185,7 +219,33 @@ describe('Execute api-balance-of strategies', () => {
       chainId: '80001'
     });
 
-    expect(strategiesReturn.strategies[0][0].message).toBe('Api returned an array whose length is less than min balance');
+    expect(strategiesReturn.strategies[0][0].message).toBe('Api returned an array whose length was outside of [1, Infinity[');
+    expect(strategiesReturn.strategies[0][0].code).toBe(ErrorCode.NOTENOUGH);
+    expect(strategiesReturn.strategies[0][0].isAuthorized).toBeFalsy();
+  });
+
+  it('should not authorize if the strategy\'s url returns an array whose length is not within the min balance and max balance', async () => {
+    const strategy : Strategy<ApiBalanceOf> = {
+      name: 'api-balance-of',
+      addresses: ['0xabcdef'],
+      params: {
+        url: 'https://arianee.org',
+        headers: { Authorization: 'Basic 123' },
+        minBalance: 1,
+        maxBalance: 2
+      }
+    };
+
+    mockedAxios.get.mockResolvedValue({
+      data: ['a', 'b', 'c']
+    });
+
+    const strategiesReturn = await executeStrategies([[strategy]], {
+      tokenId: '0',
+      chainId: '80001'
+    });
+
+    expect(strategiesReturn.strategies[0][0].message).toBe('Api returned an array whose length was outside of [1, 2]');
     expect(strategiesReturn.strategies[0][0].code).toBe(ErrorCode.NOTENOUGH);
     expect(strategiesReturn.strategies[0][0].isAuthorized).toBeFalsy();
   });

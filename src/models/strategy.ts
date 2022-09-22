@@ -114,6 +114,7 @@ export interface UnlockHasOwnership{
 export interface ApiBalanceOf {
   url: string;
   minBalance: number;
+  maxBalance?: number;
   headers: {
     [key: string]: any;
   }
