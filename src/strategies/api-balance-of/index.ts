@@ -3,9 +3,10 @@
  * Parameters:
  * - url: the url to be fetched (GET), MUST return an array
  * - minBalance: the min size of the array returned by the url
+ * - maxBalance (optional): the max size of the array returned by the url
  * - headers: optional, headers to pass to the GET request
  *
- * Strategy is authorized if the array returned by the url is of size >= minBalance
+ * Strategy is authorized if the size of the array returned by the url satisfies: minBalance <= size <= maxBalance
  * Note: all occurrences of __ADDRESS__ in url will be replaced by the first address
  * of the addresses array of the strategy (Strategy.addresses[0]).
  *
@@ -30,8 +31,8 @@ export const getArrayFromEndpoint = async (endpoint: string, headers: ApiBalance
   return maybeArray;
 };
 
-export const arrayLengthIsGreaterThan = (array: any[], minLength: number) : boolean => {
-  return array.length >= minLength;
+export const arrayLengthIsWithin = (array: any[], minLength: number, maxLength: number = Infinity) : boolean => {
+  return minLength <= array.length && array.length <= maxLength;
 };
 
 export const validateStrategy = (_strategy: Strategy<ApiBalanceOf>) : void => {
@@ -54,7 +55,7 @@ export const strategy = async (_strategy: Strategy<ApiBalanceOf>): StrategyRetur
     };
   }
 
-  const { url, headers, minBalance } = _strategy.params;
+  const { url, headers, minBalance, maxBalance } = _strategy.params;
 
   let isAuthorized = false;
   let message;
@@ -62,9 +63,9 @@ export const strategy = async (_strategy: Strategy<ApiBalanceOf>): StrategyRetur
   try {
     const replacedEndpoint = replaceAddressOccurrencesInEndpoint(url, _strategy);
     const array = await getArrayFromEndpoint(replacedEndpoint, headers);
-    isAuthorized = arrayLengthIsGreaterThan(array, minBalance);
+    isAuthorized = arrayLengthIsWithin(array, minBalance, maxBalance);
     code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTENOUGH;
-    message = isAuthorized ? null : 'Api returned an array whose length is less than min balance';
+    message = isAuthorized ? null : `Api returned an array whose length was outside of [${minBalance}, ${maxBalance ? maxBalance + ']' : 'Infinity['}`;
   } catch (e) {
     message = e?.message;
     code = ErrorCode.ERRORINSTRATEGY;
