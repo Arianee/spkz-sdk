@@ -19,8 +19,8 @@ export interface ProfileEns{
 }
 
 export interface ProfileLens {
-  handle:string;
-  tokenId: string;
+  id: string;
+  handle: string;
 }
 
 export interface ProfileAvatar{
