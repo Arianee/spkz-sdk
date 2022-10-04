@@ -3,8 +3,9 @@ import { ResultUserProfileRPC } from './userProfileRPC';
 export interface UserProfileToSend {
   avatar?: ProfileAvatar;
   ens?: ProfileEns;
+  lens?: ProfileLens;
   custom?: CustomProfile;
-  displayNameType?: 'ens' | 'custom' | 'publicAddress',
+  displayNameType?: 'ens' | 'lens' | 'custom' | 'publicAddress',
   biography?: string;
   address?: string;
 }
@@ -14,6 +15,11 @@ export interface UserProfileFromStore extends ResultUserProfileRPC{
 
 export interface ProfileEns{
   name:string;
+  tokenId: string;
+}
+
+export interface ProfileLens {
+  handle:string;
   tokenId: string;
 }
 
