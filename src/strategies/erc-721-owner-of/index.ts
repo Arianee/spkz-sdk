@@ -1,47 +1,45 @@
-// @ts-nocheck
-import { StrategyReturnPromise } from '../../models/strategyReturn';
 import assert from 'assert';
-import web3 from 'web3';
-import { Strategy } from '../../models/strategy';
+import { StrategyReturnPromise } from '../../models/strategyReturn';
+import { Strategy, ERC721OwnerOf } from '../../models/strategy';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { ErrorCode } from '../../models/errorCode';
+import { web3Factory } from '../helpers/web3Factory';
 
-/** example
- [
-    [
-        {
-            chainId:'77',
-            name: 'erc-721-owner-of',
-            address: wallet.address,
-            params: {
-               tokenId:1234,
-                address: '0xB81AFe27c103bcd42f4026CF719AF6D802928765'
-            }
-        }
-    ]
- ]
- * @param web3Provider
+const ownerOf = async (erc721Contract, tokenId: string, userAddresses: string[]) : Promise<Boolean> => {
+  const ownerOfTokenId = await erc721Contract.methods.ownerOf(tokenId).call().catch(() => '');
+  return userAddresses.includes(ownerOfTokenId.toLowerCase());
+};
+
+/**
+ * Check if an user owns one or more of the required NFTs
+ * @param strategy the strategy params
+ * @returns an authorized StrategyReturnPromise if the user owns all the required NFTs, an unauthorized one otherwise
  */
-export const strategy = (web3Provider: web3) =>
-  async (strategy: Strategy): StrategyReturnPromise => {
-    const { params, address } = strategy;
+export const strategy = async (strategy: Strategy<ERC721OwnerOf>): StrategyReturnPromise => {
+  const { params } = strategy;
+  const { chainId, tokenIds } = params as ERC721OwnerOf;
+  const erc721address = params.contract;
+  const userAddresses = strategy.addresses.map(address => address.toLowerCase());
 
-    assert(params.address !== undefined, 'erc20 address is required');
-    assert(params.tokenId !== undefined, 'tokenId is required');
+  assert(erc721address !== undefined, 'erc721 address is required');
+  assert(chainId !== undefined, 'chainId is required');
+  assert(tokenIds !== undefined, 'tokens is required');
 
-    const erc721Address = params.address;
-    const erc721SmartContracts = new web3Provider.eth.Contract(erc721ABI as any, erc721Address);
+  const web3Provider = await web3Factory(chainId);
+  const contract = new web3Provider.eth.Contract(erc721ABI as any, erc721address);
 
-    const ownerOf = await erc721SmartContracts.methods.ownerOf(params.tokenId).call().catch(() => null);
+  const isOwnerOfOneOrMore = (await Promise.all(tokenIds.map(tokenId => ownerOf(contract, tokenId, userAddresses)))).includes(true);
 
-    const isAuthorized = address.toLowerCase() === ownerOf.toLowerCase();
-    const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
-    const message = address === ownerOf ? `You are the owner of ${params.tokenId}` : `You are not the owner of ${params.tokenId}`;
+  const isAuthorized = isOwnerOfOneOrMore;
 
-    return {
-      isAuthorized,
-      strategy: strategy,
-      message: message,
-      code
-    };
+  const code = isAuthorized ? ErrorCode.SUCCESS : ErrorCode.NOTOWNER;
+  const ids = tokenIds.map(tokenId => tokenId).join(', ');
+  const message = isAuthorized ? `You are the owner of one or more of the NFTs : ${ids}` : `You do not own at least one of those NFTs : ${ids}`;
+
+  return {
+    isAuthorized,
+    strategy: strategy,
+    message: message,
+    code
   };
+};

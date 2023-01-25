@@ -3,6 +3,7 @@ import { FetchRoomService } from '../fetchRoomService/fetchRoomService';
 import { NFTROOM } from '../../../../models/NFTROOM';
 import { container } from 'tsyringe';
 import { utils } from '../../index';
+import { EnvironmentService } from '../environmentService/environementService';
 
 describe('rightService', () => {
   beforeEach(() => {
@@ -23,7 +24,10 @@ describe('rightService', () => {
           return fetchRoomMock();
         }
       } as FetchRoomService;
-      const b = new RightService(mockFetchRoom);
+      const mockEnvironment = {
+        environment: { chainId: 'test' }
+      } as EnvironmentService;
+      const b = new RightService(mockFetchRoom, mockEnvironment);
 
       setFetchRoomMock('zefzef');
     });

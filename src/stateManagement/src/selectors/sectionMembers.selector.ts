@@ -18,7 +18,7 @@ export const getSectionMember = (parameters: { roomId: string, sectionId: string
   requiredDefined(roomId, 'roomId is required');
   requiredDefined(sectionId, 'sectionId is required');
 
-  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId.toLowerCase()}`;
+  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId}`;
   return getProperty(propertiesKey);
 };
 
@@ -32,7 +32,7 @@ export const subcribeSectionMembers = (parameters:{roomId, sectionId:string}):Ob
   requiredDefined(roomId, 'roomId is required');
   requiredDefined(sectionId, 'sectionId is required');
 
-  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId.toLowerCase()}`;
+  const propertiesKey = `${REDUCERNAME.SECTIONMEMBER}.${roomId}.${sectionId}`;
   return subscribeToProperty(propertiesKey);
 };
 
@@ -42,6 +42,18 @@ export const subcribeToAllProfileOfRoom = (parameters:{roomId}):Observable<{addr
   const { roomId } = parameters;
   requiredDefined(roomId, 'roomId is required');
   const propertiesKey = `${REDUCERNAME.USERS}.${roomId}`;
+
+  return subscribeToProperty(propertiesKey);
+};
+
+export const subscribeToOneSectionMemberWithProfle = (parameters:{roomId, sectionId?:string, address:string}):Observable<UserProfileFromStore> => {
+  const { requiredDefined } = scope.subScope('subscribeToOneSectionMemberWithProfle');
+
+  const { roomId, address } = parameters;
+
+  requiredDefined(roomId, 'roomId is required');
+  requiredDefined(address, 'address is required');
+  const propertiesKey = `${REDUCERNAME.USERS}.${roomId}.${address.toLowerCase()}`;
 
   return subscribeToProperty(propertiesKey);
 };

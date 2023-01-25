@@ -4,10 +4,15 @@ export interface Strategy<T = ERC20BalancesOf
   | NativeBalancesOf
   | isExactAddresses
   | RoomOwner
-  | ERC721BalancesOfIssuedBy
-  | ERC1155BalancesOf
+  | ArianeeERC721BalancesOfIssuedBy
+  | ERC1155BalanceOfBatch
+  | ERC1155BalanceOf
   | OpenseaCollectionBalanceOf
   | PoapHolderOf
+  | UnlockHasOwnership
+  | ERC721OwnerOf
+  | ERC721NotOwnerOf
+  | ApiBalanceOf
   > {
   name: string,
   addresses?: string[],
@@ -39,11 +44,22 @@ export interface ERC721BalancesOf {
   symbol?: string
 }
 
+export interface ERC721OwnerOf {
+  contract: string;
+  chainId: string;
+  tokenIds?: Array<string>
+  logo?: string,
+  name?: string,
+  symbol?: string
+}
+
+export interface ERC721NotOwnerOf extends ERC721OwnerOf {}
+
 export interface isExactAddresses {
   addresses: Array<string>
 }
 
-export interface ERC721BalancesOfIssuedBy extends ERC721BalancesOf {
+export interface ArianeeERC721BalancesOfIssuedBy extends ERC721BalancesOf {
   issuer: string
 }
 
@@ -58,16 +74,18 @@ export interface RoomOwner {
   networkId: string
 }
 
-export interface ERC1155BalanceOf extends ERC20BalanceOf {
-    id: string
+export interface ERC1155BalanceOf {
+  id: string;
+  amount: string;
 }
 
-export interface ERC1155BalancesOf {
-    minBalance: string,
-    tokens?: Array<ERC1155BalanceOf>,
-    logo?: string,
-    name?: string,
-    symbol?: string
+export interface ERC1155BalanceOfBatch {
+  chainId: string;
+  address: string;
+  logo?: string;
+  name?: string;
+  symbol?: string;
+  minBalances: ERC1155BalanceOf[];
 }
 
 export interface OpenseaCollectionBalanceOf{
@@ -83,4 +101,21 @@ export interface PoapHolderOf{
   logo?: string,
   name?: string,
   symbol?: string
+}
+
+export interface UnlockHasOwnership{
+  chainId: string;
+  address: string;
+  logo?: string,
+  name?: string,
+  symbol?: string
+}
+
+export interface ApiBalanceOf {
+  url: string;
+  minBalance: number;
+  maxBalance?: number;
+  headers: {
+    [key: string]: any;
+  }
 }

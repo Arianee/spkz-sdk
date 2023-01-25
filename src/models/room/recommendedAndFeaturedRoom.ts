@@ -5,8 +5,10 @@ export interface Section {
     readStrategies?: any[][];
     icon?: string;
     url?: string;
-    type?: string
+    type?: SectionType
   }
+
+export type SectionType = 'chat' | 'welcome' | 'external_url';
 
 export interface RoomDetails {
     endpoint: string;

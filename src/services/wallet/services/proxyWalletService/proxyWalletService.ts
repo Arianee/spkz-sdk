@@ -10,6 +10,7 @@ import { AuthorizationsStatus } from '../../../../models/authorizationsStatus';
 import { MetamaskService } from '../metamask/metamaskService';
 import { Wallet as etherWallet } from '@ethersproject/wallet';
 import { IClientMeta } from '@walletconnect/types';
+import { EnvironmentService } from '../../../utils/services/environmentService/environementService';
 
 const localStorageAuthorizationKey = 'spkz_authorizations';
 
@@ -17,7 +18,8 @@ const localStorageAuthorizationKey = 'spkz_authorizations';
 export class ProxyWalletService {
   constructor (
     private rightService: RightService,
-    private metamaskService: MetamaskService
+    private metamaskService: MetamaskService,
+    private environmentService: EnvironmentService
   ) {
   }
 
@@ -41,6 +43,8 @@ export class ProxyWalletService {
   public decoder: (message, signature) => any;
   public jwtHelper: JWTGeneric;
   private _privateKey: string;
+
+  readonly defaultSignMessage = 'You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !';
 
   get privateKey (): string {
     return this._privateKey;
@@ -98,46 +102,40 @@ export class ProxyWalletService {
   public async addFromMetamask () {
     await this.metamaskService.initMetamask();
     const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
-
+    const message = this.environmentService.spkzConfiguration?.customSignMessage || this.defaultSignMessage;
     const jwtSigner = new JWTGeneric(this.metamaskService.signData, () => {
     });
     const zef = jwtSigner.setPayload(payloadToSign)
-      .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
+      .setMessage(message);
     const signedJWT = await zef.sign();
 
     this.addBlockchainWalletAuthorization(signedJWT);
     return this;
   }
 
-  public addFromMetamaskWc = async (browserOpen, clientMeta?:IClientMeta):Promise<{url:string, signature:Promise<any>}> => {
-    requiredDefined(browserOpen, 'You need to specify a method to open the WalletConnect link');
-    const url = await this.metamaskService.initMMWC(clientMeta);
-    let signature;
-    const sign = async () => {
-      const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {
-      });
-      const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+  public sign = async () => {
+    const jwtSigner = new JWTGeneric(this.metamaskService.signWithWc, () => {});
+    const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(this.metamaskService.defaultAccount);
+    const message = this.environmentService.spkzConfiguration?.customSignMessage || this.defaultSignMessage;
+    const jwt = jwtSigner
+      .setPayload(payloadToSign)
+      .setMessage(message);
+    const signedJWT = await jwt.sign();
+    return this.addBlockchainWalletAuthorization(signedJWT);
+  };
 
-      const jwt = jwtSigner.setPayload(payloadToSign)
-        .setMessage('You need to sign an authorization for a burner wallet.\n This authorization allows you to send messages without having to sign each message.\n\n It\'s an offchain signature, it\'s gas free !');
-      const signedJWT = await jwt.sign();
-      return this.addBlockchainWalletAuthorization(signedJWT);
+  public addFromWc = async (clientMeta?:IClientMeta, defaultQrcode = false):Promise<{url:string, sign:Function}> => {
+    const url = await this.metamaskService.initWC(clientMeta, defaultQrcode);
+
+    return {
+      url,
+      sign: this.delayedSign
     };
+  }
 
-    return new Promise((resolve) => {
-      browserOpen(url);
-
-      if (!this.metamaskService.connector.connected) {
-        this.metamaskService.connector.on('connect', async (error, payload) => {
-          this.metamaskService.defaultAccount = payload.params[0].accounts[0];
-          signature = sign();
-          resolve({ url, signature });
-        });
-      } else {
-        signature = sign();
-        resolve({ url, signature });
-      }
-    });
+  private delayedSign = async () => {
+    await this.metamaskService.getDefaultAccountFromWalletConnect();
+    return this.sign();
   }
 
   public async addWalletFromPrivateKey (privateKey: string = etherWallet.createRandom().privateKey) {

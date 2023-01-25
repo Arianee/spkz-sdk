@@ -5,10 +5,13 @@ import { required, requiredDefined } from '../../../../helpers/required/required
 import { Signaturev4 } from '../../../../models/signaturev4';
 import WalletConnect from '@walletconnect/client';
 import Web3 from 'web3';
-import { IClientMeta, IWalletConnectOptions } from '@walletconnect/types';
+import { IClientMeta, IWalletConnectOptions, IInternalEvent } from '@walletconnect/types';
+import QRCodeModal from '@walletconnect/qrcode-modal';
+import { ContractService } from '../../../utils/services/contractService/contractService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
+  private localStorageWalletConnectKey = 'walletconnect'
   public accounts: string[];
   public defaultAccount: string;
 
@@ -16,17 +19,16 @@ export class MetamaskService {
   public currentChainId=137;
 
   private _window: any;
-  public connector;
+  public connector: WalletConnect;
 
-  constructor () {
+  constructor (private contractService:ContractService) {
     if (typeof window !== 'undefined') {
       this._window = window;
     }
   }
 
-  public initMetamaskSilently = async (): Promise<void> => {
+  public initMetamaskSilently = async (chainId?:string): Promise<void> => {
     requiredDefined(this._window, "You can't use metamask on nodejs");
-
     if (this._window.ethereum) {
       this.hasMetamask = true;
 
@@ -37,6 +39,10 @@ export class MetamaskService {
         }
       } else {
         await this.initMetamask();
+      }
+
+      if (chainId && chainId.toString() !== parseInt(this.currentChainId.toString(), 16).toString()) {
+        await this.switchToNetwork(chainId as any);
       }
     }
   }
@@ -72,7 +78,7 @@ export class MetamaskService {
 
     const networkInfo = await getNetworkInfo(network);
 
-    this._window.ethereum.request({
+    await this._window.ethereum.request({
       method: 'wallet_addEthereumChain',
       params: [{
         chainId: `0x${networkInfo.chainId.toString(16)}`,
@@ -84,25 +90,43 @@ export class MetamaskService {
     });
   }
 
-  public initMMWC = async (clientMeta?:IClientMeta): Promise<string> => {
+  public initWC = async (clientMeta?:IClientMeta, defaultQrCode?:boolean): Promise<string> => {
     const connectorOptions:IWalletConnectOptions = {
       bridge: 'https://bridge.walletconnect.org'
     };
-    if (clientMeta) {
-      connectorOptions.clientMeta = clientMeta;
+    connectorOptions.clientMeta = clientMeta;
+    if (defaultQrCode) {
+      connectorOptions.qrcodeModal = QRCodeModal;
     }
 
     this.connector = new WalletConnect(connectorOptions);
 
     if (!this.connector.connected) {
       await this.connector.createSession();
+      this.connector.on('connect', (error, payload) => {
+        this.defaultAccount = payload.params[0].accounts[0];
+      });
     } else {
       this.defaultAccount = this.connector.accounts[0];
     }
 
-    const url = new URL('https://metamask.app.link/wc');
-    url.searchParams.set('uri', this.connector.uri);
-    return url.toString();
+    return this.connector.uri;
+  }
+
+  public getDefaultAccountFromWalletConnect () {
+    return new Promise((resolve, reject) => {
+      if (this.defaultAccount) {
+        return resolve(this.defaultAccount);
+      } else {
+        this.connector.on('connect', (error, payload) => {
+          if (error) {
+            return reject(error);
+          }
+          this.defaultAccount = payload.params[0].accounts[0];
+          return resolve(this.defaultAccount);
+        });
+      }
+    });
   }
 
   public signWithWc = async (data) => {
@@ -133,5 +157,17 @@ export class MetamaskService {
       method: 'eth_signTypedData_v4',
       params: [this.defaultAccount, payload]
     });
+  }
+
+  public roomSmartContract () {
+    return this.contractService.erc721Contract(this._window.ethereum);
+  }
+
+  public async killSession () {
+    if (this.connector?.connected) {
+      await this.connector.killSession();
+    } else {
+      localStorage.removeItem(this.localStorageWalletConnectKey);
+    }
   }
 }

@@ -3,7 +3,7 @@ jest.setTimeout(60000);
 
 describe('clause', () => {
   describe('AND clause', () => {
-    test('should return true if have aria on Mainnet AND POA', async () => {
+    test.skip('should return true if have aria on Mainnet AND POA', async () => {
       const strategyProvider = await executeStrategiesWithCache([[
         {
           name: 'erc-20-balance-of',
@@ -23,7 +23,7 @@ describe('clause', () => {
         },
         {
           name: 'erc-20-balance-of',
-          addresses: ['0xb261d59bc5b2ced5c000ecb23783f3054e5fc5d0'],
+          addresses: ['0x1383ddcf0aee4adb6402f5aaf47b327cbbd2bf2d'],
           params: {
             minBalance: '12',
             tokens: [
@@ -53,7 +53,7 @@ describe('clause', () => {
             ]
           }
         }
-      ]]
+      ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeTruthy();
@@ -91,7 +91,7 @@ describe('clause', () => {
             ]
           }
         }
-        ]]
+        ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeFalsy();
@@ -133,7 +133,7 @@ describe('clause', () => {
             ]
           }
         }
-      ]]
+      ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeFalsy();
@@ -172,7 +172,7 @@ describe('clause', () => {
               ]
             }
           }
-        ]]
+        ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeTruthy();

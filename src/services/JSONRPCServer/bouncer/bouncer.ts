@@ -128,11 +128,70 @@ export const bouncerJSONRPCFactory = (networkParameters: NetworkParameters) =>
       }
     };
 
+    const updateNotificationPreferences = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
+
+        const { authorizations, roomId, sectionId, preferences } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
+        requiredDefined(preferences, 'preferences should be defined');
+
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
+
+        if (isAuthorized === false) {
+          const errorPayload:ErrorPayload[] = details;
+          return callback(errorPayload);
+        }
+
+        const firstBlockchainWallet = blockchainWallets[0];
+        await configuration.updateNotificationPreferences({
+          preferences,
+          sectionId,
+          roomId,
+          blockchainWallet: firstBlockchainWallet.toString()
+        });
+        return callback(null, params);
+      } catch (e) {
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
+      }
+    };
+
+    const updateBadgeCount = async (params, callback) => {
+      try {
+        requiredDefined(params, 'params should be defined');
+
+        const { authorizations, badgeCount } = params;
+        requiredDefined(authorizations, 'authorizations should be defined');
+        requiredDefined(badgeCount, 'badgeCount should be defined');
+
+        const { isAuthorized, blockchainWallets, details } = await utils.rightService.verifyPayloadSignatures(params);
+
+        if (isAuthorized === false) {
+          const errorPayload:ErrorPayload[] = details;
+          return callback(errorPayload);
+        }
+
+        const firstBlockchainWallet = blockchainWallets[0];
+        await configuration.updateBadgeCount({
+          badgeCount,
+          blockchainWallet: firstBlockchainWallet.toString()
+        });
+        return callback(null, params);
+      } catch (e) {
+        const errorPayload = JSONRPCErrors.unknownError;
+        errorPayload.details = JSON.stringify(e);
+        return callback(errorPayload);
+      }
+    };
+
     return {
       [JSONRPCMethods.bouncer.rooms.getUserRooms]: getUserRooms,
       [JSONRPCMethods.bouncer.users.getMyProfile]: getMyProfile,
       [JSONRPCMethods.bouncer.users.updateMyProfile]: updateMyProfile,
-      [JSONRPCMethods.bouncer.rooms.join]: joinRoom
-
+      [JSONRPCMethods.bouncer.rooms.join]: joinRoom,
+      [JSONRPCMethods.bouncer.users.updateNotificationPreferences]: updateNotificationPreferences,
+      [JSONRPCMethods.bouncer.users.updateBadgeCount]: updateBadgeCount
     };
   };

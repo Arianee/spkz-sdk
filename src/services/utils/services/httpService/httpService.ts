@@ -14,6 +14,23 @@ export class HttpService {
     };
   }
 
+  public static get infuriaIPFSConfig () {
+    return {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+  }
+
+  tryGetConfigForURL = function (url: string, defaultConfig) {
+    if (url.startsWith('https://ipfs.infura.io')) {
+      return HttpService.infuriaIPFSConfig;
+    }
+
+    return defaultConfig || HttpService.defaultConfig;
+  }
+
   public fetchWithCache (
     url: string,
     config: any = { ...HttpService.defaultConfig }
@@ -44,17 +61,19 @@ export class HttpService {
     url: string,
     config: any = { ...HttpService.defaultConfig }
   ) {
+    const selectedConfig = this.tryGetConfigForURL(url, config);
+
     if (config.body) {
-      config.data = config.body;
+      selectedConfig.data = config.body;
     }
 
     try {
-      return this.httpFetch(url, config);
+      return this.httpFetch(url, selectedConfig);
     } catch (e) {
-      console.warn('Error on fetch', url, config);
+      console.warn('Error on fetch', url, selectedConfig);
       return Promise.reject(e);
     }
   }
 
-    private httpFetch=(url, config) => axios(url, config).then(result => result.data);
+    private httpFetch=(url, config) => axios(url, config).then(result => result.data).catch(e => console.error(e.message, `url(${url})`));
 }

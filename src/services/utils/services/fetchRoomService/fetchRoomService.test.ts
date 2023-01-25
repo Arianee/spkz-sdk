@@ -3,6 +3,7 @@ import { FetchRoomService } from './fetchRoomService';
 import { HttpService } from '../httpService/httpService';
 import { Contract } from 'ethers';
 import { ContractService } from '../contractService/contractService';
+jest.setTimeout(60000);
 
 describe('fetchRoom', () => {
   let fetchRoomService: FetchRoomService;
@@ -36,9 +37,9 @@ describe('fetchRoom', () => {
         return Promise.resolve(cacheDatabse[parameters.roomId]);
       })
     };
+    fetchRoomService.setCacheMethods(cacheObject);
     fetchRoomService.rawFetchRoom = jest.fn().mockImplementation(fetchRoomService.rawFetchRoom);
 
-    fetchRoomService.setCacheMethods(cacheObject);
     await fetchRoomService.fetchRoom('1');
     expect(cacheObject.get).toHaveBeenCalledWith('1');
     expect(cacheObject.set).toHaveBeenCalledTimes(1);

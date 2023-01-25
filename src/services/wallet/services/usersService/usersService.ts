@@ -3,7 +3,10 @@ import { requiredDefined } from '../../../../helpers/required/required';
 import { FetchRoomService } from '../../../utils/services/fetchRoomService/fetchRoomService';
 import { Observable } from 'rxjs';
 import { UserProfileFromStore } from '../../../../models/userProfile/userProfile';
-import { subscribeToSectionMemberWithProfle } from '../../../../stateManagement/src/selectors/sectionMembers.selector';
+import {
+  subscribeToOneSectionMemberWithProfle,
+  subscribeToSectionMemberWithProfle
+} from '../../../../stateManagement/src/selectors/sectionMembers.selector';
 import { FetchStatusEnum } from '../../../../stateManagement/src/reducers/fetchStatus/FetchStatusEnum';
 import { getFetchStatus } from '../../../../stateManagement/src/selectors/fetchStatus.selector';
 import { updateFetchStatus } from '../../../../stateManagement/src/reducers/fetchStatus/actions';
@@ -11,7 +14,9 @@ import { addUsersProfiles } from '../../../../stateManagement/src/reducers/users
 import { addMembersToSection } from '../../../../stateManagement/src/reducers/sectionMembers/actions';
 import { UsersClientService } from './usersClientService';
 import { WebsocketService } from '../websocketService/websocketService';
-import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
+import {
+  InternalMessageEventEmitterService
+} from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class UsersService {
@@ -23,20 +28,26 @@ export class UsersService {
   ) {
   }
 
-  /**
-   * Get list of section's users
-   * @param {{roomId: string; sectionId: string}} parameters
-   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
-   */
-  public subscribeToSectionUsers (parameters: {
+  public subscribeToOneSectionUsers (parameters: {
     roomId: string,
     sectionId: string,
-    forceRefresh?:boolean }): Observable<UserProfileFromStore[]> {
+    address:string,
+    forceRefresh?:boolean }): Observable<UserProfileFromStore> {
+    this.initialFetch(parameters);
+
+    return subscribeToOneSectionMemberWithProfle(parameters);
+  }
+
+  private initialFetch (parameters: {
+    roomId: string,
+    sectionId: string,
+    forceRefresh?:boolean }) {
     const {
       roomId,
       sectionId,
       forceRefresh
     } = parameters;
+
     requiredDefined(roomId, 'roomId is required');
     requiredDefined(sectionId, 'sectionId is required');
     const shouldRefresh = forceRefresh || false;
@@ -74,12 +85,25 @@ export class UsersService {
 
       this.messageService.userJoinSectionEvent((data:string) => {
         const member = JSON.parse(data);
-        addUsersProfiles({ roomId: roomId, users: [member] });
-        addMembersToSection({ sectionId, roomId, users: [{ address: member.blockchainWallet }] });
+        addUsersProfiles({ roomId: member.roomId, users: [member] });
+        addMembersToSection({ sectionId: member.sectionId, roomId: member.roomId, users: [{ address: member.blockchainWallet }] });
         return member;
       });
       // to code!
     }
+  }
+
+  /**
+   * Get list of section's users
+   * @param {{roomId: string; sectionId: string}} parameters
+   * @returns {Promise<{jsonrpc: number; id: string; result?: any}>}
+   */
+  public subscribeToSectionUsers (parameters: {
+    roomId: string,
+    sectionId: string,
+    forceRefresh?:boolean }): Observable<UserProfileFromStore[]> {
+    this.initialFetch(parameters);
+
     return subscribeToSectionMemberWithProfle(parameters);
   }
 }

@@ -1,9 +1,13 @@
+import { BadgeCountToSend } from './badgeCountToSend';
+
 export const JSONRPCMethods = {
 
   bouncer: {
     users: {
       getMyProfile: 'bouncer.users.getMyProfile',
-      updateMyProfile: 'bouncer.users.updateMyProfile'
+      updateMyProfile: 'bouncer.users.updateMyProfile',
+      updateNotificationPreferences: 'bouncer.users.updateNotificationPreferences',
+      updateBadgeCount: 'bouncer.users.updateBadgeCount'
     },
     rooms: {
       join: 'bouncer.rooms.join',

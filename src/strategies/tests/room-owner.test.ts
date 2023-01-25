@@ -13,7 +13,7 @@ describe('execute strategies of room-owner', () => {
           networkId: '1'
         }
       }]
-    ], '0');
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.isAuthorized).toBeFalsy();
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
@@ -29,7 +29,7 @@ describe('execute strategies of room-owner', () => {
           networkId: '1'
         }
       }]
-    ], '0');
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.isAuthorized).toBeFalsy();
   });
@@ -44,7 +44,7 @@ describe('execute strategies of room-owner', () => {
           networkId: '1'
         }
       }]
-    ], '0');
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);

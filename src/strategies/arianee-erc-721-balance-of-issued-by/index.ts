@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { EnrichedInformations, StrategyReturnPromise } from '../../models/strategyReturn';
-import { ERC721BalancesOfIssuedBy, Strategy } from '../../models/strategy';
+import { ArianeeERC721BalancesOfIssuedBy, Strategy } from '../../models/strategy';
 import { erc721ABI } from '../../abi/erc721.abi';
 import { ErrorCode } from '../../models/errorCode';
 import { requiredDefined, requiredType } from '../../helpers/required/required';
@@ -11,7 +11,7 @@ import { minMaxMessage } from '../helpers/messageHelper';
 import web3 from 'web3';
 import { sumBN } from '../helpers/sumBN/sumBN';
 
-const getBalanceOfIssuedBy = async (params: ERC721BalancesOfIssuedBy, issuer:string, addresses:string[]): Promise<{
+const getBalanceOfIssuedBy = async (params: ArianeeERC721BalancesOfIssuedBy, issuer:string, addresses:string[]): Promise<{
   chainId: string, address: string, balanceOf: string }[]> => {
   const { address: ERC71Address, chainId } = params;
   requiredDefined(ERC71Address, 'address of token is required');
@@ -40,7 +40,7 @@ const getBalanceOfIssuedBy = async (params: ERC721BalancesOfIssuedBy, issuer:str
   return flattenDeep(result);
 };
 
-const getBalances = async (strategy:Strategy<ERC721BalancesOfIssuedBy>) : Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
+const getBalances = async (strategy:Strategy<ArianeeERC721BalancesOfIssuedBy>) : Promise<{ sum: string, balances: { chainId: string, address: string, balanceOf: string }[] }> => {
   const { tokens } = strategy.params;
   const balances = await Promise.all(tokens.map(token => getBalanceOfIssuedBy(token, strategy.params.issuer, strategy.addresses)));
 
@@ -53,7 +53,7 @@ const getBalances = async (strategy:Strategy<ERC721BalancesOfIssuedBy>) : Promis
   };
 };
 
-export const strategy = async (strategy: Strategy<ERC721BalancesOfIssuedBy>): StrategyReturnPromise => {
+export const strategy = async (strategy: Strategy<ArianeeERC721BalancesOfIssuedBy>): StrategyReturnPromise => {
   const { params } = strategy;
   const firstToken = params.tokens[0];
   let symbol, name;

@@ -1,7 +1,9 @@
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('execute strategies of erc 721 balance of issued by', () => {
+// erc-721-balance-of-issued-by is an alias of arianee-erc-721-balance-of-issued-by
+
+describe('execute strategies of erc 721 balance of issued by alias of arianee erc 721 balance of issued by', () => {
   test('wallet without erc 721 of specific should be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
@@ -20,7 +22,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
           }]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);
@@ -44,7 +46,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
           }]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(1);
@@ -68,7 +70,7 @@ describe('execute strategies of erc 721 balance of issued by', () => {
           }]
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(1);

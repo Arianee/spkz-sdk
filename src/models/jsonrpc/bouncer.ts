@@ -8,3 +8,15 @@ export interface BouncerUserQuery {
  network:string;
  chainId:string;
 }
+
+export interface NotificationPreferences {
+  blockchainWallet: string;
+  roomId?: string,
+  sectionId?: string,
+  preferences: 'ALL' | 'MENTIONS_ONLY' | 'NONE',
+}
+
+export interface BadgeCount {
+  blockchainWallet: string;
+  badgeCount: number
+}

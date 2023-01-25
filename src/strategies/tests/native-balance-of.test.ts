@@ -15,7 +15,7 @@ describe('clause', () => {
             networkId: '1'
           }
         }
-      ]]
+      ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeTruthy();
@@ -32,7 +32,7 @@ describe('clause', () => {
             networkId: '1'
           }
         }
-        ]]
+        ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeFalsy();
@@ -59,7 +59,7 @@ describe('clause', () => {
             networkId: '1'
           }
         }
-      ]]
+      ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeTruthy();
@@ -88,7 +88,7 @@ describe('clause', () => {
             networkId: '1'
           }
         }
-      ]]
+      ]], { tokenId: '0', chainId: '80001' }
       );
 
       expect(strategyProvider.isAuthorized).toBeTruthy();

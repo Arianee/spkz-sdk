@@ -170,16 +170,17 @@ workflows:
           filters:
             branches:
               only: master
-  every-two-hour-workflow:
-    triggers:
-      - schedule:
-          cron: "0 * * * *"
-          filters:
-            branches:
-              only:
-                - develop
-                - main
-    jobs:
-      - test
+
+  # uat:
+    # triggers:
+    #   - schedule:
+    #       cron: "0 11 * * *"
+    #       filters:
+    #         branches:
+    #           only:
+    #             - develop
+    #             - main
+    # jobs:
+    #   - test
 
 

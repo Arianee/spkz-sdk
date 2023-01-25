@@ -15,7 +15,7 @@ describe('execute strategies of opensea collection balance of', () => {
           collection: 'metaverse-avatars'
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(1);
@@ -36,7 +36,7 @@ describe('execute strategies of opensea collection balance of', () => {
           collection: 'metaverse-avatars'
         }
       }]
-    ]);
+    ], { tokenId: '0', chainId: '80001' });
 
     expect(strategyProvider.strategies[0][0].message).toBeDefined();
     expect(strategyProvider.strategies[0][0].code).toBe(0);

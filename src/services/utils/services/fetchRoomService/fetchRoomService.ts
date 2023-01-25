@@ -5,6 +5,7 @@ import cache from 'memory-cache';
 import { ContractService } from '../contractService/contractService';
 import { AsyncFunc } from '../../../../models/AsyncFunc';
 import { requiredDefined } from '../../../../helpers/required/required';
+import { IPFSService } from '../nftRoomAdminService/IPFSService';
 
 @scoped(Lifecycle.ContainerScoped)
 export class FetchRoomService {
@@ -14,6 +15,7 @@ export class FetchRoomService {
   private memCache=new cache.Cache();
 
   constructor (private httpService: HttpService,
+              private IPFSService:IPFSService,
               private contractService: ContractService) {
   }
 
@@ -42,12 +44,23 @@ export class FetchRoomService {
   };
 
   public rawFetchRoom = async (roomId) => {
-    const tokenURI = await this.contractService.erc721Contract().methods.tokenURI(roomId)
+    let tokenURI:string | undefined = await this.contractService.erc721Contract().methods.tokenURI(roomId)
       .call().catch((e) => { console.error('error fetchingRoom', e); return undefined; });
+
+    // Convert hardcoded ipfs url to ipfs hash
+    if (tokenURI.startsWith('https://ipfs.infura.io:5001/api/v0/cat?arg=')) {
+      tokenURI = 'ipfs://' + tokenURI.replace('https://ipfs.infura.io:5001/api/v0/cat?arg=', '');
+    }
+
     if (tokenURI === undefined) {
       return undefined;
     }
-    return this.httpService.fetch(tokenURI);
+
+    if (tokenURI.startsWith('ipfs://')) {
+      return this.IPFSService.fetchOnIPFS(tokenURI);
+    } else {
+      return this.httpService.fetch(tokenURI);
+    }
   };
 
   /**

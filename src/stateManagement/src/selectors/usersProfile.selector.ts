@@ -1,9 +1,8 @@
 import { getProperty, subscribeToProperty } from '../utilityMapper/utilities';
 import { REDUCERNAME } from '../reducerName';
-import { UserProfileFromStore, UserProfileToSend } from '../../../models/userProfile/userProfile';
+import { UserProfileFromStore } from '../../../models/userProfile/userProfile';
 import { Observable } from 'rxjs';
 import { Scope } from '@arianee/required';
-import { UserProfileRPC } from '../../../models/userProfile/userProfileRPC';
 
 const scope = Scope({ scopes: ['users', 'selector'] });
 
