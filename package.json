@@ -2,8 +2,8 @@
   "name": "@arianee/spkz-sdk",
   "version": "1.6.0",
   "description": "Spkz-sdk for Arianee",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.js",
+  "types": "./index.d.ts",
   "scripts": {
     "start": "node dist/index.js",
     "test:jest": "start-server-and-test 'npm run start:express' http://localhost:3000/ping 'jest --coverage --runInBand --bail --forceExit'",
