@@ -11,14 +11,14 @@ describe('execute strategies of erc 1155 balance of', () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-1155-balance-of-batch',
-        addresses: ['0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4'],
+        addresses: ['0x20797F3D8b051f444Ed9968d34B0a6B1aF9c01d4'],
         params: {
-          chainId: '4',
-          address: '0x4e0951fa4f0c299380ad8c81ae1a32f120907f64',
+          chainId: '1',
+          address: '0x7DaEC605E9e2a1717326eeDFd660601e2753A057',
           logo: '',
           name: '',
           symbol: '',
-          minBalances: [{ id: '0', amount: '500' }, { id: '1', amount: '1' }]
+          minBalances: [{ id: '0', amount: '1' }]
         }
       }]
     ], { tokenId: '0', chainId: '80001' });
@@ -33,10 +33,10 @@ describe('execute strategies of erc 1155 balance of', () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-1155-balance-of-batch',
-        addresses: ['0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4'],
+        addresses: ['0x20797F3D8b051f444Ed9968d34B0a6B1aF9c01d4'],
         params: {
-          chainId: '4',
-          address: '0x4e0951fa4f0c299380ad8c81ae1a32f120907f64',
+          chainId: '1',
+          address: '0x7DaEC605E9e2a1717326eeDFd660601e2753A057',
           logo: '',
           name: '',
           symbol: '',
@@ -55,10 +55,10 @@ describe('execute strategies of erc 1155 balance of', () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
         name: 'erc-1155-balance-of-batch',
-        addresses: ['0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4'],
+        addresses: ['0x20797F3D8b051f444Ed9968d34B0a6B1aF9c01d4'],
         params: {
-          chainId: '4',
-          address: '0x4e0951fa4f0c299380ad8c81ae1a32f120907f64',
+          chainId: '1',
+          address: '0x7DaEC605E9e2a1717326eeDFd660601e2753A057',
           logo: '',
           name: '',
           symbol: '',
