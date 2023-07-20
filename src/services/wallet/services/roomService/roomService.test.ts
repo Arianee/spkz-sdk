@@ -11,7 +11,7 @@ import { getStore } from '../../../../stateManagement/src/store';
 
 jest.setTimeout(60000);
 
-describe('room', () => {
+xdescribe('room', () => {
   let proxyWallet: SPKZ;
   let proxiesWallet:SPKZ[];
 

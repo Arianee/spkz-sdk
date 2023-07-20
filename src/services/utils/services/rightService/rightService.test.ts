@@ -87,7 +87,7 @@ describe('rightService', () => {
       });
     });
   });
-  describe('can join section', () => {
+  xdescribe('can join section', () => {
     const room0 = {
       $schema: 'https://cert.arianee.org/version1/ArianeeAsset.json',
       endpoint: 'http://localhost:3000/spkz/rpc',

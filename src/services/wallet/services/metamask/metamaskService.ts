@@ -3,11 +3,9 @@ import { network } from '../../../../models/network.enum';
 import { getNetworkInfo } from '../../../../helpers/networkInfos/networkInfos.helper';
 import { required, requiredDefined } from '../../../../helpers/required/required';
 import { Signaturev4 } from '../../../../models/signaturev4';
-import WalletConnect from '@walletconnect/client';
-import Web3 from 'web3';
-import { IClientMeta, IWalletConnectOptions, IInternalEvent } from '@walletconnect/types';
-import QRCodeModal from '@walletconnect/qrcode-modal';
 import { ContractService } from '../../../utils/services/contractService/contractService';
+import { EthereumProvider } from '@walletconnect/ethereum-provider';
+import { ethers } from 'ethers';
 
 @scoped(Lifecycle.ContainerScoped)
 export class MetamaskService {
@@ -19,7 +17,10 @@ export class MetamaskService {
   public currentChainId=137;
 
   private _window: any;
-  public connector: WalletConnect;
+  web3ModalEthereumProvider: any;
+  projectId = '161a26cf3fa8e9340f7d0c153dcd2b64';
+  provider?: ethers.providers.Web3Provider;
+  isConnected: boolean;
 
   constructor (private contractService:ContractService) {
     if (typeof window !== 'undefined') {
@@ -90,55 +91,69 @@ export class MetamaskService {
     });
   }
 
-  public initWC = async (clientMeta?:IClientMeta, defaultQrCode?:boolean): Promise<string> => {
-    const connectorOptions:IWalletConnectOptions = {
-      bridge: 'https://bridge.walletconnect.org'
-    };
-    connectorOptions.clientMeta = clientMeta;
-    if (defaultQrCode) {
-      connectorOptions.qrcodeModal = QRCodeModal;
-    }
+  public initWC = async (): Promise<void> => {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise<void>(async (resolve, reject) => {
+      if (this.isConnected) {
+        console.info('[Web3ModalV2Connector] Already connected');
+        return;
+      }
 
-    this.connector = new WalletConnect(connectorOptions);
-
-    if (!this.connector.connected) {
-      await this.connector.createSession();
-      this.connector.on('connect', (error, payload) => {
-        this.defaultAccount = payload.params[0].accounts[0];
-      });
-    } else {
-      this.defaultAccount = this.connector.accounts[0];
-    }
-
-    return this.connector.uri;
-  }
-
-  public getDefaultAccountFromWalletConnect () {
-    return new Promise((resolve, reject) => {
-      if (this.defaultAccount) {
-        return resolve(this.defaultAccount);
-      } else {
-        this.connector.on('connect', (error, payload) => {
-          if (error) {
-            return reject(error);
-          }
-          this.defaultAccount = payload.params[0].accounts[0];
-          return resolve(this.defaultAccount);
+      try {
+        this.web3ModalEthereumProvider =
+          await EthereumProvider.init({
+            projectId: this.projectId,
+            showQrModal: true,
+            chains: [1],
+            methods: ['personal_sign'],
+            events: ['chainChanged', 'accountsChanged'],
+            metadata: {
+              name: 'SPKZ',
+              description: 'SPKZ by Arianee',
+              url: 'https://arian.ee/',
+              icons: ['']
+            }
+          });
+        // 6. Set up connection listener
+        this.web3ModalEthereumProvider.on('connect', async () => {
+          this.isConnected = true;
+          this.provider = new ethers.providers.Web3Provider(
+            this.web3ModalEthereumProvider
+          );
+          this.defaultAccount = (await this.provider.listAccounts())[0];
+          console.info('[Web3ModalV2Connector] Connected with ', this.defaultAccount);
+          resolve();
         });
+        await this.web3ModalEthereumProvider.connect();
+      } catch (err) {
+        reject(err);
       }
     });
   }
 
-  public signWithWc = async (data) => {
-    const web3 = new Web3();
+  public getDefaultAccountFromWalletConnect () {
+    // eslint-disable-next-line no-async-promise-executor
+    return new Promise(async (resolve, reject) => {
+      if (this.defaultAccount) {
+        return resolve(this.defaultAccount);
+      } else {
+        this.defaultAccount = (await this.provider.listAccounts())[0];
+        return resolve(this.defaultAccount);
+      }
+    });
+  }
 
-    const msgParams = [
-      web3.utils.utf8ToHex(data), // Required
-      this.defaultAccount
-    ];
+  public signWithWc = async (data) : Promise<string> => {
+    if (!this.web3ModalEthereumProvider) { throw new Error('Web3Modal is not initialized'); }
+    if (!this.isConnected) {
+      await this.initWC();
+    }
+    console.info(
+      '[Web3ModalConnector] Init Signed: { message: "%s" }',
+      data
+    );
 
-    return this.connector
-      .signPersonalMessage(msgParams);
+    return this.provider!.getSigner().signMessage(data);
   }
 
   public signData = (data: string): Promise<string> => {
@@ -164,8 +179,16 @@ export class MetamaskService {
   }
 
   public async killSession () {
-    if (this.connector?.connected) {
-      await this.connector.killSession();
+    if (this.isConnected) {
+      if (!this.web3ModalEthereumProvider) { throw new Error('Web3ModalEthereumProvider is not initialized'); }
+
+      this.web3ModalEthereumProvider.disconnect();
+      // Remove WalletConnect session from local storage
+      localStorage.removeItem('walletconnect');
+
+      this.isConnected = false;
+
+      console.info('[Web3ModalV2Connector] Disconnected');
     } else {
       localStorage.removeItem(this.localStorageWalletConnectKey);
     }

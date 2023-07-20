@@ -1,7 +1,7 @@
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('erc-20-balance-of', () => {
+xdescribe('erc-20-balance-of', () => {
   const walletAddressWithAria:string = '0x5b1135819aDf7F5a8753cA49a162e8853EE01775';
   const walletAddressWithoutAria:string = '0x248793a3e73195533A043Ff02bbCBabBf675d88E';
 

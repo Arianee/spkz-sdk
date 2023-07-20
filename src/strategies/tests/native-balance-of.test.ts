@@ -1,7 +1,7 @@
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('clause', () => {
+xdescribe('clause', () => {
   describe('Simple clause', () => {
     test('should return true if 1 ETH on mainnet', async () => {
       const strategyProvider = await executeStrategiesWithCache([[

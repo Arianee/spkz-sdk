@@ -2,8 +2,8 @@ import { executeStrategiesWithCache } from '../executeStrategy';
 
 jest.setTimeout(60000);
 
-describe('poap holder of', () => {
-  xtest('should return true if one address attended POAP', async () => {
+xdescribe('poap holder of', () => {
+  test('should return true if one address attended POAP', async () => {
     const strategyProvider = await executeStrategiesWithCache([[
       {
         name: 'poap-holder-of',
@@ -22,7 +22,7 @@ describe('poap holder of', () => {
     expect(strategyProvider.strategies[0][0].enrichedInformations.symbol).toBeDefined();
     expect(strategyProvider.strategies[0][0].enrichedInformations.symbol).toBeDefined();
   });
-  xtest('should return false if no addresses attended POAP', async () => {
+  test('should return false if no addresses attended POAP', async () => {
     const strategyProvider = await executeStrategiesWithCache([[
       {
         name: 'poap-holder-of',

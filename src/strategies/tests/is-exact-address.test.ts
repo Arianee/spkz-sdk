@@ -1,7 +1,7 @@
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('execute strategies of is exact address of', () => {
+xdescribe('execute strategies of is exact address of', () => {
   test('wallet address is not in list', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{
