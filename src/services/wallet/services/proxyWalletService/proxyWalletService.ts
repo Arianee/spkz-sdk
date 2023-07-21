@@ -124,11 +124,10 @@ export class ProxyWalletService {
     return this.addBlockchainWalletAuthorization(signedJWT);
   };
 
-  public addFromWc = async (clientMeta?:IClientMeta, defaultQrcode = false):Promise<{url:string, sign:Function}> => {
-    const url = await this.metamaskService.initWC(clientMeta, defaultQrcode);
+  public addFromWc = async ():Promise<{sign:Function}> => {
+    await this.metamaskService.initWC();
 
     return {
-      url,
       sign: this.delayedSign
     };
   }

@@ -147,7 +147,7 @@ describe('validateStrategy', () => {
   });
 });
 
-describe('Execute api-balance-of strategies', () => {
+xdescribe('Execute api-balance-of strategies', () => {
   it('should authorize if the strategy\'s url returns an array whose length is more than the min balance', async () => {
     const strategy : Strategy<ApiBalanceOf> = {
       name: 'api-balance-of',

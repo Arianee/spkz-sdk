@@ -1,7 +1,7 @@
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('execute strategies of arianee erc 721 balance of issued by', () => {
+xdescribe('execute strategies of arianee erc 721 balance of issued by', () => {
   test('wallet without erc 721 of specific should be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{

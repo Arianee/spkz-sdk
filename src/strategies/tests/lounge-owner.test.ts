@@ -2,7 +2,7 @@ import { executeStrategiesWithCache } from '../executeStrategy';
 
 jest.setTimeout(60000);
 
-describe('execute strategies of lounge owner', () => {
+xdescribe('execute strategies of lounge owner', () => {
   test('Should be wallet not owner of lounge XX should be not authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{

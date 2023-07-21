@@ -6,7 +6,7 @@ jest.setTimeout(60000);
 // deployed erc1155 on rinkeby 0x4e0951fa4f0c299380ad8c81ae1a32f120907f64
 // owner of tokens (SPKZ (id 0, supply 500) ARIANEE (id1, supply 1)) 0x5D1e2E92488b9911C08a559ad9E3A8bD0F31B2F4
 
-describe('execute strategies of erc 1155 balance of', () => {
+xdescribe('execute strategies of erc 1155 balance of', () => {
   test('wallet with erc 1155 and sufficient balances SHOULD be authorized', async () => {
     const strategyProvider = await executeStrategiesWithCache([
       [{

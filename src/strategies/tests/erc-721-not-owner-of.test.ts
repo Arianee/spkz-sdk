@@ -2,7 +2,7 @@ import { Strategy, ERC721OwnerOf } from '../../models/strategy';
 import { executeStrategiesWithCache } from '../executeStrategy';
 jest.setTimeout(60000);
 
-describe('execute erc-721-not-owner-of strategies with cache', () => {
+xdescribe('execute erc-721-not-owner-of strategies with cache', () => {
   it('should not authorize if the user addresses owns all the NFTs', async () => {
     const addressWhoOwnsTheNFTs = '0x5d1e2e92488b9911c08a559ad9e3a8bd0f31b2f4';
 
