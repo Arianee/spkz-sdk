@@ -1,6 +1,6 @@
 import { Lifecycle, scoped } from 'tsyringe';
 import { EnvironmentService } from '../environmentService/environementService';
-import { create, IPFSHTTPClient } from 'ipfs-http-client';
+// import { create, IPFSHTTPClient } from 'ipfs-http-client';
 import { HttpService } from '../httpService/httpService';
 import { retryExecFactory } from '../../../../helpers/retryExecFactory/retryExecFactory';
 import axios from 'axios';
@@ -13,7 +13,7 @@ export const enum IPFSContentType {
 
 @scoped(Lifecycle.ContainerScoped)
 export class IPFSService {
-  public ipfsClient: IPFSHTTPClient = create({ url: 'https://ipfs.moralis.io:2053' });
+  // public ipfsClient: IPFSHTTPClient = create({ url: 'https://ipfs.moralis.io:2053' });
 
   public readonly ipfsProviders = [
     'https://cloudflare-ipfs.com/ipfs/:ipfsHash',
