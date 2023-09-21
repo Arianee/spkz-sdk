@@ -72,7 +72,7 @@
     "webpack-dev-server": "^4.3.0"
   },
   "dependencies": {
-    "@arianee/gas-station": "^0.0.4",
+    "@arianee/gas-station": "^0.0.9",
     "@arianee/required": "0.9.0",
     "@pqt/abbreviate": "^1.0.2",
     "@walletconnect/client": "^1.5.1",
