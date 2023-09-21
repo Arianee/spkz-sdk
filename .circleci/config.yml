@@ -34,7 +34,8 @@ jobs:
       - image: cimg/node:14.17.6
     steps:
       - checkout
-      - node/install-packages
+      - node/install-packages:
+          cache-version: "v2"
       - run:
           name: build library
           command: npm run build
