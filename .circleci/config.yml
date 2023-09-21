@@ -89,7 +89,7 @@ jobs:
 
   release:
     docker:
-      - image: cimg/node:14.17.6
+      - image: cimg/node:16.20.2
     steps:
       - checkout
       - node/install-packages
