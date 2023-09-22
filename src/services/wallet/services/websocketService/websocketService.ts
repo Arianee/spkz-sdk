@@ -4,6 +4,7 @@ import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client/build/socket';
 import { PayloadService } from '../payloadService/payloadService';
 import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
+import hash from 'hash.js/lib/hash/sha/256';
 
 @scoped(Lifecycle.ContainerScoped)
 export class WebsocketService {
@@ -101,8 +102,6 @@ export class WebsocketService {
   }
 
   private hashString = async (data:string) => {
-    const crypto = await import('crypto');
-    const hash = crypto.createHash('sha256');
     hash.update(data);
     return hash.digest('hex');
   }
