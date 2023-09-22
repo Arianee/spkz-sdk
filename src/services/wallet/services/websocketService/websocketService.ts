@@ -4,7 +4,6 @@ import { io } from 'socket.io-client';
 import { Socket } from 'socket.io-client/build/socket';
 import { PayloadService } from '../payloadService/payloadService';
 import { InternalMessageEventEmitterService } from '../internalMessageEventEmitterService/internalMessageEventEmitterService';
-import { createHash } from 'crypto';
 
 @scoped(Lifecycle.ContainerScoped)
 export class WebsocketService {
@@ -31,7 +30,7 @@ export class WebsocketService {
   private subscribeToRoom = async (roomId:string, sectionId:string) => {
     const tokenContent = await this.fetchRoomService.fetchRoom(roomId);
     if (tokenContent) {
-      const notificationEndpointHash = this.hashString(tokenContent.notificationEndpoint);
+      const notificationEndpointHash = await this.hashString(tokenContent.notificationEndpoint);
       const joinRoomsLength = this.websockets[notificationEndpointHash].joinedRooms.push({ roomId, sectionId, joined: false });
       this.joinRoom(notificationEndpointHash, joinRoomsLength - 1);
     }
@@ -62,7 +61,7 @@ export class WebsocketService {
       if (!notificationEndpoint) {
         throw new Error('there is no notification endpoint');
       }
-      const notificationEndpointHash = this.hashString(notificationEndpoint);
+      const notificationEndpointHash = await this.hashString(notificationEndpoint);
       if (!this.websockets[notificationEndpointHash]) {
         this.websockets[notificationEndpointHash] = {
           socket: io(notificationEndpoint,
@@ -101,8 +100,9 @@ export class WebsocketService {
     });
   }
 
-  private hashString = (data:string) => {
-    const hash = createHash('sha256');
+  private hashString = async (data:string) => {
+    const crypto = await import('crypto');
+    const hash = crypto.createHash('sha256');
     hash.update(data);
     return hash.digest('hex');
   }
