@@ -155,8 +155,17 @@ export class ProxyWalletService {
     return this;
   }
 
-  public addFromCustomWallet () {
+  public async addFromCustomWallet (signMethod:(data)=>Promise<string>, address:string):Promise<this> {
+    const payloadToSign = this.getPayloadToSignToAddABlockchainWallet(address);
+    const message = this.environmentService.spkzConfiguration?.customSignMessage || this.defaultSignMessage;
+    const jwtSigner = new JWTGeneric(signMethod, () => {
+    });
+    const jwt = jwtSigner.setPayload(payloadToSign)
+      .setMessage(message);
+    const signedJWT = await jwt.sign();
 
+    this.addBlockchainWalletAuthorization(signedJWT);
+    return this;
   }
 
   /**
